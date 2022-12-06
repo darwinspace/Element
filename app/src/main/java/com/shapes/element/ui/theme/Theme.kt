@@ -1,47 +1,46 @@
 package com.shapes.element.ui.theme
 
-import androidx.compose.foundation.BorderStroke
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorPalette = darkColors(
-	primary = Purple200,
-	primaryVariant = Purple700,
-	secondary = Teal200
-)
+private val DarkColorScheme = darkColorScheme()
 
-private val LightColorPalette = lightColors(
-	primary = Purple500,
-	primaryVariant = Purple700,
-	secondary = Teal200
-)
+private val LightColorScheme = lightColorScheme()
 
-val Colors.elementBorder: Color
-	get() {
-		return onSurface.copy(alpha = 0.12f)
-	}
+val LocalSpace = compositionLocalOf { Space() }
 
 @Composable
-fun ElementTheme(content: @Composable () -> Unit) {
-	val darkTheme: Boolean = isSystemInDarkTheme()
+fun ElementTheme(
+	darkTheme: Boolean = isSystemInDarkTheme(),
+	content: @Composable () -> Unit
+) {
+	val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-	val colors = if (darkTheme) {
-		DarkColorPalette
+	val colorScheme = if (dynamicColor) {
+		if (darkTheme) {
+			dynamicDarkColorScheme(LocalContext.current)
+		} else {
+			dynamicLightColorScheme(LocalContext.current)
+		}
 	} else {
-		LightColorPalette
+		if (darkTheme) {
+			DarkColorScheme
+		} else {
+			LightColorScheme
+		}
 	}
 
-	MaterialTheme(
-		colors = colors,
-		typography = Typography,
-		shapes = Shapes,
-		content = content
-	)
+	CompositionLocalProvider(LocalSpace provides Space()) {
+		MaterialTheme(
+			colorScheme = colorScheme,
+			typography = Typography,
+			shapes = Shapes,
+			content = content
+		)
+	}
 }

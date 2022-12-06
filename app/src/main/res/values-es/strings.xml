@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Element</string>
+    <string name="element_add">Añadir Item</string>
+    <string name="element_list_empty">No hay elementos</string>
+    <string name="element_list_empty_content">Presiona \'<b>Añadir Item</b>\' para crear un elemento.</string>
+    <string name="exception_expression">Expresión Inválida</string>
+    <string name="exception_arithmetic">Error aritmético</string>
+    <string name="search">Buscar</string>
+    <string name="element_name">Nombre</string>
+    <string name="element_value">Valor</string>
+    <string name="element_list_search_empty">No se pudo encontrar ningún elemento.</string>
+</resources>

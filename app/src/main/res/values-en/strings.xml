@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Element</string>
+    <string name="element_add">Add Item</string>
+    <string name="element_list_empty">There are not items</string>
+    <string name="element_list_empty_content">Click \'<b>Add Item</b>\' to create an item.</string>
+    <string name="exception_arithmetic">Arithmetic error</string>
+    <string name="exception_expression">Invalid Expression</string>
+    <string name="search">Search</string>
+    <string name="element_name">Name</string>
+    <string name="element_value">Value</string>
+    <string name="element_list_search_empty">Can’t find any element.</string>
+</resources>
