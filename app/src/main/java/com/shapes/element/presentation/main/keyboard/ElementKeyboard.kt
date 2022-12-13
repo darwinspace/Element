@@ -2,17 +2,19 @@ package com.shapes.element.presentation.main.keyboard
 
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.shapes.element.presentation.main.keyboard.KeyboardButton.NumberButton
 import com.shapes.element.presentation.main.keyboard.KeyboardButton.OperatorButton
 import com.shapes.element.presentation.main.keyboard.KeyboardOperator.*
 
-object KeyboardData {
+object ElementKeyboard {
 	private const val compactRows = 6
 	private const val mediumRows = 4
 
-	@Composable
-	operator fun invoke(windowSizeClass: WindowSizeClass): List<List<KeyboardButton>> {
+
+	fun getRows(windowSizeClass: WindowSizeClass): List<List<KeyboardButton>> {
 		val compact = windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact
 		val rows = if (compact) {
 			compactRows
@@ -25,6 +27,30 @@ object KeyboardData {
 
 	private fun get(compact: Boolean = false): List<KeyboardButton> {
 		return if (compact) compactButtons else buttons
+	}
+
+	fun calculateKeyboardGap(size: WindowSizeClass): Dp {
+		return if (size.heightSizeClass == WindowHeightSizeClass.Compact) {
+			if (size.widthSizeClass == WindowWidthSizeClass.Compact) {
+				2.dp
+			} else {
+				4.dp
+			}
+		} else {
+			8.dp
+		}
+	}
+
+	fun calculateKeyboardPadding(size: WindowSizeClass): Dp {
+		return if (size.heightSizeClass == WindowHeightSizeClass.Compact) {
+			if (size.widthSizeClass == WindowWidthSizeClass.Compact) {
+				2.dp
+			} else {
+				4.dp
+			}
+		} else {
+			12.dp
+		}
 	}
 
 	private val buttons = listOf(

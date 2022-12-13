@@ -1,11 +1,13 @@
 package com.shapes.element.domain.use_case.data
 
-import com.shapes.element.domain.data.repository.ApplicationRepositoryImplementation
-import com.shapes.element.domain.model.ElementItemData
-import com.shapes.element.domain.repository.ApplicationRepository
+import android.content.Context
+import com.shapes.element.domain.data.repository.ElementRepositoryImplementation
+import com.shapes.element.domain.model.Element
+import com.shapes.element.domain.repository.ElementRepository
+import kotlinx.coroutines.flow.Flow
 
-class GetElementList(private val repository: ApplicationRepository = ApplicationRepositoryImplementation()) {
-	suspend operator fun invoke(): List<ElementItemData> {
-		return emptyList()
+class GetElementList(private val repository: ElementRepository = ElementRepositoryImplementation()) {
+	operator fun invoke(context: Context): Flow<List<Element>> {
+		return repository.getElementList(context)
 	}
 }

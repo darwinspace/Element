@@ -1,17 +1,17 @@
 package com.shapes.element.domain.data.source
 
 import com.shapes.element.domain.model.ApplicationData
-import com.shapes.element.domain.model.ElementItemData
+import com.shapes.element.domain.model.Element
 import kotlinx.coroutines.delay
 
 class ApplicationDatabaseImplementation : ApplicationDatabase {
 	override suspend fun getApplicationData(): ApplicationData {
 		val list = buildList {
-			add(ElementItemData(name = "Box 🎁", value = 20.0))
-			add(ElementItemData(name = "Taco 🌮", value = 25.0))
-			add(ElementItemData(name = "Burrito 🌯", value = 40.0))
-			add(ElementItemData(name = "Hamburger 🍔", value = 60.0))
-			add(ElementItemData(name = "Coca Cola 🥤", value = 20.0))
+			add(Element(name = "Box 🎁", value = 20.0))
+			add(Element(name = "Taco 🌮", value = 25.0))
+			add(Element(name = "Burrito 🌯", value = 40.0))
+			add(Element(name = "Hamburger 🍔", value = 60.0))
+			add(Element(name = "Coca Cola 🥤", value = 20.0))
 		}
 
 		delay(timeMillis = 0L)

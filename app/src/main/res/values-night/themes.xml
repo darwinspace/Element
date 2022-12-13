@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="icon_application_background">#121212</color>
-
-    <style name="Theme.Element" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/status_bar_dark</item>
-        <item name="android:windowBackground">@color/icon_application_background</item>
-    </style>
-</resources>

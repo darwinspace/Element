@@ -3,13 +3,17 @@ package com.shapes.element.presentation.main.component
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -17,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -39,25 +42,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.shapes.element.R
-import com.shapes.element.domain.model.ElementItemData
-import com.shapes.element.domain.model.OperationItem
-import com.shapes.element.domain.model.OperationItem.*
+import com.shapes.element.domain.model.Element
+import com.shapes.element.domain.model.ExpressionItem
+import com.shapes.element.domain.model.ExpressionItem.*
+import com.shapes.element.presentation.main.keyboard.ElementKeyboard
 import com.shapes.element.presentation.main.keyboard.KeyboardButton
-import com.shapes.element.presentation.main.keyboard.KeyboardData
 import com.shapes.element.presentation.main.keyboard.KeyboardOperator
+import com.shapes.element.presentation.main.viewmodel.ExpressionResultState
 import com.shapes.element.presentation.main.viewmodel.MainViewModel
-import com.shapes.element.ui.theme.ElementTheme
 import com.shapes.element.ui.theme.space
 import com.shapes.element.util.filterIf
 import com.shapes.expression.ExpressionResult
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,6 +78,10 @@ fun HorizontalApplicationComponent(size: WindowSizeClass) {
 					.weight(4f)
 			)
 
+			VerticalDivider(
+				color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+			)
+
 			MainApplicationContent(
 				modifier = Modifier
 					.fillMaxHeight()
@@ -87,6 +90,19 @@ fun HorizontalApplicationComponent(size: WindowSizeClass) {
 			)
 		}
 	}
+}
+
+@Composable
+private fun VerticalDivider(
+	color: Color = MaterialTheme.colorScheme.primaryContainer,
+	thickness: Dp = DividerDefaults.Thickness
+) {
+	Box(
+		modifier = Modifier
+			.fillMaxHeight()
+			.width(thickness)
+			.background(color = color)
+	)
 }
 
 @Composable
@@ -116,6 +132,7 @@ private fun VerticalApplicationComponent(size: WindowSizeClass) {
 					}
 				}
 			}
+
 			ElementList(
 				modifier = Modifier
 					.height(bottomSheetHeight)
@@ -149,9 +166,11 @@ private fun ApplicationComponentMediumHeightBottomSheetButton(
 		targetValue = if (bottomSheetState.isCollapsed) 0f else 180f
 	)
 
+	val tonalElevation = 1.dp
+
 	Surface(
 		modifier = Modifier.clickable(role = Role.Button, onClick = onClick),
-		tonalElevation = 3.dp
+		tonalElevation = tonalElevation
 	) {
 		Box(
 			modifier = Modifier
@@ -174,19 +193,24 @@ private fun MainApplicationContent(
 	size: WindowSizeClass
 ) {
 	Column(modifier = modifier) {
-		OperationFrame(modifier = Modifier.weight(1f))
+		ExpressionData(modifier = Modifier.weight(1f))
 		Keyboard(size)
 	}
 }
 
 @Composable
-private fun OperationFrame(modifier: Modifier = Modifier) {
+private fun ExpressionData(modifier: Modifier = Modifier) {
 	val scrollState = rememberScrollState()
+	val tonalElevation = 3.dp
+
 	Surface(
-		modifier = modifier.verticalScroll(scrollState)
+		modifier = Modifier
+			.verticalScroll(scrollState)
+			.then(modifier),
+		tonalElevation = tonalElevation
 	) {
 		Column {
-			OperationList()
+			ExpressionList()
 			ResultFrame()
 		}
 	}
@@ -198,14 +222,14 @@ fun Double.format(): String {
 }
 
 @Composable
-fun GenericOperationElementItem(operationItem: OperationItem) {
-	when (operationItem) {
+fun GenericExpressionItem(expressionItem: ExpressionItem) {
+	when (expressionItem) {
 		is NumberItem -> {
-			val text = operationItem.number.format()
+			val text = expressionItem.number.toString()
 			ElementItemText(text = text)
 		}
 		is OperatorItem -> {
-			val operator = operationItem.operator
+			val operator = expressionItem.operator
 			val isParentheses = operator == KeyboardOperator.Open
 					|| operator == KeyboardOperator.Close
 			val color = if (isParentheses) {
@@ -220,12 +244,12 @@ fun GenericOperationElementItem(operationItem: OperationItem) {
 }
 
 @Composable
-fun OperationList(
+fun ExpressionList(
 	viewModel: MainViewModel = viewModel()
 ) {
-	val operations = viewModel.operation
+	val expression = viewModel.expression
 	val infiniteTransition = rememberInfiniteTransition()
-	val opacityValue by infiniteTransition.animateFloat(
+	val cursorOpacity by infiniteTransition.animateFloat(
 		initialValue = 0f, targetValue = 1f, animationSpec = infiniteRepeatable(
 			animation = tween(durationMillis = 600, easing = LinearEasing),
 			repeatMode = RepeatMode.Reverse
@@ -240,46 +264,43 @@ fun OperationList(
 				.fillMaxWidth(),
 			state = state,
 			contentPadding = PaddingValues(horizontal = 24.dp),
-			horizontalArrangement = Arrangement.spacedBy(8.dp),
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			items(operations) { elementItem ->
+			items(expression) { elementItem ->
 				if (elementItem is ElementItem) {
 					var visible by rememberSaveable { mutableStateOf(true) }
-					OperationElementItem(
-						elementItem = elementItem.elementItem,
+					ExpressionElementItem(
+						element = elementItem.element,
 						visible = visible,
 						onClick = { visible = !visible }
 					)
 				} else {
-					GenericOperationElementItem(elementItem)
+					GenericExpressionItem(elementItem)
 				}
 			}
 
 			item {
-				Cursor(opacityValue = opacityValue)
+				Cursor(
+					modifier = Modifier.alpha(cursorOpacity)
+				)
 			}
 
 			scope.launch {
-				delay(100)
-				state.animateScrollToItem(operations.size)
+				state.animateScrollToItem(expression.size)
 			}
 		}
 	}
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun LazyItemScope.Cursor(
+private fun Cursor(
+	modifier: Modifier = Modifier,
 	width: Dp = 4.dp,
-	height: Dp = 32.dp,
-	opacityValue: Float
+	height: Dp = 32.dp
 ) {
 	val cursorColor = MaterialTheme.colorScheme.primary
 	Box(
-		modifier = Modifier
-			.animateItemPlacement()
-			.alpha(opacityValue)
+		modifier = modifier
 			.background(cursorColor)
 			.size(width, height)
 	)
@@ -295,62 +316,67 @@ fun ElementItemText(
 		modifier = modifier,
 		text = text,
 		style = MaterialTheme.typography.titleMedium,
-		color = color,
-		letterSpacing = 1.sp
+		color = color
 	)
 }
 
 @Composable
 private fun ResultFrame(viewModel: MainViewModel = viewModel()) {
-	when (val resultState = viewModel.operationResult) {
-		is MainViewModel.ResultState.Value -> {
-			when (val expressionResult = resultState.result) {
-				is ExpressionResult.Value -> {
-					val scrollState = rememberScrollState()
-					val resultValue = expressionResult.value.format()
-					Surface(
-						modifier = Modifier
-							.fillMaxWidth()
-							.horizontalScroll(
-								state = scrollState
-							)
-					) {
-						Box(
-							modifier = Modifier.padding(horizontal = 32.dp),
-							contentAlignment = Alignment.CenterEnd
-						) {
-							ResultText(resultValue)
-						}
-					}
-				}
-				is ExpressionResult.ExpressionException -> {
-					Surface(
-						modifier = Modifier
-							.padding(bottom = 24.dp)
-							.padding(horizontal = 24.dp)
-							.fillMaxWidth(),
-						shape = MaterialTheme.shapes.medium,
-						color = MaterialTheme.colorScheme.errorContainer
-					) {
-						val text = if (expressionResult.exception is ArithmeticException) {
-							stringResource(id = R.string.exception_arithmetic)
-						} else {
-							stringResource(id = R.string.exception_expression)
-						}
-
-						Text(
-							modifier = Modifier
-								.fillMaxWidth()
-								.padding(24.dp),
-							text = text,
-							textAlign = TextAlign.End,
-							style = MaterialTheme.typography.headlineSmall
-						)
-					}
-				}
+	val resultState = viewModel.result
+	if (resultState is ExpressionResultState.Value) {
+		when (val result = resultState.result) {
+			is ExpressionResult.Value -> {
+				ExpressionResult(
+					modifier = Modifier
+						.fillMaxWidth()
+						.horizontalScroll(state = rememberScrollState()),
+					result = result
+				)
+			}
+			is ExpressionResult.ExpressionException -> {
+				ExpressionException(result)
 			}
 		}
-		MainViewModel.ResultState.Empty -> Unit
+	}
+}
+
+@Composable
+private fun ExpressionException(result: ExpressionResult.ExpressionException) {
+	Surface(
+		modifier = Modifier
+			.padding(bottom = 24.dp)
+			.padding(horizontal = 24.dp)
+			.fillMaxWidth(),
+		shape = MaterialTheme.shapes.medium,
+		color = MaterialTheme.colorScheme.errorContainer
+	) {
+		val text = if (result.exception is ArithmeticException) {
+			stringResource(id = R.string.exception_arithmetic)
+		} else {
+			stringResource(id = R.string.exception_expression)
+		}
+
+		Text(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(24.dp),
+			text = text,
+			textAlign = TextAlign.End,
+			style = MaterialTheme.typography.headlineSmall
+		)
+	}
+}
+
+@Composable
+private fun ExpressionResult(modifier: Modifier, result: ExpressionResult.Value) {
+	val value = result.value.format()
+	Surface(modifier = modifier) {
+		Box(
+			modifier = Modifier.padding(32.dp),
+			contentAlignment = Alignment.CenterEnd
+		) {
+			ResultText(value)
+		}
 	}
 }
 
@@ -365,8 +391,8 @@ fun ResultText(text: String) {
 }
 
 @Composable
-fun OperationElementItem(
-	elementItem: ElementItemData,
+fun ExpressionElementItem(
+	element: Element,
 	visible: Boolean = true,
 	onClick: () -> Unit
 ) {
@@ -384,7 +410,7 @@ fun OperationElementItem(
 		tonalElevation = 5.dp
 	) {
 		Box(modifier = Modifier.padding(padding)) {
-			val text = if (visible) elementItem.name else elementItem.value.format()
+			val text = if (visible) element.name else element.value.format()
 			OperationElementItemName(text)
 		}
 	}
@@ -396,75 +422,49 @@ fun OperationElementItemName(elementName: String) {
 	Text(text = elementName, style = style)
 }
 
-enum class KeyboardButtonType {
-	Default, Operator, Delete, Parentheses, Equal
-}
+@Composable
+fun Keyboard(size: WindowSizeClass) {
+	val keyboardPadding = ElementKeyboard.calculateKeyboardPadding(size)
 
-fun getKeyboardButtonType(keyboardButton: KeyboardButton): KeyboardButtonType {
-	return when (keyboardButton) {
-		is KeyboardButton.NumberButton -> KeyboardButtonType.Default
-		is KeyboardButton.OperatorButton -> {
-			when (keyboardButton.operator) {
-				KeyboardOperator.Delete -> KeyboardButtonType.Delete
-				KeyboardOperator.Open, KeyboardOperator.Close -> KeyboardButtonType.Parentheses
-				KeyboardOperator.Multiply,
-				KeyboardOperator.Divide,
-				KeyboardOperator.Add,
-				KeyboardOperator.Subtract -> KeyboardButtonType.Operator
-				KeyboardOperator.Equal -> KeyboardButtonType.Equal
-			}
+	Surface {
+		Column(modifier = Modifier.padding(keyboardPadding)) {
+			KeyboardRows(size)
 		}
 	}
 }
 
 @Composable
-fun Keyboard(
-	size: WindowSizeClass,
-	viewModel: MainViewModel = viewModel()
-) {
-	val keyboardRows = KeyboardData(size)
-
-	val isHeightCompact = size.heightSizeClass == WindowHeightSizeClass.Compact
-	val isWidthCompact = size.widthSizeClass == WindowWidthSizeClass.Compact
-	val (keyboardGap, keyboardPadding) = if (isHeightCompact) {
-		if (isWidthCompact) {
-			2.dp to 2.dp
-		} else {
-			6.dp to 6.dp
+private fun KeyboardRows(size: WindowSizeClass) {
+	val rows = ElementKeyboard.getRows(size)
+	rows.forEach { row ->
+		Row {
+			KeyboardButtons(size, row)
 		}
-	} else {
-		8.dp to 12.dp
 	}
+}
 
-	Surface(color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)) {
-		Column(
-			modifier = Modifier.padding(keyboardPadding),
-			verticalArrangement = Arrangement.spacedBy(0.dp)
-		) {
-			keyboardRows.forEach { row ->
-				Row {
-					row.forEach { keyboardButton ->
-						val buttonType = getKeyboardButtonType(keyboardButton)
-						val isDelete = buttonType == KeyboardButtonType.Delete
-						KeyboardButton(
-							modifier = Modifier
-								.weight(1f)
-								.padding(keyboardGap),
-							buttonType = buttonType,
-							onLongClick = {
-								if (isDelete) {
-									viewModel.onLongKeyboardButtonClick()
-								}
-							},
-							onClick = {
-								viewModel.onKeyboardButtonClick(keyboardButton)
-							}
-						) {
-							KeyboardButtonText(keyboardButton.text)
-						}
-					}
-				}
+@Composable
+private fun RowScope.KeyboardButtons(
+	size: WindowSizeClass,
+	rows: List<KeyboardButton>,
+) {
+	val viewModel: MainViewModel = viewModel()
+	val keyboardGap = ElementKeyboard.calculateKeyboardGap(size)
+
+	rows.forEach { keyboardButton ->
+		KeyboardButton(
+			modifier = Modifier
+				.weight(1f)
+				.padding(keyboardGap),
+			keyboardButton = keyboardButton,
+			onLongClick = {
+				viewModel.onLongKeyboardButtonClick(keyboardButton)
+			},
+			onClick = {
+				viewModel.onKeyboardButtonClick(keyboardButton)
 			}
+		) {
+			KeyboardButtonText(keyboardButton.text)
 		}
 	}
 }
@@ -478,28 +478,33 @@ fun KeyboardButtonText(text: String) {
 @Composable
 fun KeyboardButton(
 	modifier: Modifier = Modifier,
-	shape: Shape = MaterialTheme.shapes.medium,
-	buttonType: KeyboardButtonType = KeyboardButtonType.Default,
-	onLongClick: (() -> Unit)? = null,
+	keyboardButton: KeyboardButton,
 	onClick: () -> Unit,
+	onLongClick: (() -> Unit)? = null,
 	content: @Composable BoxScope.() -> Unit
 ) {
-	val color = when (buttonType) {
-		KeyboardButtonType.Delete -> MaterialTheme.colorScheme.tertiaryContainer
-		KeyboardButtonType.Parentheses,
-		KeyboardButtonType.Operator -> MaterialTheme.colorScheme.secondaryContainer
-		KeyboardButtonType.Equal -> MaterialTheme.colorScheme.primary
-		KeyboardButtonType.Default -> MaterialTheme.colorScheme.surface
-	}
+	val interactionSource = remember { MutableInteractionSource() }
 
-	val tonalElevation =
-		if (isSystemInDarkTheme() && buttonType == KeyboardButtonType.Default) 2.dp else 0.dp
+	val isPressed by interactionSource.collectIsPressedAsState()
+	val cornerSize by animateDpAsState(
+		targetValue = if (isPressed) {
+			MaterialTheme.space.regular
+		} else {
+			MaterialTheme.space.small
+		}
+	)
+
+	val color = keyboardButton.getColor()
+	val shape = RoundedCornerShape(cornerSize)
+	val tonalElevation = 1.dp
 
 	Surface(
 		modifier = modifier
 			.clip(shape)
 			.combinedClickable(
 				role = Role.Button,
+				interactionSource = interactionSource,
+				indication = rememberRipple(),
 				onLongClick = onLongClick,
 				onClick = onClick
 			),
@@ -508,318 +513,251 @@ fun KeyboardButton(
 		tonalElevation = tonalElevation
 	) {
 		Box(
-			modifier = Modifier
-				.height(48.dp)
-				.padding(horizontal = 16.dp),
+			modifier = Modifier.defaultMinSize(
+				minWidth = 48.dp,
+				minHeight = 48.dp
+			),
 			contentAlignment = Alignment.Center,
 			content = content
 		)
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElementList(modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel()) {
-	val space = MaterialTheme.space.regular
+fun ElementList(modifier: Modifier = Modifier) {
+	val viewModel = viewModel<MainViewModel>()
 
-	val focusManager = LocalFocusManager.current
+	val elementList by viewModel.getElementList(LocalContext.current)
+		.collectAsState(initial = emptyList())
+
+	val space = MaterialTheme.space.regular
 
 	var search by rememberSaveable(viewModel.search) { mutableStateOf(String()) }
 
-	var name by rememberSaveable(viewModel.addition) { mutableStateOf(String()) }
-	var value by rememberSaveable(viewModel.addition) { mutableStateOf(String()) }
-
-	val isAdditionButtonEnabled = name.isNotBlank()
-
-	val scope = rememberCoroutineScope()
-	val context = LocalContext.current
-	val elementList by viewModel.getElementList(context).collectAsState(initial = emptyList())
-
-	Surface(modifier = modifier, tonalElevation = 2.dp) {
+	Surface(modifier = modifier) {
 		LazyColumn(
 			contentPadding = PaddingValues(space),
 			verticalArrangement = Arrangement.spacedBy(space)
 		) {
-			item {
-				Column {
-					Row(
-						modifier = Modifier.fillMaxWidth(),
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						val isAdditionVisible = viewModel.addition
-						val isSearchVisible = elementList.isNotEmpty()
-
-						AnimatedVisibility(visible = isSearchVisible || isAdditionVisible) {
-							androidx.compose.animation.AnimatedVisibility(
-								visible = isSearchVisible && !isAdditionVisible,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								FilledTonalIconToggleButton(
-									modifier = Modifier.size(48.dp),
-									checked = viewModel.search,
-									onCheckedChange = { viewModel.search = it }
-								) {
-									androidx.compose.animation.AnimatedVisibility(
-										visible = viewModel.search,
-										enter = fadeIn(),
-										exit = fadeOut()
-									) {
-										Icon(
-											imageVector = Icons.Default.Close,
-											contentDescription = null
-										)
-									}
-
-									androidx.compose.animation.AnimatedVisibility(
-										visible = !viewModel.search,
-										enter = fadeIn(),
-										exit = fadeOut()
-									) {
-										Icon(
-											imageVector = Icons.Default.Search,
-											contentDescription = null
-										)
-									}
-								}
-							}
-
-							androidx.compose.animation.AnimatedVisibility(
-								visible = isAdditionVisible,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								FilledTonalIconButton(
-									modifier = Modifier.size(48.dp),
-									onClick = {
-										viewModel.addition = !viewModel.addition
-									}
-								) {
-									Icon(
-										imageVector = Icons.Default.Close,
-										contentDescription = null
-									)
-								}
-							}
-						}
-
-						AnimatedVisibility(
-							visible = !(!isSearchVisible && !isAdditionVisible)
-						) {
-							Spacer(modifier = Modifier.width(space))
-						}
-
-						val noneName = elementList.none { it.name == name.trim() }
-						val isAddItemButtonEnabled =
-							if (viewModel.addition) isAdditionButtonEnabled && noneName else true
-
-						Box(
-							modifier = Modifier
-								.weight(1f)
-								.height(60.dp),
-							contentAlignment = Alignment.Center
-						) {
-							androidx.compose.animation.AnimatedVisibility(
-								visible = !viewModel.search,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								Button(
-									enabled = isAddItemButtonEnabled,
-									modifier = Modifier
-										.fillParentMaxWidth()
-										.height(48.dp),
-									shape = MaterialTheme.shapes.small,
-									onClick = {
-										scope.launch {
-											if (viewModel.addition && noneName) {
-												val element = ElementItemData(name.trim(), value)
-												viewModel.addElementItem(
-													context,
-													elementList,
-													element
-												)
-											}
-
-											viewModel.addition = !viewModel.addition
-										}
-									}
-								) {
-									Text(text = stringResource(id = R.string.element_add))
-								}
-							}
-
-							androidx.compose.animation.AnimatedVisibility(
-								visible = viewModel.search,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								OutlinedTextField(
-									modifier = Modifier.fillParentMaxWidth(),
-									shape = MaterialTheme.shapes.small,
-									singleLine = true,
-									keyboardOptions = KeyboardOptions(
-										capitalization = KeyboardCapitalization.Sentences,
-										imeAction = ImeAction.Search
-									),
-									keyboardActions = KeyboardActions(
-										onSearch = {
-											focusManager.clearFocus()
-										}
-									),
-									value = search,
-									onValueChange = {
-										search = it
-									},
-									placeholder = {
-										Text(text = stringResource(id = R.string.search))
-									},
-									trailingIcon = {
-										Icon(
-											imageVector = Icons.Default.Search,
-											contentDescription = null
-										)
-									}
-								)
-							}
-						}
-					}
-
-					AnimatedVisibility(visible = viewModel.addition) {
-						Column {
-							Spacer(modifier = Modifier.height(space))
-
-							OutlinedTextField(
-								modifier = Modifier.fillMaxWidth(),
-								shape = MaterialTheme.shapes.small,
-								keyboardOptions = KeyboardOptions(
-									capitalization = KeyboardCapitalization.Sentences,
-									imeAction = ImeAction.Next
-								),
-								keyboardActions = KeyboardActions(
-									onNext = {
-										focusManager.moveFocus(FocusDirection.Next)
-										name = name.trim()
-									}
-								),
-								singleLine = true,
-								value = name,
-								onValueChange = { name = it },
-								placeholder = {
-									Text(text = stringResource(id = R.string.element_name))
-								}
-							)
-
-							Spacer(modifier = Modifier.height(space))
-
-							OutlinedTextField(
-								modifier = Modifier.fillMaxWidth(),
-								shape = MaterialTheme.shapes.small,
-								keyboardOptions = KeyboardOptions(
-									keyboardType = KeyboardType.Decimal,
-									imeAction = ImeAction.Done
-								),
-								keyboardActions = KeyboardActions(
-									onDone = {
-										focusManager.clearFocus()
-									}
-								),
-								singleLine = true,
-								value = value,
-								onValueChange = { value = it },
-								placeholder = {
-									Text(text = stringResource(id = R.string.element_value))
-								}
-							)
-						}
-					}
-				}
-			}
+			elementListHeader(
+				elementList = elementList,
+				search = search,
+				onSearchChange = { search = it }
+			)
 
 			keyboardContent(viewModel, elementList, search)
 		}
 	}
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-fun LazyListScope.keyboardContent(
-	viewModel: MainViewModel,
-	elementList: List<ElementItemData>,
-	search: String
+@OptIn(ExperimentalMaterial3Api::class)
+private fun LazyListScope.elementListHeader(
+	elementList: List<Element>,
+	search: String,
+	onSearchChange: (String) -> Unit
 ) {
-	val filterEnabled = viewModel.search && search.isNotBlank()
-	val filteredElements = elementList.filterIf(filterEnabled) {
-		it.name.contains(search, ignoreCase = true)
-	}
+	item {
+		val viewModel = viewModel<MainViewModel>()
+		val focusManager = LocalFocusManager.current
 
-	items(filteredElements) { item ->
 		val space = MaterialTheme.space.regular
-		val shape = MaterialTheme.shapes.medium
-		val textStyle = MaterialTheme.typography.titleSmall
-		val name = item.name
-		val value = item.value.format()
+
+		var name by rememberSaveable(viewModel.addition) { mutableStateOf(String()) }
+		var value by rememberSaveable(viewModel.addition) { mutableStateOf(String()) }
+
+		val isAdditionButtonEnabled = name.isNotBlank()
 
 		val scope = rememberCoroutineScope()
 
 		val context = LocalContext.current
 
-		Surface(
-			modifier = Modifier
-				.clip(shape)
-				.combinedClickable(
-					role = Role.Button,
-					onClick = {
-						val operationItem = ElementItem(item)
-						viewModel.appendOperationItem(operationItem)
-					},
-					onLongClick = {
-						scope.launch {
-							viewModel.removeElementItem(context, elementList, item)
-						}
-					}
-				),
-			shape = shape,
-			tonalElevation = 3.dp
-		) {
+		Column {
 			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(space),
-				horizontalArrangement = Arrangement.spacedBy(24.dp),
+				modifier = Modifier.fillMaxWidth(),
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				Text(
-					modifier = Modifier.weight(1f),
-					text = name,
-					textAlign = TextAlign.Justify,
-					style = textStyle
-				)
-				Text(text = value, style = textStyle)
-			}
-		}
-	}
+				val isAdditionVisible = viewModel.addition
+				val isSearchVisible = elementList.isNotEmpty()
 
-	if (elementList.isEmpty()) {
-		item {
-			ElementListEmptyCard()
-		}
-	}
+				AnimatedVisibility(visible = isSearchVisible || isAdditionVisible) {
+					androidx.compose.animation.AnimatedVisibility(
+						visible = isSearchVisible && !isAdditionVisible,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						FilledTonalIconToggleButton(
+							modifier = Modifier.size(48.dp),
+							checked = viewModel.search,
+							onCheckedChange = { viewModel.search = it }
+						) {
+							androidx.compose.animation.AnimatedVisibility(
+								visible = viewModel.search,
+								enter = fadeIn(),
+								exit = fadeOut()
+							) {
+								Icon(
+									imageVector = Icons.Default.Close,
+									contentDescription = null
+								)
+							}
 
-	if (elementList.isNotEmpty() && filteredElements.isEmpty()) {
-		item {
-			Surface(tonalElevation = 2.dp, shape = MaterialTheme.shapes.small) {
-				Column(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(24.dp),
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.spacedBy(16.dp)
+							androidx.compose.animation.AnimatedVisibility(
+								visible = !viewModel.search,
+								enter = fadeIn(),
+								exit = fadeOut()
+							) {
+								Icon(
+									imageVector = Icons.Default.Search,
+									contentDescription = null
+								)
+							}
+						}
+					}
+
+					androidx.compose.animation.AnimatedVisibility(
+						visible = isAdditionVisible,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						FilledTonalIconButton(
+							modifier = Modifier.size(48.dp),
+							onClick = {
+								viewModel.addition = !viewModel.addition
+							}
+						) {
+							Icon(
+								imageVector = Icons.Default.Close,
+								contentDescription = null
+							)
+						}
+					}
+				}
+
+				AnimatedVisibility(
+					visible = !(!isSearchVisible && !isAdditionVisible)
 				) {
-					Icon(imageVector = Icons.Default.Search, contentDescription = null)
-					Text(
-						text = stringResource(id = R.string.element_list_search_empty),
-						style = MaterialTheme.typography.bodyLarge,
-						textAlign = TextAlign.Center
+					Spacer(modifier = Modifier.width(space))
+				}
+
+				val noneName = elementList.none { it.name == name.trim() }
+				val isAddItemButtonEnabled =
+					if (viewModel.addition) isAdditionButtonEnabled && noneName else true
+
+				Box(
+					modifier = Modifier
+						.weight(1f)
+						.height(60.dp),
+					contentAlignment = Alignment.Center
+				) {
+					androidx.compose.animation.AnimatedVisibility(
+						visible = !viewModel.search,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						Button(
+							enabled = isAddItemButtonEnabled,
+							modifier = Modifier
+								.fillParentMaxWidth()
+								.height(48.dp),
+							shape = MaterialTheme.shapes.small,
+							onClick = {
+								scope.launch {
+									if (viewModel.addition && noneName) {
+										val element = Element(name.trim(), value)
+										viewModel.addElementItem(
+											context,
+											elementList,
+											element
+										)
+									}
+
+									viewModel.addition = !viewModel.addition
+								}
+							}
+						) {
+							Text(text = stringResource(id = R.string.element_add))
+						}
+					}
+
+					androidx.compose.animation.AnimatedVisibility(
+						visible = viewModel.search,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						OutlinedTextField(
+							modifier = Modifier.fillParentMaxWidth(),
+							shape = MaterialTheme.shapes.small,
+							singleLine = true,
+							keyboardOptions = KeyboardOptions(
+								capitalization = KeyboardCapitalization.Sentences,
+								imeAction = ImeAction.Search
+							),
+							keyboardActions = KeyboardActions(
+								onSearch = {
+									focusManager.clearFocus()
+								}
+							),
+							value = search,
+							onValueChange = onSearchChange,
+							placeholder = {
+								Text(text = stringResource(id = R.string.search))
+							},
+							trailingIcon = {
+								Icon(
+									imageVector = Icons.Default.Search,
+									contentDescription = null
+								)
+							}
+						)
+					}
+				}
+			}
+
+			AnimatedVisibility(visible = viewModel.addition) {
+				Column {
+					Spacer(modifier = Modifier.height(space))
+
+					OutlinedTextField(
+						modifier = Modifier.fillMaxWidth(),
+						shape = MaterialTheme.shapes.small,
+						keyboardOptions = KeyboardOptions(
+							capitalization = KeyboardCapitalization.Sentences,
+							imeAction = ImeAction.Next
+						),
+						keyboardActions = KeyboardActions(
+							onNext = {
+								focusManager.moveFocus(FocusDirection.Next)
+								name = name.trim()
+							}
+						),
+						singleLine = true,
+						value = name,
+						onValueChange = { name = it },
+						placeholder = {
+							Text(text = stringResource(id = R.string.element_name))
+						}
+					)
+
+					Spacer(modifier = Modifier.height(space))
+
+					OutlinedTextField(
+						modifier = Modifier.fillMaxWidth(),
+						shape = MaterialTheme.shapes.small,
+						keyboardOptions = KeyboardOptions(
+							keyboardType = KeyboardType.Decimal,
+							imeAction = ImeAction.Done
+						),
+						keyboardActions = KeyboardActions(
+							onDone = {
+								focusManager.clearFocus()
+							}
+						),
+						singleLine = true,
+						value = value,
+						onValueChange = { value = it },
+						placeholder = {
+							Text(text = stringResource(id = R.string.element_value))
+						}
 					)
 				}
 			}
@@ -827,12 +765,124 @@ fun LazyListScope.keyboardContent(
 	}
 }
 
+fun LazyListScope.keyboardContent(
+	viewModel: MainViewModel,
+	elementList: List<Element>,
+	search: String
+) {
+	val filterEnabled = viewModel.search && search.isNotBlank()
+	val elementFilteredList = elementList.filterIf(filterEnabled) {
+		it.name.contains(search, ignoreCase = true)
+	}
+
+	items(elementFilteredList) { element ->
+		val scope = rememberCoroutineScope()
+
+		val context = LocalContext.current
+
+		ElementListItem(
+			modifier = Modifier.fillMaxWidth(),
+			element = element,
+			onClick = {
+				val operationItem = ElementItem(element)
+				viewModel.appendExpressionItem(operationItem)
+			},
+			onLongClick = {
+				scope.launch {
+					viewModel.removeElementItem(context, elementList, element)
+				}
+			}
+		)
+	}
+
+	if (elementList.isEmpty()) {
+		item {
+			ElementEmptyListCard()
+		}
+	}
+
+	if (elementList.isNotEmpty() && elementFilteredList.isEmpty()) {
+		item {
+			ElementEmptySearchListCard()
+		}
+	}
+}
+
 @Composable
-private fun ElementListEmptyCard() {
-	val space = 32.dp
+@OptIn(ExperimentalFoundationApi::class)
+private fun ElementListItem(
+	modifier: Modifier = Modifier,
+	element: Element,
+	onClick: () -> Unit,
+	onLongClick: () -> Unit,
+) {
+	val name = element.name
+	val value = element.value.format()
+
+	val space = MaterialTheme.space.regular
+	val textStyle = MaterialTheme.typography.titleSmall
+	val shape = MaterialTheme.shapes.medium
+	val tonalElevation = 3.dp
+
+	Surface(
+		modifier = modifier
+			.clip(shape)
+			.combinedClickable(
+				role = Role.Button,
+				onClick = onClick,
+				onLongClick = onLongClick
+			),
+		shape = shape,
+		tonalElevation = tonalElevation
+	) {
+		Row(
+			modifier = Modifier.padding(space),
+			horizontalArrangement = Arrangement.spacedBy(space),
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			Text(
+				modifier = Modifier.weight(1f),
+				text = name,
+				textAlign = TextAlign.Justify,
+				style = textStyle
+			)
+			Text(text = value, style = textStyle)
+		}
+	}
+}
+
+@Composable
+private fun ElementEmptySearchListCard() {
+	val space = MaterialTheme.space.regular
+
+	Surface(
+		shape = MaterialTheme.shapes.small,
+		color = MaterialTheme.colorScheme.primaryContainer
+	) {
+		Column(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(space),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.spacedBy(16.dp)
+		) {
+			Icon(imageVector = Icons.Default.Search, contentDescription = null)
+			Text(
+				text = stringResource(id = R.string.empty_element_search_list),
+				style = MaterialTheme.typography.titleSmall,
+				textAlign = TextAlign.Center
+			)
+		}
+	}
+}
+
+@Composable
+private fun ElementEmptyListCard() {
+	val space = MaterialTheme.space.large
+
 	Surface(
 		shape = MaterialTheme.shapes.medium,
-		tonalElevation = 3.dp
+		color = MaterialTheme.colorScheme.primaryContainer
 	) {
 		Column(
 			modifier = Modifier
@@ -842,35 +892,16 @@ private fun ElementListEmptyCard() {
 			verticalArrangement = Arrangement.spacedBy(8.dp)
 		) {
 			Text(
-				text = stringResource(id = R.string.element_list_empty),
+				text = stringResource(id = R.string.empty_element_list),
 				style = MaterialTheme.typography.titleSmall,
 				textAlign = TextAlign.Center
 			)
 
 			Text(
-				text = stringResource(id = R.string.element_list_empty_content),
+				text = stringResource(id = R.string.empty_element_list_content),
 				style = MaterialTheme.typography.bodyLarge,
 				textAlign = TextAlign.Center
 			)
 		}
-	}
-}
-
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(widthDp = 640, heightDp = 360)
-@Composable
-fun ApplicationPreview() {
-	ElementTheme {
-		ApplicationComponent(WindowSizeClass.calculateFromSize(DpSize(640.dp, 360.dp)))
-	}
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-@Preview(widthDp = 360, heightDp = 640)
-@Composable
-fun HorizontalApplicationPreview() {
-	ElementTheme {
-		ApplicationComponent(WindowSizeClass.calculateFromSize(DpSize(360.dp, 640.dp)))
 	}
 }

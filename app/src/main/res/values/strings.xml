@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Element</string>
     <string name="element_add">Add Item</string>
-    <string name="element_list_empty">There are not items</string>
-    <string name="element_list_empty_content">Click \'<b>Add Item</b>\' to create an item.</string>
-    <string name="element_list_search_empty">Can’t find any element.</string>
+    <string name="empty_element_list">There are not items</string>
+    <string name="empty_element_list_content">Click \'Add Item\' to create an item.</string>
+    <string name="empty_element_search_list">Can’t find any element.</string>
 
     <string name="exception_arithmetic">Arithmetic error</string>
     <string name="exception_expression">Invalid Expression</string>
