@@ -1,16 +1,19 @@
 package com.shapes.element.presentation.main.viewmodel
 
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.shapes.element.domain.data.repository.ElementRepositoryImplementation
 import com.shapes.element.domain.model.Element
 import com.shapes.element.domain.model.ExpressionItem
 import com.shapes.element.domain.model.ExpressionItem.*
 import com.shapes.element.domain.repository.ElementRepository
+import com.shapes.element.domain.use_case.data.AddToElementList
+import com.shapes.element.domain.use_case.data.EditElementFromList
+import com.shapes.element.domain.use_case.data.GetElementList
+import com.shapes.element.domain.use_case.data.RemoveElementFromList
 import com.shapes.element.presentation.main.keyboard.KeyboardButton
 import com.shapes.element.presentation.main.keyboard.KeyboardButton.NumberButton
 import com.shapes.element.presentation.main.keyboard.KeyboardButton.OperatorButton
@@ -18,7 +21,7 @@ import com.shapes.element.presentation.main.keyboard.KeyboardButtonType
 import com.shapes.element.presentation.main.keyboard.KeyboardOperator
 import com.shapes.expression.ExecuteExpression
 import com.shapes.expression.Expression
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class MainViewModel(
 	private val repository: ElementRepository = ElementRepositoryImplementation()
@@ -30,38 +33,28 @@ class MainViewModel(
 
 	val expression = mutableStateListOf<ExpressionItem>()
 
+	var cursor by mutableStateOf(0)
+
 	var result by mutableStateOf<ExpressionResultState>(ExpressionResultState.Empty)
 		private set
 
-	fun getElementList(context: Context): Flow<List<Element>> {
-		return repository.getElementList(context)
-	}
+	val elementList: State<List<Element>>
+		@Composable
+		get() {
+			return getElementList(LocalContext.current).collectAsState(emptyList())
+		}
 
-	suspend fun addElementItem(
-		context: Context,
-		elementList: List<Element>,
-		element: Element
-	) {
-		val list = listOf(element) + elementList
-		repository.setElementList(context, list)
-	}
-
-	suspend fun removeElementItem(
-		context: Context,
-		elementList: List<Element>,
-		element: Element
-	) {
-		val list = elementList - element
-		repository.setElementList(context, list)
-	}
+	val getElementList by lazy { GetElementList(repository) }
+	val addElementToList by lazy { AddToElementList(repository) }
+	val editElementFromList by lazy { EditElementFromList(repository) }
+	val removeElementFromList by lazy { RemoveElementFromList(repository) }
 
 	private fun addOperator(operator: KeyboardOperator = KeyboardOperator.Multiply) {
 		val operatorItem = OperatorItem(operator)
 		expression.add(operatorItem)
 	}
 
-	fun appendExpressionItem(expressionItem: ExpressionItem) {
-		emptyResult()
+	private fun appendExpressionItem(expressionItem: ExpressionItem) {
 		when (expressionItem) {
 			is NumberItem -> {
 				onNumberItemOperation(expressionItem)
@@ -75,45 +68,29 @@ class MainViewModel(
 		}
 	}
 
+	private fun onAppendExpressionItem(expressionItem: ExpressionItem) {
+		emptyResult()
+		appendExpressionItem(expressionItem)
+		increaseCursor()
+	}
+
 	private fun onOperatorItemOperation(operationItem: OperatorItem) {
-		expression.add(operationItem)
+		expression.add(cursor, operationItem)
 	}
 
 	private fun onNumberItemOperation(operationItem: NumberItem) {
-		if (expression.isNotEmpty()) {
-			val previous = expression.last()
-			val isAppendable = previous == OperatorItem(KeyboardOperator.Close)
-					|| previous is ElementItem
-			if (isAppendable) {
-				addOperator()
-			}
-		}
-
-		expression.add(operationItem)
-	}
-
-	private fun isAppendable(operation: ExpressionItem): Boolean {
-		return operation == OperatorItem(KeyboardOperator.Close)
-				|| operation is NumberItem
-				|| operation is ElementItem
+		expression.add(cursor, operationItem)
 	}
 
 	private fun onElementItemOperation(operationItem: ElementItem) {
-		if (expression.isNotEmpty() && isAppendable(expression.last())) {
-			val keyboardOperator = if (expression.last() is ElementItem) {
-				KeyboardOperator.Add
-			} else {
-				KeyboardOperator.Multiply
-			}
-
-			addOperator(keyboardOperator)
-		}
-
-		expression.add(operationItem)
+		expression.add(cursor, operationItem)
 	}
 
-	private fun removeLastItem() {
-		expression.removeLastOrNull()
+	private fun removeItem() {
+		val index = cursor - 1
+		expression.getOrNull(index)?.let {
+			expression.removeAt(index)
+		}
 	}
 
 	fun onKeyboardButtonClick(keyboardButton: KeyboardButton) {
@@ -150,7 +127,7 @@ class MainViewModel(
 
 	private fun onRegularOperatorButtonClick(operator: KeyboardOperator) {
 		val item = OperatorItem(operator)
-		appendExpressionItem(item)
+		onAppendExpressionItem(item)
 	}
 
 	private fun onEqualOperatorButtonClick() {
@@ -163,29 +140,50 @@ class MainViewModel(
 	}
 
 	private fun onDeleteOperatorButtonClick() {
-		removeLastItem()
+		removeItem()
+		decreaseCursor()
+		emptyResult()
+	}
+
+	private fun increaseCursor() {
+		cursor += 1
+	}
+
+	private fun decreaseCursor() {
+		if (cursor > 0) {
+			cursor -= 1
+		}
 	}
 
 	private fun onKeyboardNumberButtonClick(button: NumberButton) {
 		val item = NumberItem(button.number)
-		appendExpressionItem(item)
+		onAppendExpressionItem(item)
 	}
 
 	private fun makeExpression(expressionItems: List<ExpressionItem>): String {
-		return expressionItems.joinToString(separator = String()) { operationItem ->
-			when (operationItem) {
-				is ElementItem -> "(${operationItem.element.value})"
-				is NumberItem -> operationItem.number
-				is OperatorItem -> operationItem.operator.symbol
-			}.toString()
-		}
+		return expressionItems.joinToString(
+			separator = String(),
+			transform = ExpressionItem::toString
+		)
 	}
 
 	private fun emptyExpression() {
 		expression.clear()
+		cursor = 0
 	}
 
 	private fun emptyResult() {
 		result = ExpressionResultState.Empty
+	}
+
+	fun onElementItemClick(element: Element) {
+		val expressionItem = ElementItem(element)
+		onAppendExpressionItem(expressionItem)
+	}
+
+	fun onLongElementItemClick(context: Context, element: Element) {
+		viewModelScope.launch {
+			removeElementFromList(context, element)
+		}
 	}
 }

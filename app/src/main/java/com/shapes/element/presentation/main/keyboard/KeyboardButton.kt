@@ -5,17 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 sealed class KeyboardButton {
-	abstract val text: String
-
-	data class NumberButton(val number: Int) : KeyboardButton() {
-		override val text: String
-			get() = number.toString()
+	data class NumberButton(val number: String) : KeyboardButton() {
+		constructor(number: Int) : this(number.toString())
 	}
 
-	data class OperatorButton(val operator: KeyboardOperator) : KeyboardButton() {
-		override val text: String
-			get() = operator.symbol
-	}
+	data class OperatorButton(val operator: KeyboardOperator) : KeyboardButton()
 
 	fun getType(): KeyboardButtonType {
 		return when (this) {
@@ -43,6 +37,13 @@ sealed class KeyboardButton {
 			KeyboardButtonType.Operator -> MaterialTheme.colorScheme.secondaryContainer
 			KeyboardButtonType.Equal -> MaterialTheme.colorScheme.primary
 			KeyboardButtonType.Default -> MaterialTheme.colorScheme.surface
+		}
+	}
+
+	fun getText(): String {
+		return when (this) {
+			is NumberButton -> number
+			is OperatorButton -> operator.symbol
 		}
 	}
 }

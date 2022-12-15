@@ -28,7 +28,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
@@ -37,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,11 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.shapes.element.R
 import com.shapes.element.domain.model.Element
-import com.shapes.element.domain.model.ExpressionItem
 import com.shapes.element.domain.model.ExpressionItem.*
 import com.shapes.element.presentation.main.keyboard.ElementKeyboard
 import com.shapes.element.presentation.main.keyboard.KeyboardButton
-import com.shapes.element.presentation.main.keyboard.KeyboardOperator
 import com.shapes.element.presentation.main.viewmodel.ExpressionResultState
 import com.shapes.element.presentation.main.viewmodel.MainViewModel
 import com.shapes.element.ui.theme.space
@@ -210,7 +206,7 @@ private fun ExpressionData(modifier: Modifier = Modifier) {
 		tonalElevation = tonalElevation
 	) {
 		Column {
-			ExpressionList()
+			ExpressionList(modifier = Modifier.fillMaxWidth())
 			ResultFrame()
 		}
 	}
@@ -219,105 +215,6 @@ private fun ExpressionData(modifier: Modifier = Modifier) {
 fun Double.format(): String {
 	val format = java.text.DecimalFormat.getInstance()
 	return format.format(this)
-}
-
-@Composable
-fun GenericExpressionItem(expressionItem: ExpressionItem) {
-	when (expressionItem) {
-		is NumberItem -> {
-			val text = expressionItem.number.toString()
-			ElementItemText(text = text)
-		}
-		is OperatorItem -> {
-			val operator = expressionItem.operator
-			val isParentheses = operator == KeyboardOperator.Open
-					|| operator == KeyboardOperator.Close
-			val color = if (isParentheses) {
-				MaterialTheme.colorScheme.tertiary
-			} else {
-				MaterialTheme.colorScheme.primary
-			}
-			ElementItemText(text = operator.symbol, color = color)
-		}
-		else -> Unit
-	}
-}
-
-@Composable
-fun ExpressionList(
-	viewModel: MainViewModel = viewModel()
-) {
-	val expression = viewModel.expression
-	val infiniteTransition = rememberInfiniteTransition()
-	val cursorOpacity by infiniteTransition.animateFloat(
-		initialValue = 0f, targetValue = 1f, animationSpec = infiniteRepeatable(
-			animation = tween(durationMillis = 600, easing = LinearEasing),
-			repeatMode = RepeatMode.Reverse
-		)
-	)
-	val state = rememberLazyListState()
-	val scope = rememberCoroutineScope()
-	Surface {
-		LazyRow(
-			modifier = Modifier
-				.height(96.dp)
-				.fillMaxWidth(),
-			state = state,
-			contentPadding = PaddingValues(horizontal = 24.dp),
-			verticalAlignment = Alignment.CenterVertically
-		) {
-			items(expression) { elementItem ->
-				if (elementItem is ElementItem) {
-					var visible by rememberSaveable { mutableStateOf(true) }
-					ExpressionElementItem(
-						element = elementItem.element,
-						visible = visible,
-						onClick = { visible = !visible }
-					)
-				} else {
-					GenericExpressionItem(elementItem)
-				}
-			}
-
-			item {
-				Cursor(
-					modifier = Modifier.alpha(cursorOpacity)
-				)
-			}
-
-			scope.launch {
-				state.animateScrollToItem(expression.size)
-			}
-		}
-	}
-}
-
-@Composable
-private fun Cursor(
-	modifier: Modifier = Modifier,
-	width: Dp = 4.dp,
-	height: Dp = 32.dp
-) {
-	val cursorColor = MaterialTheme.colorScheme.primary
-	Box(
-		modifier = modifier
-			.background(cursorColor)
-			.size(width, height)
-	)
-}
-
-@Composable
-fun ElementItemText(
-	modifier: Modifier = Modifier,
-	text: String,
-	color: Color = Color.Unspecified
-) {
-	Text(
-		modifier = modifier,
-		text = text,
-		style = MaterialTheme.typography.titleMedium,
-		color = color
-	)
 }
 
 @Composable
@@ -391,38 +288,6 @@ fun ResultText(text: String) {
 }
 
 @Composable
-fun ExpressionElementItem(
-	element: Element,
-	visible: Boolean = true,
-	onClick: () -> Unit
-) {
-	val shape = MaterialTheme.shapes.small
-	val padding = PaddingValues(12.dp, 8.dp)
-
-	Surface(
-		modifier = Modifier
-			.clip(shape)
-			.clickable(
-				role = Role.Button,
-				onClick = onClick
-			),
-		shape = shape,
-		tonalElevation = 5.dp
-	) {
-		Box(modifier = Modifier.padding(padding)) {
-			val text = if (visible) element.name else element.value.format()
-			OperationElementItemName(text)
-		}
-	}
-}
-
-@Composable
-fun OperationElementItemName(elementName: String) {
-	val style: TextStyle = MaterialTheme.typography.titleSmall
-	Text(text = elementName, style = style)
-}
-
-@Composable
 fun Keyboard(size: WindowSizeClass) {
 	val keyboardPadding = ElementKeyboard.calculateKeyboardPadding(size)
 
@@ -464,7 +329,7 @@ private fun RowScope.KeyboardButtons(
 				viewModel.onKeyboardButtonClick(keyboardButton)
 			}
 		) {
-			KeyboardButtonText(keyboardButton.text)
+			KeyboardButtonText(keyboardButton.getText())
 		}
 	}
 }
@@ -527,8 +392,7 @@ fun KeyboardButton(
 fun ElementList(modifier: Modifier = Modifier) {
 	val viewModel = viewModel<MainViewModel>()
 
-	val elementList by viewModel.getElementList(LocalContext.current)
-		.collectAsState(initial = emptyList())
+	val elementList by viewModel.elementList
 
 	val space = MaterialTheme.space.regular
 
@@ -540,7 +404,6 @@ fun ElementList(modifier: Modifier = Modifier) {
 			verticalArrangement = Arrangement.spacedBy(space)
 		) {
 			elementListHeader(
-				elementList = elementList,
 				search = search,
 				onSearchChange = { search = it }
 			)
@@ -552,12 +415,12 @@ fun ElementList(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 private fun LazyListScope.elementListHeader(
-	elementList: List<Element>,
 	search: String,
 	onSearchChange: (String) -> Unit
 ) {
 	item {
 		val viewModel = viewModel<MainViewModel>()
+		val elementList by viewModel.elementList
 		val focusManager = LocalFocusManager.current
 
 		val space = MaterialTheme.space.regular
@@ -661,18 +524,14 @@ private fun LazyListScope.elementListHeader(
 								.height(48.dp),
 							shape = MaterialTheme.shapes.small,
 							onClick = {
-								scope.launch {
-									if (viewModel.addition && noneName) {
+								if (viewModel.addition && noneName) {
+									scope.launch {
 										val element = Element(name.trim(), value)
-										viewModel.addElementItem(
-											context,
-											elementList,
-											element
-										)
+										viewModel.addElementToList(context, element)
 									}
-
-									viewModel.addition = !viewModel.addition
 								}
+
+								viewModel.addition = !viewModel.addition
 							}
 						) {
 							Text(text = stringResource(id = R.string.element_add))
@@ -776,21 +635,16 @@ fun LazyListScope.keyboardContent(
 	}
 
 	items(elementFilteredList) { element ->
-		val scope = rememberCoroutineScope()
-
 		val context = LocalContext.current
 
 		ElementListItem(
 			modifier = Modifier.fillMaxWidth(),
 			element = element,
 			onClick = {
-				val operationItem = ElementItem(element)
-				viewModel.appendExpressionItem(operationItem)
+				viewModel.onElementItemClick(element)
 			},
 			onLongClick = {
-				scope.launch {
-					viewModel.removeElementItem(context, elementList, element)
-				}
+				viewModel.onLongElementItemClick(context, element)
 			}
 		)
 	}
@@ -816,8 +670,7 @@ private fun ElementListItem(
 	onClick: () -> Unit,
 	onLongClick: () -> Unit,
 ) {
-	val name = element.name
-	val value = element.value.format()
+	val (name, value) = element
 
 	val space = MaterialTheme.space.regular
 	val textStyle = MaterialTheme.typography.titleSmall
@@ -867,6 +720,7 @@ private fun ElementEmptySearchListCard() {
 			verticalArrangement = Arrangement.spacedBy(16.dp)
 		) {
 			Icon(imageVector = Icons.Default.Search, contentDescription = null)
+
 			Text(
 				text = stringResource(id = R.string.empty_element_search_list),
 				style = MaterialTheme.typography.titleSmall,
