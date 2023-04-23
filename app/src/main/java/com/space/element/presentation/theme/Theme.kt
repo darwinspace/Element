@@ -1,35 +1,30 @@
-package com.space.element.ui.theme
+package com.space.element.presentation.theme
 
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme()
-
-private val LightColorScheme = lightColorScheme()
-
-data class Elevation(
-	val unspecified: Dp = Dp.Unspecified,
-	val LevelZero: Dp = 0.dp,
-	val LevelOne: Dp = 1.dp,
-	val LevelTwo: Dp = 2.dp,
-	val LevelThree: Dp = 3.dp,
-	val LevelFour: Dp = 4.dp,
-	val LevelFive: Dp = 5.dp,
+private val LightColorScheme = lightColorScheme(
+	background = Color.White,
+	onBackground = Color.Black,
 )
 
-val LocalSpace = staticCompositionLocalOf { Space() }
-val LocalTonalElevation = staticCompositionLocalOf { Elevation() }
+private val DarkColorScheme = darkColorScheme(
+	background = Color.Black,
+	onBackground = Color.White
+)
 
 @Composable
 fun ElementTheme(

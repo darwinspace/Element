@@ -1,4 +1,4 @@
-package com.space.element.ui.theme
+package com.space.element.presentation.theme
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

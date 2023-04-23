@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_add_element">Añadir Elemento</string>
+    <string name="button_add_element">Crear Elemento</string>
     <string name="exception_expression">Expresión Inválida</string>
     <string name="exception_arithmetic">Error aritmético</string>
     <string name="search">Buscar</string>
