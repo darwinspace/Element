@@ -14,9 +14,19 @@ val fontFamily = FontFamily(
 )
 
 val Typography = Typography(
+	titleLarge = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Bold,
+		fontSize = 20.sp
+	),
 	titleMedium = TextStyle(
 		fontFamily = fontFamily,
 		fontWeight = FontWeight.Bold,
+		fontSize = 16.sp
+	),
+	titleSmall = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Normal,
 		fontSize = 16.sp
 	),
 	labelLarge = TextStyle(

@@ -1,17 +1,17 @@
 package com.space.element.presentation.main.component.list
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,15 +23,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.presentation.component.ElementButton
-import com.space.element.presentation.main.component.list.CreateElementTextField
-import com.space.element.presentation.main.component.list.SearchElementTextField
-import com.space.element.presentation.main.model.ElementListState
+import com.space.element.presentation.main.model.ElementListMode
+import com.space.element.presentation.main.model.ElementListMode.Create
 
 
 @Composable
 fun ElementListHeader(
-	state: ElementListState,
-	onStateChange: (ElementListState) -> Unit,
+	mode: ElementListMode,
+	onStateChange: (ElementListMode) -> Unit,
 	addElementEnabled: Boolean,
 	searchValue: String,
 	onSearchValueChange: (String) -> Unit,
@@ -41,114 +40,37 @@ fun ElementListHeader(
 	onElementValueChange: (String) -> Unit,
 	onAddElement: () -> Unit
 ) {
-	val isIdleMode = state is ElementListState.IdleState
-	val isAddMode = state is ElementListState.AddState
-	val isSearchMode = state is ElementListState.SearchState
-
 	val height = 48.dp
 
-	Row(
-		modifier = Modifier.fillMaxWidth(),
-		verticalAlignment = Alignment.CenterVertically
+	Box(
+		modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp)
 	) {
-		AnimatedVisibility(visible = isAddMode) {
-			FilledTonalIconButton(
-				modifier = Modifier.size(height),
-				onClick = {
-					onStateChange(ElementListState.IdleState)
-				}
-			) {
-				Icon(imageVector = Icons.Default.Close, contentDescription = null)
-			}
-		}
-
-		AnimatedVisibility(
-			visible = isAddMode
+		Row(
+			modifier = Modifier.fillMaxWidth(),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.SpaceBetween
 		) {
-			Spacer(modifier = Modifier.requiredWidth(24.dp))
-		}
-
-		AnimatedVisibility(
-			visible = isIdleMode || isAddMode || isSearchMode,
-			modifier = Modifier.weight(1f)
-		) {
-			AnimatedVisibility(
-				visible = isIdleMode || isAddMode,
-				enter = fadeIn(),
-				exit = fadeOut()
-			) {
-				CreateItemButton(
-					modifier = Modifier.heightIn(height),
-					enabled = addElementEnabled
-				) {
-					if (isIdleMode) {
-						onStateChange(ElementListState.AddState)
-					}
-
-					if (isAddMode) {
-						onAddElement()
-					}
-				}
-			}
-
-			AnimatedVisibility(
-				visible = isSearchMode,
-				enter = fadeIn(),
-				exit = fadeOut()
-			) {
-				SearchElementTextField(searchValue, onSearchValueChange)
-			}
-		}
-
-		AnimatedVisibility(visible = isIdleMode || isSearchMode) {
-			Spacer(modifier = Modifier.requiredWidth(24.dp))
-		}
-
-		AnimatedVisibility(visible = isIdleMode || isSearchMode || isAddMode) {
-			FilledTonalIconButton(
-				modifier = Modifier
-					.border(
-						BorderStroke(
-							width = 2.dp,
-							MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-						), CircleShape
-					)
-					.size(height),
-				onClick = {
-					val s =
-						if (isIdleMode)
-							ElementListState.SearchState
-						else
-							ElementListState.IdleState
-					onStateChange(s)
-				}
-			) {
-				AnimatedVisibility(
-					visible = isIdleMode,
-					enter = fadeIn(),
-					exit = fadeOut()
-				) {
-					Icon(imageVector = Icons.Default.Search, contentDescription = null)
-				}
-
-				AnimatedVisibility(
-					visible = isSearchMode || isAddMode,
-					enter = fadeIn(),
-					exit = fadeOut()
-				) {
-					Icon(imageVector = Icons.Default.Close, contentDescription = null)
-				}
-			}
+			ElementListHeaderContent()
 		}
 	}
 
+
 	AnimatedVisibility(
-		visible = isAddMode,
+		visible = mode is Create,
 		enter = expandVertically(),
 		exit = shrinkVertically(),
 	) {
 		CreateElementForm(elementName, onElementNameChange, elementValue, onElementValueChange)
 	}
+}
+
+@Composable
+fun ElementListHeaderContent() {
+	CreateElementButton {
+		throw NotImplementedError()
+	}
+
+	Text("Content")
 }
 
 @Composable
@@ -192,7 +114,7 @@ private fun CreateElementForm(
 }
 
 @Composable
-private fun CreateItemButton(
+private fun CreateElementButton(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
 	onClick: () -> Unit

@@ -15,7 +15,7 @@ import com.space.element.domain.use_case.element_list.AddElementToList
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElementFromList
 import com.space.element.domain.use_case.expression.ExecuteExpression
-import com.space.element.presentation.main.model.ElementListState
+import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResult.ExpressionException
 import com.space.element.presentation.main.model.ExpressionResult.Value
 import com.space.element.presentation.main.model.ExpressionResultState
@@ -43,7 +43,7 @@ class MainViewModel @Inject constructor(
 		initialValue = emptyList()
 	)
 
-	var elementsState by mutableStateOf<ElementListState>(ElementListState.IdleState)
+	var elementsState by mutableStateOf<ElementListMode>(ElementListMode.Normal)
 
 	val expression = mutableStateListOf<ExpressionItem>()
 

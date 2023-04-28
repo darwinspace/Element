@@ -9,19 +9,45 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.space.element.R
 import com.space.element.domain.model.Element
 import com.space.element.presentation.main.*
-import com.space.element.presentation.main.model.ElementListState
+import com.space.element.presentation.main.model.ElementListMode
+import com.space.element.presentation.theme.ElementTheme
+import kotlin.random.Random
+
+@Preview
+@Composable
+fun ElementListPreview() {
+	val elementList = remember {
+		buildList<Element> {
+			repeat(1) {
+				add(
+					Element(
+						name = "Object ${it + 1}",
+						value = Random.nextInt(10, 20).toString()
+					)
+				)
+			}
+		}
+	}
+
+	ElementTheme {
+		ElementList(
+			elementList = elementList,
+			elementListMode = ElementListMode.Create
+		)
+	}
+}
 
 @Composable
 fun ElementList(
 	modifier: Modifier = Modifier,
-	elements: List<Element>,
-	elementsState: ElementListState
+	elementList: List<Element>,
+	elementListMode: ElementListMode
 ) {
-	val searchState = elementsState is ElementListState.SearchState
+	val searchState = elementListMode is ElementListMode.Search
 	var searchValue by rememberSaveable(searchState) {
 		mutableStateOf(String())
 	}
@@ -34,60 +60,59 @@ fun ElementList(
 	}
 	*/
 
-	var elementName by rememberSaveable(elementsState is ElementListState.AddState) {
+	var elementName by rememberSaveable(elementListMode is ElementListMode.Create) {
 		mutableStateOf(String())
 	}
 
-	var elementValue by rememberSaveable(elementsState is ElementListState.AddState) {
+	var elementValue by rememberSaveable(elementListMode is ElementListMode.Create) {
 		mutableStateOf(String())
 	}
 
 	val elementNameValid = {
-		elementName.isNotBlank() && elements.none {
+		elementName.isNotBlank() && elementList.none {
 			it.name == elementName.trim()
 		}
 	}
 
-	val addElementEnabled = if (elementsState is ElementListState.AddState) {
+	val addElementEnabled = if (elementListMode is ElementListMode.Create) {
 		elementNameValid() && elementValue.isNotBlank()
 	} else {
 		true
 	}
 
-
 	Column(modifier = modifier) {
-		Box(modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp)) {
-			ElementListHeader(
-				state = elementsState,
-				onStateChange = {
-					//viewModel.elementsState = it
-				},
-				addElementEnabled = addElementEnabled,
-				searchValue = searchValue,
-				onSearchValueChange = { searchValue = it },
-				elementName = elementName,
-				onElementNameChange = { elementName = it },
-				elementValue = elementValue,
-				onElementValueChange = { elementValue = it },
-				onAddElement = {
-					// viewModel.addElement(elementName, elementValue)
-				}
-			)
+		ElementListHeader(
+			mode = elementListMode,
+			onStateChange = {
+				//viewModel.elementsState = it
+			},
+			addElementEnabled = addElementEnabled,
+			searchValue = searchValue,
+			onSearchValueChange = { searchValue = it },
+			elementName = elementName,
+			onElementNameChange = { elementName = it },
+			elementValue = elementValue,
+			onElementValueChange = { elementValue = it },
+			onAddElement = {
+				// viewModel.addElement(elementName, elementValue)
+			}
+		)
+
+		if (elementList.isNotEmpty()) {
+			ElementListContent(elementList) {
+				// viewModel.onElementItemClick(element)
+			}
+		}
+
+		if (elementList.isEmpty()) {
+			EmptyElementListCard()
 		}
 
 		/*
-		if (elements.isEmpty()) {
-			ElementEmptyListCard()
-		}
-
 		if (filteredElements.isEmpty() && elements.isNotEmpty()) {
 			ElementEmptySearchListCard()
 		}
 		*/
-
-		ElementListContent(elements) { element ->
-			// viewModel.onElementItemClick(element)
-		}
 	}
 }
 

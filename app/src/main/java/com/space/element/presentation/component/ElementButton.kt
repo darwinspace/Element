@@ -1,6 +1,7 @@
 package com.space.element.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,7 +32,7 @@ fun ElementButton(
 	onClick: () -> Unit
 ) {
 	Button(
-		modifier = modifier,
+		modifier = modifier.defaultMinSize(minHeight = 48.dp),
 		enabled = enabled,
 		shape = MaterialTheme.shapes.small,
 		border = BorderStroke(

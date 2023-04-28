@@ -1,7 +1,7 @@
 package com.space.element.presentation.main.component
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -32,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -66,17 +67,6 @@ private val getItemSpacerWidth: (List<ExpressionItem>, Int) -> Dp = { expression
 
 @Composable
 fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition: Int) {
-	val infiniteTransition = rememberInfiniteTransition()
-	val cursorColorPrimary = MaterialTheme.colorScheme.primary
-	val cursorColor by infiniteTransition.animateColor(
-		initialValue = cursorColorPrimary.copy(alpha = 0f),
-		targetValue = cursorColorPrimary,
-		animationSpec = infiniteRepeatable(
-			animation = tween(durationMillis = 1200),
-			repeatMode = RepeatMode.Reverse
-		)
-	)
-
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
@@ -95,8 +85,7 @@ fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition
 			item {
 				ExpressionItemSpacer(
 					width = StartContentSpace,
-					cursorVisible = expression.isEmpty() || expressionCursorPosition == 0,
-					cursorColor = cursorColor
+					cursorVisible = expression.isEmpty() || expressionCursorPosition == 0
 				) {
 					//viewModel.onExpressionSpaceClick(0)
 				}
@@ -105,7 +94,6 @@ fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition
 			itemsIndexed(expression) { index, item ->
 				ExpressionItemRow(
 					expressionItem = item,
-					cursorColor = cursorColor,
 					cursorVisible = expressionCursorPosition == index + 1,
 					spacerWidth = getItemSpacerWidth(expression, index)
 				) {
@@ -124,7 +112,6 @@ fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition
 @Composable
 private fun ExpressionItemRow(
 	expressionItem: ExpressionItem,
-	cursorColor: Color,
 	cursorVisible: Boolean,
 	spacerWidth: Dp,
 	onSpacerClick: () -> Unit
@@ -137,7 +124,6 @@ private fun ExpressionItemRow(
 		ExpressionItemSpacer(
 			width = spacerWidth,
 			cursorVisible = cursorVisible,
-			cursorColor = cursorColor,
 			onClick = onSpacerClick
 		)
 	}
@@ -147,7 +133,6 @@ private fun ExpressionItemRow(
 private fun ExpressionItemSpacer(
 	width: Dp,
 	cursorVisible: Boolean,
-	cursorColor: Color,
 	onClick: () -> Unit
 ) {
 	Box(
@@ -162,7 +147,7 @@ private fun ExpressionItemSpacer(
 		contentAlignment = Alignment.Center,
 		content = {
 			if (cursorVisible) {
-				Cursor(cursorColor)
+				Cursor()
 			}
 		}
 	)
@@ -174,9 +159,11 @@ private fun ExpressionItem(expressionItem: ExpressionItem) {
 		is ExpressionItem.ElementItem -> {
 			ExpressionElementItem(expressionItem.element)
 		}
+
 		is ExpressionItem.OperatorItem -> {
 			ExpressionOperatorItem(expressionItem.operator)
 		}
+
 		is ExpressionItem.NumberItem -> {
 			ExpressionNumberItem(expressionItem.number)
 		}
@@ -226,12 +213,8 @@ private fun ExpressionNumberItem(number: String) {
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
 	val color = when (operator.type) {
-		OperatorType.Arithmetic -> {
-			MaterialTheme.colorScheme.primary
-		}
-		OperatorType.Parentheses -> {
-			MaterialTheme.colorScheme.tertiary
-		}
+		OperatorType.Arithmetic -> MaterialTheme.colorScheme.primary
+		OperatorType.Parentheses -> MaterialTheme.colorScheme.tertiary
 	}
 
 	ExpressionItemText(text = operator.symbol, color = color)
@@ -252,10 +235,21 @@ private fun ExpressionItemText(
 }
 
 @Composable
-private fun Cursor(color: Color = MaterialTheme.colorScheme.primary) {
+private fun Cursor() {
+	val infiniteTransition = rememberInfiniteTransition()
+	val alpha by infiniteTransition.animateFloat(
+		initialValue = 0f,
+		targetValue = 1f,
+		animationSpec = infiniteRepeatable(
+			animation = tween(durationMillis = 1200),
+			repeatMode = RepeatMode.Reverse
+		)
+	)
+
 	Box(
 		modifier = Modifier
-			.background(color)
+			.alpha(alpha)
+			.background(MaterialTheme.colorScheme.primary)
 			.width(CursorWidth)
 			.height(CursorHeight)
 	)

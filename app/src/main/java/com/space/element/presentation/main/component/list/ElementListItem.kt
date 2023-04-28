@@ -15,8 +15,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
+import com.space.element.presentation.theme.ElementTheme
+
+@Preview
+@Composable
+fun ElementListItem() {
+	ElementTheme {
+		ElementListItem(
+			element = Element(name = "Item", value = "10"),
+			onClick = {
+				throw NotImplementedError()
+			}
+		)
+	}
+}
 
 @Composable
 fun ElementListItem(
@@ -28,7 +43,7 @@ fun ElementListItem(
 
 	val space = 24.dp
 	val padding = PaddingValues(20.dp)
-	val textStyle = MaterialTheme.typography.labelLarge
+	val textStyle = MaterialTheme.typography.titleSmall
 	val shape = MaterialTheme.shapes.medium
 	val tonalElevation = 3.dp
 

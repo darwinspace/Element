@@ -19,8 +19,8 @@ import com.space.element.presentation.theme.ElementTheme
 fun ElementKeyboardPreview() {
 	ElementTheme {
 		ElementKeyboard(
-			contentGap = 24.dp,
-			contentPadding = PaddingValues(24.dp),
+			contentGap = 16.dp,
+			contentPadding = PaddingValues(16.dp),
 			onLongClick = {
 				throw NotImplementedError()
 			},

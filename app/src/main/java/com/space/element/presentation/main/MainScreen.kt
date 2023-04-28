@@ -1,5 +1,6 @@
 package com.space.element.presentation.main
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -22,10 +23,11 @@ import com.space.element.domain.model.ExpressionItem.*
 import com.space.element.presentation.main.component.ElementHeader
 import com.space.element.presentation.main.component.keyboard.ElementKeyboard
 import com.space.element.presentation.main.component.list.ElementList
-import com.space.element.presentation.main.model.ElementListState
+import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.theme.ElementTheme
 import java.util.*
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview
 @Composable
 fun MainScreenPreview() {
@@ -48,8 +50,8 @@ fun RowMainScreen() {
 				modifier = Modifier
 					.fillMaxHeight()
 					.weight(4f),
-				elements = emptyList(),
-				ElementListState.IdleState
+				elementList = emptyList(),
+				ElementListMode.Normal
 			)
 
 			VerticalDivider()
@@ -128,8 +130,8 @@ private fun ElementListBottomSheet(bottomSheetHeight: Dp) {
 		modifier = Modifier
 			.height(bottomSheetHeight)
 			.fillMaxWidth(),
-		elements = emptyList(),
-		ElementListState.IdleState
+		elementList = emptyList(),
+		ElementListMode.Normal
 	)
 }
 

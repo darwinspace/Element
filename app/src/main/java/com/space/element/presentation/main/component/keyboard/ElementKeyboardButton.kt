@@ -86,7 +86,7 @@ fun ElementKeyboardButton(
 fun KeyboardButtonText(text: String, fontStyle: FontStyle) {
 	Text(
 		text = text,
-		style = MaterialTheme.typography.titleMedium,
+		style = MaterialTheme.typography.titleLarge,
 		fontStyle = fontStyle
 	)
 }
