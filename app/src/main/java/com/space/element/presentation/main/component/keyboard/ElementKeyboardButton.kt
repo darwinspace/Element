@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -17,17 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
-
-private fun KeyboardButton.getFontStyle(): FontStyle {
-	return when (type) {
-		KeyboardButtonType.Function -> FontStyle.Italic
-		else -> FontStyle.Normal
-	}
-}
 
 @Composable
 private fun KeyboardButton.getSurfaceColor(): Color {
@@ -52,9 +45,9 @@ fun ElementKeyboardButton(
 	modifier: Modifier = Modifier,
 	color: Color = keyboardButton.getSurfaceColor(),
 	borderColor: Color = contentColorFor(color).copy(alpha = 0.1f),
-	fontStyle: FontStyle = keyboardButton.getFontStyle(),
 	onClick: (KeyboardButton) -> Unit,
-	onLongClick: (KeyboardButton) -> Unit
+	onLongClick: (KeyboardButton) -> Unit,
+	content: @Composable BoxScope.(KeyboardButton) -> Unit
 ) {
 	Surface(
 		modifier = modifier
@@ -83,16 +76,15 @@ fun ElementKeyboardButton(
 				),
 			contentAlignment = Alignment.Center
 		) {
-			KeyboardButtonText(text = keyboardButton.symbol, fontStyle = fontStyle)
+			content(keyboardButton)
 		}
 	}
 }
 
 @Composable
-fun KeyboardButtonText(text: String, fontStyle: FontStyle) {
+fun ElementKeyboardButtonText(text: String) {
 	Text(
 		text = text,
-		style = MaterialTheme.typography.titleLarge,
-		fontStyle = fontStyle
+		style = MaterialTheme.typography.titleLarge
 	)
 }

@@ -150,7 +150,10 @@ private fun ColumnMainScreen(
 
 	BottomSheetScaffold(
 		sheetContent = {
-			ElementListBottomSheet(elementList, elementListMode)
+			ElementListBottomSheet(
+				elementList = elementList,
+				elementListMode = elementListMode
+			)
 		},
 		sheetShape = RectangleShape,
 		sheetElevation = 0.dp,
@@ -232,7 +235,7 @@ private fun MainContent(
 			expression = expression,
 			expressionCursorPosition = expressionCursorPosition,
 			expressionResultState = expressionResult,
-			onExpressionSpaceClick = {}
+			onExpressionSpaceClick = onExpressionSpaceClick
 		)
 		HorizontalDivider()
 		ElementKeyboard(
