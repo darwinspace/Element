@@ -19,11 +19,16 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.space.element.domain.model.Element
+import com.space.element.domain.model.ExpressionItem
 import com.space.element.domain.model.ExpressionItem.*
 import com.space.element.presentation.main.component.ElementHeader
 import com.space.element.presentation.main.component.keyboard.ElementKeyboard
 import com.space.element.presentation.main.component.list.ElementList
 import com.space.element.presentation.main.model.ElementListMode
+import com.space.element.presentation.main.model.ExpressionResultState
+import com.space.element.presentation.main.model.KeyboardButton
+import com.space.element.presentation.main.model.Operator
 import com.space.element.presentation.theme.ElementTheme
 import java.util.*
 
@@ -32,55 +37,93 @@ import java.util.*
 @Composable
 fun MainScreenPreview() {
 	ElementTheme {
-		MainScreen()
+		MainScreen(
+			expression = listOf(
+				NumberItem(number = "9"),
+				OperatorItem(Operator.Addition),
+				NumberItem(number = "1"),
+			),
+			expressionCursorPosition = 0,
+			expressionResult = ExpressionResultState.Empty,
+			onExpressionSpaceClick = { throw NotImplementedError() },
+			elementList = emptyList(),
+			elementListMode = ElementListMode.Normal,
+			onKeyboardButtonLongClick = { throw NotImplementedError() },
+			onKeyboardButtonClick = { throw NotImplementedError() }
+		)
 	}
 }
 
 // TODO: BoxWithConstraints.
 @Composable
-fun MainScreen() {
-	ColumnMainScreen()
-}
-
-@Composable
-fun RowMainScreen() {
-	Surface(color = MaterialTheme.colorScheme.background) {
-		Row(modifier = Modifier.fillMaxSize()) {
-			ElementList(
-				modifier = Modifier
-					.fillMaxHeight()
-					.weight(4f),
-				elementList = emptyList(),
-				ElementListMode.Normal
-			)
-
-			VerticalDivider()
-
-			MainContent(
-				modifier = Modifier
-					.fillMaxHeight()
-					.weight(6f)
-			)
-		}
-	}
-}
-
-@Composable
-private fun VerticalDivider(
-	color: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp),
-	thickness: Dp = 2.dp
+fun MainScreen(
+	expression: List<ExpressionItem>,
+	expressionCursorPosition: Int,
+	expressionResult: ExpressionResultState,
+	onExpressionSpaceClick: (Int) -> Unit,
+	elementList: List<Element>,
+	elementListMode: ElementListMode,
+	onKeyboardButtonClick: (KeyboardButton) -> Unit,
+	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
 ) {
-	Box(
-		modifier = Modifier
-			.fillMaxHeight()
-			.width(thickness)
-			.background(color = color)
+	ColumnMainScreen(
+		expression = expression,
+		expressionCursorPosition = expressionCursorPosition,
+		expressionResult = expressionResult,
+		elementList = elementList,
+		elementListMode = elementListMode,
+		onExpressionSpaceClick = onExpressionSpaceClick,
+		onKeyboardButtonClick = onKeyboardButtonClick,
+		onKeyboardButtonLongClick = onKeyboardButtonLongClick
 	)
 }
 
+//@Composable
+//fun RowMainScreen(
+//	expression: List<ExpressionItem>,
+//	expressionCursorPosition: Int,
+//	expressionResult: ExpressionResultState
+//) {
+//	Surface(color = MaterialTheme.colorScheme.background) {
+//		Row(modifier = Modifier.fillMaxSize()) {
+//			ElementList(
+//				modifier = Modifier
+//					.fillMaxHeight()
+//					.weight(4f),
+//				elementList = emptyList(),
+//				ElementListMode.Normal
+//			)
+//
+//			VerticalDivider()
+//
+//			MainContent(
+//				modifier = Modifier
+//					.fillMaxHeight()
+//					.weight(6f),
+//				expression = expression,
+//				expressionCursorPosition = expressionCursorPosition,
+//				expressionResult = expressionResult
+//			)
+//		}
+//	}
+//}
+
+//@Composable
+//private fun VerticalDivider(
+//	color: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+//	thickness: Dp = 2.dp
+//) {
+//	Box(
+//		modifier = Modifier
+//			.fillMaxHeight()
+//			.width(thickness)
+//			.background(color = color)
+//	)
+//}
+
 @Composable
 private fun HorizontalDivider(
-	color: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp),
+	color: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
 	thickness: Dp = 2.dp
 ) {
 	Box(
@@ -93,17 +136,21 @@ private fun HorizontalDivider(
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-private fun ColumnMainScreen() {
+private fun ColumnMainScreen(
+	expression: List<ExpressionItem>,
+	expressionCursorPosition: Int,
+	expressionResult: ExpressionResultState,
+	onExpressionSpaceClick: (Int) -> Unit,
+	elementList: List<Element>,
+	elementListMode: ElementListMode,
+	onKeyboardButtonClick: (KeyboardButton) -> Unit,
+	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
+) {
 	val bottomSheetPeekHeight = 52.dp
-	val bottomSheetHeight = 512.dp
 
 	BottomSheetScaffold(
 		sheetContent = {
-			Surface {
-				Column {
-					ElementListBottomSheet(bottomSheetHeight)
-				}
-			}
+			ElementListBottomSheet(elementList, elementListMode)
 		},
 		sheetShape = RectangleShape,
 		sheetElevation = 0.dp,
@@ -113,26 +160,41 @@ private fun ColumnMainScreen() {
 		MainContent(
 			modifier = Modifier
 				.fillMaxSize()
-				.padding(contentPadding)
+				.padding(contentPadding),
+			expression = expression,
+			expressionCursorPosition = expressionCursorPosition,
+			expressionResult = expressionResult,
+			onExpressionSpaceClick = onExpressionSpaceClick,
+			onKeyboardButtonClick = onKeyboardButtonClick,
+			onKeyboardButtonLongClick = onKeyboardButtonLongClick
 		)
 	}
 }
 
 @Composable
-private fun ElementListBottomSheet(bottomSheetHeight: Dp) {
-	ElementListPeek(
-		modifier = Modifier
-			.height(28.dp)
-			.fillMaxWidth()
-	)
+private fun ElementListBottomSheet(
+	elementList: List<Element>,
+	elementListMode: ElementListMode,
+) {
+	val bottomSheetHeight = 512.dp
 
-	ElementList(
-		modifier = Modifier
-			.height(bottomSheetHeight)
-			.fillMaxWidth(),
-		elementList = emptyList(),
-		ElementListMode.Normal
-	)
+	Surface {
+		Column {
+			ElementListPeek(
+				modifier = Modifier
+					.height(28.dp)
+					.fillMaxWidth()
+			)
+
+			ElementList(
+				modifier = Modifier
+					.height(bottomSheetHeight)
+					.fillMaxWidth(),
+				elementList = elementList,
+				elementListMode = elementListMode
+			)
+		}
+	}
 }
 
 @Composable
@@ -153,23 +215,31 @@ private fun ElementListPeek(modifier: Modifier) {
 }
 
 @Composable
-private fun MainContent(modifier: Modifier = Modifier) {
+private fun MainContent(
+	modifier: Modifier = Modifier,
+	expression: List<ExpressionItem>,
+	expressionCursorPosition: Int,
+	expressionResult: ExpressionResultState,
+	onExpressionSpaceClick: (Int) -> Unit,
+	onKeyboardButtonClick: (KeyboardButton) -> Unit,
+	onKeyboardButtonLongClick: (KeyboardButton) -> Unit
+) {
 	Column(modifier = modifier) {
 		ElementHeader(
 			modifier = Modifier
 				.weight(1f)
-				.verticalScroll(rememberScrollState())
+				.verticalScroll(rememberScrollState()),
+			expression = expression,
+			expressionCursorPosition = expressionCursorPosition,
+			expressionResultState = expressionResult,
+			onExpressionSpaceClick = {}
 		)
 		HorizontalDivider()
 		ElementKeyboard(
 			contentGap = 16.dp,
-			contentPadding = PaddingValues(16.dp),
-			onLongClick = {
-				throw NotImplementedError()
-			},
-			onClick = {
-				throw NotImplementedError()
-			}
+			contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp),
+			onButtonLongClick = onKeyboardButtonLongClick,
+			onButtonClick = onKeyboardButtonClick
 		)
 	}
 }

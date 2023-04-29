@@ -53,7 +53,7 @@ private val StartContentSpace = 4.dp
 private val ContentSpace = 8.dp
 private val FrameHeight = 96.dp
 
-private val getItemSpacerWidth: (List<ExpressionItem>, Int) -> Dp = { expression, index ->
+private val getItemSpaceWidth: (List<ExpressionItem>, Int) -> Dp = { expression, index ->
 	val isNumberItem: (ExpressionItem?) -> Boolean = { it is ExpressionItem.NumberItem }
 	val currentIsNumberItem = isNumberItem(expression[index])
 	val nextIsNumberItem = isNumberItem(expression.getOrNull(index + 1))
@@ -66,7 +66,19 @@ private val getItemSpacerWidth: (List<ExpressionItem>, Int) -> Dp = { expression
 }
 
 @Composable
-fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition: Int) {
+private fun Operator.getColor(): Color {
+	return when (type) {
+		OperatorType.Arithmetic -> MaterialTheme.colorScheme.primary
+		OperatorType.Parentheses -> MaterialTheme.colorScheme.tertiary
+	}
+}
+
+@Composable
+fun ElementExpression(
+	expression: List<ExpressionItem>,
+	expressionCursorPosition: Int,
+	onExpressionSpaceClick: (Int) -> Unit
+) {
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
@@ -83,22 +95,24 @@ fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition
 			state = state
 		) {
 			item {
-				ExpressionItemSpacer(
+				ExpressionItemSpace(
 					width = StartContentSpace,
-					cursorVisible = expression.isEmpty() || expressionCursorPosition == 0
-				) {
-					//viewModel.onExpressionSpaceClick(0)
-				}
+					cursorVisible = expression.isEmpty() || expressionCursorPosition == 0,
+					onClick = {
+						onExpressionSpaceClick(0)
+					}
+				)
 			}
 
 			itemsIndexed(expression) { index, item ->
 				ExpressionItemRow(
 					expressionItem = item,
 					cursorVisible = expressionCursorPosition == index + 1,
-					spacerWidth = getItemSpacerWidth(expression, index)
-				) {
-					//viewModel.onExpressionSpaceClick(index + 1)
-				}
+					spaceWidth = getItemSpaceWidth(expression, index),
+					onSpaceClick = {
+						onExpressionSpaceClick(index + 1)
+					}
+				)
 			}
 
 			scope.launch {
@@ -113,24 +127,24 @@ fun ElementExpression(expression: List<ExpressionItem>, expressionCursorPosition
 private fun ExpressionItemRow(
 	expressionItem: ExpressionItem,
 	cursorVisible: Boolean,
-	spacerWidth: Dp,
-	onSpacerClick: () -> Unit
+	spaceWidth: Dp,
+	onSpaceClick: () -> Unit
 ) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		ExpressionItem(expressionItem)
 
-		ExpressionItemSpacer(
-			width = spacerWidth,
+		ExpressionItemSpace(
+			width = spaceWidth,
 			cursorVisible = cursorVisible,
-			onClick = onSpacerClick
+			onClick = onSpaceClick
 		)
 	}
 }
 
 @Composable
-private fun ExpressionItemSpacer(
+private fun ExpressionItemSpace(
 	width: Dp,
 	cursorVisible: Boolean,
 	onClick: () -> Unit
@@ -212,12 +226,7 @@ private fun ExpressionNumberItem(number: String) {
 
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
-	val color = when (operator.type) {
-		OperatorType.Arithmetic -> MaterialTheme.colorScheme.primary
-		OperatorType.Parentheses -> MaterialTheme.colorScheme.tertiary
-	}
-
-	ExpressionItemText(text = operator.symbol, color = color)
+	ExpressionItemText(text = operator.symbol, color = operator.getColor())
 }
 
 @Composable

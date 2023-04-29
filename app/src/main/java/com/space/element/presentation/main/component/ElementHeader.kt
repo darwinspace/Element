@@ -5,10 +5,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.space.element.domain.model.ExpressionItem
 import com.space.element.presentation.main.model.ExpressionResultState
 
 @Composable
-fun ElementHeader(modifier: Modifier = Modifier) {
+fun ElementHeader(
+	modifier: Modifier = Modifier,
+	expression: List<ExpressionItem>,
+	expressionCursorPosition: Int,
+	expressionResultState: ExpressionResultState,
+	onExpressionSpaceClick: (Int) -> Unit
+) {
 	val tonalElevation = 3.dp
 
 	Surface(
@@ -16,8 +23,12 @@ fun ElementHeader(modifier: Modifier = Modifier) {
 		tonalElevation = tonalElevation
 	) {
 		Column {
-			ElementExpression(expression = emptyList(), expressionCursorPosition = 0)
-			ElementExpressionResult(result = ExpressionResultState.Value(0.0))
+			ElementExpression(
+				expression = expression,
+				expressionCursorPosition = expressionCursorPosition,
+				onExpressionSpaceClick = onExpressionSpaceClick
+			)
+			ElementExpressionResult(expressionResultState = expressionResultState)
 		}
 	}
 }

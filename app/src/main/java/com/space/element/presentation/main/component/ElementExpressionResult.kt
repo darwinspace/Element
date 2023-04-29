@@ -18,7 +18,14 @@ import com.space.element.util.format
 
 
 @Composable
-fun ElementExpressionResult(result: ExpressionResultState.Value) {
+fun ElementExpressionResult(expressionResultState: ExpressionResultState) {
+	if (expressionResultState is ExpressionResultState.Value) {
+		ElementExpressionResultValue(expressionResultState)
+	}
+}
+
+@Composable
+private fun ElementExpressionResultValue(expressionResultState: ExpressionResultState.Value) {
 	Surface(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -28,7 +35,7 @@ fun ElementExpressionResult(result: ExpressionResultState.Value) {
 			modifier = Modifier.padding(horizontal = 24.dp),
 			contentAlignment = Alignment.CenterEnd
 		) {
-			ElementExpressionResultText(result.value)
+			ElementExpressionResultText(expressionResultState.value)
 		}
 	}
 }

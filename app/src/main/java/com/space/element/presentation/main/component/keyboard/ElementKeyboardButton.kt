@@ -36,8 +36,10 @@ private fun KeyboardButton.getSurfaceColor(): Color {
 		KeyboardButtonType.Dot,
 		KeyboardButtonType.Function,
 		KeyboardButtonType.Number -> MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
+
 		KeyboardButtonType.Operator,
 		KeyboardButtonType.Parentheses -> MaterialTheme.colorScheme.primaryContainer
+
 		KeyboardButtonType.Delete -> MaterialTheme.colorScheme.tertiaryContainer
 		KeyboardButtonType.Equal -> MaterialTheme.colorScheme.primary
 	}
@@ -51,16 +53,20 @@ fun ElementKeyboardButton(
 	color: Color = keyboardButton.getSurfaceColor(),
 	borderColor: Color = contentColorFor(color).copy(alpha = 0.1f),
 	fontStyle: FontStyle = keyboardButton.getFontStyle(),
-	onClick: () -> Unit,
-	onLongClick: () -> Unit
+	onClick: (KeyboardButton) -> Unit,
+	onLongClick: (KeyboardButton) -> Unit
 ) {
 	Surface(
 		modifier = modifier
 			.clip(MaterialTheme.shapes.medium)
 			.combinedClickable(
 				role = Role.Button,
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = {
+					onClick(keyboardButton)
+				},
+				onLongClick = {
+					onLongClick(keyboardButton)
+				}
 			),
 		shape = MaterialTheme.shapes.medium,
 		color = color,

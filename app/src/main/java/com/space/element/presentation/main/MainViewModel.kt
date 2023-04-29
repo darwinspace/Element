@@ -37,24 +37,24 @@ class MainViewModel @Inject constructor(
 	private val removeElementFromList: RemoveElementFromList,
 	private val executeExpression: ExecuteExpression
 ) : ViewModel() {
-	val elements = getElementList().stateIn(
+	val elementList = getElementList().stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
 		initialValue = emptyList()
 	)
 
-	var elementsState by mutableStateOf<ElementListMode>(ElementListMode.Normal)
+	var elementListMode by mutableStateOf<ElementListMode>(ElementListMode.Normal)
 
 	val expression = mutableStateListOf<ExpressionItem>()
+
+	var expressionCursorPosition by mutableStateOf(0)
+		private set
 
 	var expressionResult by mutableStateOf<ExpressionResultState>(Empty)
 		private set
 
-	var expressionCursor by mutableStateOf(0)
-		private set
-
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
-		expression.add(expressionCursor, expressionItem)
+		expression.add(expressionCursorPosition, expressionItem)
 	}
 
 	private fun onAppendExpressionItem(expressionItem: ExpressionItem) {
@@ -64,7 +64,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun removeItem() {
-		val index = expressionCursor - 1
+		val index = expressionCursorPosition - 1
 		expression.getOrNull(index)?.let {
 			expression.removeAt(index)
 		}
@@ -154,7 +154,7 @@ class MainViewModel @Inject constructor(
 				appendExpressionItem(item)
 			}
 
-			expressionCursor = expression.size
+			expressionCursorPosition = expression.size
 		}
 	}
 
@@ -165,12 +165,12 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun increaseCursor() {
-		expressionCursor += 1
+		expressionCursorPosition += 1
 	}
 
 	private fun decreaseCursor() {
-		if (expressionCursor > 0) {
-			expressionCursor -= 1
+		if (expressionCursorPosition > 0) {
+			expressionCursorPosition -= 1
 		}
 	}
 
@@ -180,7 +180,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun emptyExpressionCursor() {
-		expressionCursor = 0
+		expressionCursorPosition = 0
 	}
 
 	private fun emptyResult() {
@@ -206,6 +206,6 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onExpressionSpaceClick(position: Int) {
-		expressionCursor = position
+		expressionCursorPosition = position
 	}
 }

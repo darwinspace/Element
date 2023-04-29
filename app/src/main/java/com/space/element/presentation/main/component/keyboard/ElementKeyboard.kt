@@ -21,10 +21,10 @@ fun ElementKeyboardPreview() {
 		ElementKeyboard(
 			contentGap = 16.dp,
 			contentPadding = PaddingValues(16.dp),
-			onLongClick = {
+			onButtonLongClick = {
 				throw NotImplementedError()
 			},
-			onClick = {
+			onButtonClick = {
 				throw NotImplementedError()
 			}
 		)
@@ -35,15 +35,15 @@ fun ElementKeyboardPreview() {
 fun ElementKeyboard(
 	contentGap: Dp,
 	contentPadding: PaddingValues,
-	onLongClick: () -> Unit,
-	onClick: () -> Unit
+	onButtonLongClick: (KeyboardButton) -> Unit,
+	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
 		ElementKeyboardContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
-			onLongClick = onLongClick,
-			onClick = onClick
+			onButtonLongClick = onButtonLongClick,
+			onButtonClick = onButtonClick
 		)
 	}
 }
@@ -52,8 +52,8 @@ fun ElementKeyboard(
 private fun ElementKeyboardContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
-	onLongClick: () -> Unit,
-	onClick: () -> Unit,
+	onButtonLongClick: (KeyboardButton) -> Unit,
+	onButtonClick: (KeyboardButton) -> Unit,
 ) {
 	Column(
 		modifier = Modifier.padding(keyboardContentPadding),
@@ -65,26 +65,26 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 		}
 
@@ -94,26 +94,26 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 		}
 
@@ -123,26 +123,26 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 		}
 
@@ -152,26 +152,26 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 		}
 
@@ -181,26 +181,26 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Function,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
-				onClick = onClick,
-				onLongClick = onLongClick
+				onClick = onButtonClick,
+				onLongClick = onButtonLongClick
 			)
 		}
 	}

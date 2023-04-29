@@ -22,7 +22,7 @@ import com.space.element.presentation.theme.ElementTheme
 
 @Preview
 @Composable
-fun ElementListItem() {
+fun ElementListItemPreview() {
 	ElementTheme {
 		ElementListItem(
 			element = Element(name = "Item", value = "10"),
