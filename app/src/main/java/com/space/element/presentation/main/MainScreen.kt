@@ -33,9 +33,10 @@ import com.space.element.presentation.theme.ElementTheme
 import java.util.*
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview
 @Composable
 fun MainScreenPreview() {
+	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
+
 	ElementTheme {
 		MainScreen(
 			expression = listOf(
@@ -44,10 +45,11 @@ fun MainScreenPreview() {
 				NumberItem(number = "1"),
 			),
 			expressionCursorPosition = 0,
-			expressionResult = ExpressionResultState.Empty,
+			expressionResult = ExpressionResultState.Value(value = 10.0),
 			onExpressionSpaceClick = { throw NotImplementedError() },
 			elementList = emptyList(),
-			elementListMode = ElementListMode.Normal,
+			elementListMode = elementListMode,
+			onElementListModeChange = { elementListMode = it },
 			onKeyboardButtonLongClick = { throw NotImplementedError() },
 			onKeyboardButtonClick = { throw NotImplementedError() }
 		)
@@ -63,6 +65,7 @@ fun MainScreen(
 	onExpressionSpaceClick: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
 ) {
@@ -72,6 +75,7 @@ fun MainScreen(
 		expressionResult = expressionResult,
 		elementList = elementList,
 		elementListMode = elementListMode,
+		onElementListModeChange = onElementListModeChange,
 		onExpressionSpaceClick = onExpressionSpaceClick,
 		onKeyboardButtonClick = onKeyboardButtonClick,
 		onKeyboardButtonLongClick = onKeyboardButtonLongClick
@@ -143,6 +147,7 @@ private fun ColumnMainScreen(
 	onExpressionSpaceClick: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
 ) {
@@ -152,7 +157,8 @@ private fun ColumnMainScreen(
 		sheetContent = {
 			ElementListBottomSheet(
 				elementList = elementList,
-				elementListMode = elementListMode
+				elementListMode = elementListMode,
+				onElementListModeChange = onElementListModeChange
 			)
 		},
 		sheetShape = RectangleShape,
@@ -178,6 +184,7 @@ private fun ColumnMainScreen(
 private fun ElementListBottomSheet(
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit
 ) {
 	val bottomSheetHeight = 512.dp
 
@@ -194,7 +201,8 @@ private fun ElementListBottomSheet(
 					.height(bottomSheetHeight)
 					.fillMaxWidth(),
 				elementList = elementList,
-				elementListMode = elementListMode
+				elementListMode = elementListMode,
+				onElementListModeChange = onElementListModeChange
 			)
 		}
 	}
@@ -237,7 +245,9 @@ private fun MainContent(
 			expressionResultState = expressionResult,
 			onExpressionSpaceClick = onExpressionSpaceClick
 		)
+
 		HorizontalDivider()
+
 		ElementKeyboard(
 			contentGap = 16.dp,
 			contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp),

@@ -1,7 +1,6 @@
 package com.space.element.presentation.main.component.list
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -17,7 +16,7 @@ fun ElementListContent(
 	onClick: (Element) -> Unit
 ) {
 	LazyColumn(
-		contentPadding = PaddingValues(24.dp),
+		// contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
 		elementItems(elementList, onClick)

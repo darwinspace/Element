@@ -37,7 +37,7 @@ fun ElementButton(
 		shape = MaterialTheme.shapes.small,
 		border = BorderStroke(
 			width = 2.dp,
-			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+			color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.1f)
 		),
 		onClick = onClick,
 	) {

@@ -12,7 +12,7 @@ enum class KeyboardButton(val symbol: String, val type: KeyboardButtonType) {
 	Eight(symbol = "8", type = KeyboardButtonType.Number),
 	Nine(symbol = "9", type = KeyboardButtonType.Number),
 	Delete(symbol = "<-", type = KeyboardButtonType.Delete),
-	Dot(symbol = "•", type = KeyboardButtonType.Dot),
+	Dot(symbol = ".", type = KeyboardButtonType.Dot),
 	Open(symbol = Operator.Open.symbol, type = KeyboardButtonType.Parentheses),
 	Close(symbol = Operator.Close.symbol, type = KeyboardButtonType.Parentheses),
 	Addition(symbol = Operator.Addition.symbol, type = KeyboardButtonType.Operator),

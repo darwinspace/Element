@@ -83,13 +83,16 @@ class MainViewModel @Inject constructor(
 			KeyboardButtonType.Operator -> {
 				onOperatorButtonClick(keyboardButton)
 			}
+
 			KeyboardButtonType.Delete -> {
 				onDeleteOperatorButtonClick()
 			}
+
 			KeyboardButtonType.Function -> Unit
 			KeyboardButtonType.Equal -> {
 				onEqualOperatorButtonClick()
 			}
+
 			KeyboardButtonType.Number -> {
 				onNumberButtonClick(keyboardButton)
 			}
@@ -104,7 +107,7 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun onDeleteLongClick() {
+	private fun onDeleteLongClick() {
 		emptyExpression()
 		emptyResult()
 	}
@@ -207,5 +210,9 @@ class MainViewModel @Inject constructor(
 
 	fun onExpressionSpaceClick(position: Int) {
 		expressionCursorPosition = position
+	}
+
+	fun onElementListModeChange(elementListMode: ElementListMode) {
+		this.elementListMode = elementListMode
 	}
 }

@@ -28,7 +28,10 @@ fun ElementHeader(
 				expressionCursorPosition = expressionCursorPosition,
 				onExpressionSpaceClick = onExpressionSpaceClick
 			)
-			ElementExpressionResult(expressionResultState = expressionResultState)
+
+			ElementExpressionResult(
+				expressionResultState = expressionResultState
+			)
 		}
 	}
 }

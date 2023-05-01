@@ -70,7 +70,7 @@ fun ElementKeyboardButton(
 	) {
 		Box(
 			modifier = Modifier
-				.height(64.dp)
+				.height(72.dp)
 				.defaultMinSize(
 					minWidth = 40.dp, minHeight = 40.dp
 				),
@@ -85,6 +85,6 @@ fun ElementKeyboardButton(
 fun ElementKeyboardButtonText(text: String) {
 	Text(
 		text = text,
-		style = MaterialTheme.typography.titleLarge
+		style = MaterialTheme.typography.titleMedium
 	)
 }

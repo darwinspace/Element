@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
@@ -20,69 +20,80 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.presentation.component.ElementButton
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
+import com.space.element.presentation.theme.ElementTheme
 
+@Preview
+@Composable
+fun ElementListHeaderPreview() {
+	ElementTheme {
+		// ElementListHeader()
+	}
+}
 
 @Composable
 fun ElementListHeader(
 	mode: ElementListMode,
-	onStateChange: (ElementListMode) -> Unit,
-	addElementEnabled: Boolean,
-	searchValue: String,
-	onSearchValueChange: (String) -> Unit,
-	elementName: String,
-	onElementNameChange: (String) -> Unit,
-	elementValue: String,
-	onElementValueChange: (String) -> Unit,
-	onAddElement: () -> Unit
+	onModeChange: (ElementListMode) -> Unit
 ) {
-	val height = 48.dp
-
-	Box(
-		modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp)
-	) {
+	Box {
 		Row(
 			modifier = Modifier.fillMaxWidth(),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
-			ElementListHeaderContent()
+			ElementListHeaderContent(
+				mode = mode,
+				onModeChange = onModeChange
+			)
 		}
 	}
-
 
 	AnimatedVisibility(
 		visible = mode is Create,
 		enter = expandVertically(),
 		exit = shrinkVertically(),
 	) {
-		CreateElementForm(elementName, onElementNameChange, elementValue, onElementValueChange)
+		CreateElementForm()
 	}
 }
 
 @Composable
-fun ElementListHeaderContent() {
-	CreateElementButton {
-		throw NotImplementedError()
-	}
+fun RowScope.ElementListHeaderContent(
+	mode: ElementListMode,
+	onModeChange: (ElementListMode) -> Unit
+) {
+	CreateElementButton(
+		modifier = Modifier.weight(1f),
+		onClick = {
+			onModeChange(Create)
+		}
+	)
 
-	Text("Content")
+//	AnimatedVisibility(visible = Random.nextBoolean()) {
+//		Row {
+//			Spacer(modifier = Modifier.requiredWidth(24.dp))
+//
+//			ElementIconButton(onClick = { /*TODO*/ }) {
+//				Icon(imageVector = Icons.Default.Search, contentDescription = null)
+//			}
+//		}
+//	}
 }
 
 @Composable
 private fun CreateElementForm(
-	elementName: String,
-	onElementNameChange: (String) -> Unit,
-	elementValue: String,
-	onElementValueChange: (String) -> Unit
 ) {
+	val elementName: String = ""
+	val onElementNameChange: (String) -> Unit = {}
+	val elementValue: String = ""
+	val onElementValueChange: (String) -> Unit = {}
 	Column {
-		Spacer(modifier = Modifier.requiredHeight(24.dp))
-
 		CreateElementTextField(
 			modifier = Modifier.fillMaxWidth(),
 			value = elementName,

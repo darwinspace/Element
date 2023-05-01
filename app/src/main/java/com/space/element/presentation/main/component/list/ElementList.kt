@@ -10,33 +10,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.domain.model.Element
 import com.space.element.presentation.main.*
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.theme.ElementTheme
-import kotlin.random.Random
 
 @Preview
 @Composable
 fun ElementListPreview() {
-	val elementList = remember {
-		buildList<Element> {
-			repeat(1) {
-				add(
-					Element(
-						name = "Object ${it + 1}",
-						value = Random.nextInt(10, 20).toString()
-					)
-				)
-			}
-		}
+	val elementList = List(10) {
+		Element(
+			name = "Item $it",
+			value = it.toString()
+		)
 	}
 
 	ElementTheme {
 		ElementList(
 			elementList = elementList,
-			elementListMode = ElementListMode.Create
+			elementListMode = ElementListMode.Normal,
+			onElementListModeChange = {}
 		)
 	}
 }
@@ -45,7 +40,8 @@ fun ElementListPreview() {
 fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: List<Element>,
-	elementListMode: ElementListMode
+	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit
 ) {
 	val searchState = elementListMode is ElementListMode.Search
 	var searchValue by rememberSaveable(searchState) {
@@ -80,28 +76,22 @@ fun ElementList(
 		true
 	}
 
-	Column(modifier = modifier) {
+	Column(
+		modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp),
+		verticalArrangement = Arrangement.spacedBy(24.dp)
+	) {
 		ElementListHeader(
 			mode = elementListMode,
-			onStateChange = {
-				//viewModel.elementsState = it
-			},
-			addElementEnabled = addElementEnabled,
-			searchValue = searchValue,
-			onSearchValueChange = { searchValue = it },
-			elementName = elementName,
-			onElementNameChange = { elementName = it },
-			elementValue = elementValue,
-			onElementValueChange = { elementValue = it },
-			onAddElement = {
-				// viewModel.addElement(elementName, elementValue)
-			}
+			onModeChange = onElementListModeChange
 		)
 
 		if (elementList.isNotEmpty()) {
-			ElementListContent(elementList) {
-				// viewModel.onElementItemClick(element)
-			}
+			ElementListContent(
+				elementList = elementList,
+				onClick = {
+					// viewModel.onElementItemClick(element)
+				}
+			)
 		}
 
 		if (elementList.isEmpty()) {
@@ -148,6 +138,7 @@ fun CreateElementTextField(
 	val shape = MaterialTheme.shapes.small
 
 	OutlinedTextField(
+		modifier = modifier,
 		value = value,
 		onValueChange = onValueChange,
 		placeholder = placeholder,

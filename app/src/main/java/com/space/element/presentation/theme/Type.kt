@@ -17,14 +17,19 @@ val Typography = Typography(
 	titleLarge = TextStyle(
 		fontFamily = fontFamily,
 		fontWeight = FontWeight.Bold,
-		fontSize = 20.sp
+		fontSize = 24.sp
 	),
 	titleMedium = TextStyle(
 		fontFamily = fontFamily,
 		fontWeight = FontWeight.Bold,
-		fontSize = 16.sp
+		fontSize = 20.sp
 	),
 	titleSmall = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Bold,
+		fontSize = 16.sp
+	),
+	bodyMedium = TextStyle(
 		fontFamily = fontFamily,
 		fontWeight = FontWeight.Normal,
 		fontSize = 16.sp

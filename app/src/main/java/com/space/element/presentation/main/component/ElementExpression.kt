@@ -226,7 +226,10 @@ private fun ExpressionNumberItem(number: String) {
 
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
-	ExpressionItemText(text = operator.symbol, color = operator.getColor())
+	ExpressionItemText(
+		text = operator.symbol,
+		color = operator.getColor()
+	)
 }
 
 @Composable
@@ -238,7 +241,7 @@ private fun ExpressionItemText(
 	Text(
 		modifier = modifier,
 		text = text,
-		style = MaterialTheme.typography.headlineMedium,
+		style = MaterialTheme.typography.titleLarge,
 		color = color
 	)
 }
