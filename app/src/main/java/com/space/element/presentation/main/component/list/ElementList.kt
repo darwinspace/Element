@@ -1,11 +1,15 @@
 package com.space.element.presentation.main.component.list
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -13,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.domain.model.Element
-import com.space.element.presentation.main.*
+import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.theme.ElementTheme
 
@@ -107,13 +111,12 @@ fun ElementList(
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchElementTextField(
 	value: String,
 	onValueChange: (String) -> Unit
 ) {
-	OutlinedTextField(
+	ElementTextField(
 		value = value,
 		onValueChange = onValueChange,
 		placeholder = {
@@ -121,30 +124,6 @@ fun SearchElementTextField(
 		},
 		keyboardOptions = KeyboardOptions(
 			imeAction = ImeAction.Search
-		),
-		singleLine = true,
-		shape = MaterialTheme.shapes.small
-	)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CreateElementTextField(
-	value: String,
-	onValueChange: (String) -> Unit,
-	modifier: Modifier = Modifier,
-	placeholder: @Composable (() -> Unit),
-	keyboardOptions: KeyboardOptions
-) {
-	val shape = MaterialTheme.shapes.small
-
-	OutlinedTextField(
-		modifier = modifier,
-		value = value,
-		onValueChange = onValueChange,
-		placeholder = placeholder,
-		keyboardOptions = keyboardOptions,
-		singleLine = true,
-		shape = shape
+		)
 	)
 }

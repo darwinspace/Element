@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.presentation.component.ElementButton
+import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
 import com.space.element.presentation.theme.ElementTheme
@@ -87,17 +92,15 @@ fun RowScope.ElementListHeaderContent(
 }
 
 @Composable
-private fun CreateElementForm(
-) {
-	val elementName: String = ""
-	val onElementNameChange: (String) -> Unit = {}
-	val elementValue: String = ""
-	val onElementValueChange: (String) -> Unit = {}
+private fun CreateElementForm() {
+	var elementName: String by remember { mutableStateOf(String()) }
+	var elementValue: String by remember { mutableStateOf(String()) }
+
 	Column {
-		CreateElementTextField(
+		ElementTextField(
 			modifier = Modifier.fillMaxWidth(),
 			value = elementName,
-			onValueChange = onElementNameChange,
+			onValueChange = { elementName = it },
 			placeholder = {
 				Text(text = stringResource(R.string.element_name))
 			},
@@ -109,10 +112,10 @@ private fun CreateElementForm(
 
 		Spacer(modifier = Modifier.requiredHeight(24.dp))
 
-		CreateElementTextField(
+		ElementTextField(
 			modifier = Modifier.fillMaxWidth(),
 			value = elementValue,
-			onValueChange = onElementValueChange,
+			onValueChange = { elementValue = it },
 			placeholder = {
 				Text(text = stringResource(R.string.element_value))
 			},
