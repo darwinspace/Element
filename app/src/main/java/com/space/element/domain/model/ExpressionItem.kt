@@ -7,14 +7,14 @@ sealed class ExpressionItem {
 		override fun toString() = "(${element.value})"
 	}
 
-	data class NumberItem(val number: String) : ExpressionItem() {
-		override fun toString() = number
+	data class NumberItem(val number: Char) : ExpressionItem() {
+		override fun toString() = number.toString()
 	}
 
 	data class OperatorItem(val operator: Operator) : ExpressionItem() {
 		override fun toString() = when (operator) {
-			Operator.Multiplication -> "*"
+			Operator.Multiplication -> '*'
 			else -> operator.symbol
-		}
+		}.toString()
 	}
 }

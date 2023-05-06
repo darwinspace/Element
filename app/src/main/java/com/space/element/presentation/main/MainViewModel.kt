@@ -24,6 +24,7 @@ import com.space.element.presentation.main.model.ExpressionResultState.Error
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
 import com.space.element.presentation.main.model.Operator
+import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -138,16 +139,16 @@ class MainViewModel @Inject constructor(
 			emptyExpression()
 			emptyResult()
 
-			val valueReversed = value.toString().reversed()
+			val valueReversed = value.format().reversed()
 
 			valueReversed.forEach { character ->
-				if (Operator.Dot.symbol == character.toString()) {
+				if (Operator.Dot.symbol == character) {
 					val item = OperatorItem(Operator.Dot)
 					appendExpressionItem(item)
 				}
 
 				if (character.isDigit()) {
-					val item = NumberItem(character.toString())
+					val item = NumberItem(character)
 					appendExpressionItem(item)
 				}
 			}

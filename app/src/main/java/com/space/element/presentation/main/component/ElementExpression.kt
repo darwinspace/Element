@@ -168,7 +168,7 @@ private fun ExpressionElementItem(element: Element) {
 	val shape = MaterialTheme.shapes.small
 	val padding = PaddingValues(12.dp, 6.dp)
 	val tonalElevation = 12.dp
-	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
 	val border = BorderStroke(width = 2.dp, color = borderColor)
 
 	Surface(
@@ -193,18 +193,21 @@ private fun ExpressionElementItem(element: Element) {
 
 @Composable
 private fun ExpressionElementItemName(elementName: String) {
-	Text(text = elementName, style = MaterialTheme.typography.bodyMedium)
+	Text(
+		text = elementName,
+		style = MaterialTheme.typography.titleSmall
+	)
 }
 
 @Composable
-private fun ExpressionNumberItem(number: String) {
-	ExpressionItemText(text = number)
+private fun ExpressionNumberItem(number: Char) {
+	ExpressionItemText(text = number.toString())
 }
 
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
 	ExpressionItemText(
-		text = operator.symbol,
+		text = operator.symbol.toString(),
 		color = operator.getColor()
 	)
 }

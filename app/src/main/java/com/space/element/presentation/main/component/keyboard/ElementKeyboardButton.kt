@@ -82,9 +82,9 @@ fun ElementKeyboardButton(
 }
 
 @Composable
-fun ElementKeyboardButtonText(text: String) {
+fun ElementKeyboardButtonSymbol(symbol: Char) {
 	Text(
-		text = text,
+		text = symbol.toString(),
 		style = MaterialTheme.typography.titleMedium
 	)
 }

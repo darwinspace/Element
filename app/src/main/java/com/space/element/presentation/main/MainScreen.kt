@@ -35,9 +35,11 @@ fun MainScreenPreview() {
 	ElementTheme {
 		MainScreen(
 			expression = listOf(
-				NumberItem(number = "9"),
+				NumberItem(number = '9'),
 				OperatorItem(Operator.Addition),
-				NumberItem(number = "1"),
+				NumberItem(number = '2'),
+				OperatorItem(Operator.Multiplication),
+				ElementItem(element = Element(name = "Taco 🌮", value = "20"))
 			),
 			expressionCursorPosition = 0,
 			expressionResult = ExpressionResultState.Value(value = 10.0),
@@ -72,11 +74,11 @@ fun MainScreen(
 		expressionResult = expressionResult,
 		elementList = elementList,
 		elementListMode = elementListMode,
+		onElementListItemClick = onElementListItemClick,
 		onElementListModeChange = onElementListModeChange,
 		onExpressionSpaceClick = onExpressionSpaceClick,
 		onKeyboardButtonClick = onKeyboardButtonClick,
-		onKeyboardButtonLongClick = onKeyboardButtonLongClick,
-		onElementListItemClick = onElementListItemClick
+		onKeyboardButtonLongClick = onKeyboardButtonLongClick
 	)
 }
 

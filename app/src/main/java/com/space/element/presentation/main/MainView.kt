@@ -18,9 +18,9 @@ fun MainView() {
 		onExpressionSpaceClick = viewModel::onExpressionSpaceClick,
 		elementList = elementList,
 		elementListMode = viewModel.elementListMode,
+		onElementListItemClick = viewModel::onElementListItemClick,
 		onElementListModeChange = viewModel::onElementListModeChange,
 		onKeyboardButtonLongClick = viewModel::onKeyboardButtonLongClick,
-		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
-		onElementListItemClick = viewModel::onElementListItemClick
+		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)
 }

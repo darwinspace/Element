@@ -79,7 +79,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Close,
@@ -87,7 +87,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Division,
@@ -95,7 +95,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
@@ -108,7 +108,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
@@ -116,7 +116,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
@@ -124,7 +124,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
@@ -132,7 +132,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
@@ -145,7 +145,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Five,
@@ -153,7 +153,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Six,
@@ -161,7 +161,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
@@ -169,7 +169,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
@@ -182,7 +182,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Two,
@@ -190,7 +190,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Three,
@@ -198,7 +198,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
@@ -206,7 +206,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
@@ -219,7 +219,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
@@ -227,7 +227,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
@@ -235,7 +235,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
@@ -243,7 +243,7 @@ private fun ElementKeyboardContent(
 				onClick = onButtonClick,
 				onLongClick = onButtonLongClick
 			) {
-				ElementKeyboardButtonText(text = it.symbol)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 	}
