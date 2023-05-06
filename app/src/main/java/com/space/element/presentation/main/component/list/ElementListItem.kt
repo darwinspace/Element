@@ -45,7 +45,7 @@ fun ElementListItem(
 	val padding = PaddingValues(20.dp)
 	val textStyle = MaterialTheme.typography.titleSmall
 	val shape = MaterialTheme.shapes.medium
-	val tonalElevation = 3.dp
+	val tonalElevation = 6.dp
 
 	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
 	val border = BorderStroke(width = 2.dp, color = borderColor)

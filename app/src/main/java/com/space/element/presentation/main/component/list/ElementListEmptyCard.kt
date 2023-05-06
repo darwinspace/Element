@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -38,7 +37,7 @@ fun EmptyElementListCard() {
 
 	val text = getText()
 
-	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+	val borderColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f)
 	val border = BorderStroke(width = 2.dp, color = borderColor)
 
 	Surface(
@@ -51,8 +50,7 @@ fun EmptyElementListCard() {
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(space),
-			fontStyle = FontStyle.Italic,
-			style = MaterialTheme.typography.bodyLarge,
+			style = MaterialTheme.typography.bodyMedium,
 			textAlign = TextAlign.Center
 		)
 	}

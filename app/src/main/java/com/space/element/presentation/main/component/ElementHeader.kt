@@ -16,7 +16,7 @@ fun ElementHeader(
 	expressionResultState: ExpressionResultState,
 	onExpressionSpaceClick: (Int) -> Unit
 ) {
-	val tonalElevation = 3.dp
+	val tonalElevation = 6.dp
 
 	Surface(
 		modifier = modifier,

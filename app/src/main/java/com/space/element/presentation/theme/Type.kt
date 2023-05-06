@@ -29,10 +29,20 @@ val Typography = Typography(
 		fontWeight = FontWeight.Bold,
 		fontSize = 16.sp
 	),
+	bodyLarge = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Normal,
+		fontSize = 20.sp
+	),
 	bodyMedium = TextStyle(
 		fontFamily = fontFamily,
 		fontWeight = FontWeight.Normal,
 		fontSize = 16.sp
+	),
+	bodySmall = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Normal,
+		fontSize = 14.sp
 	),
 	labelLarge = TextStyle(
 		fontFamily = fontFamily,

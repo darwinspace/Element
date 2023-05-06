@@ -21,5 +21,6 @@ fun MainView() {
 		onElementListModeChange = viewModel::onElementListModeChange,
 		onKeyboardButtonLongClick = viewModel::onKeyboardButtonLongClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
+		onElementListItemClick = viewModel::onElementListItemClick
 	)
 }

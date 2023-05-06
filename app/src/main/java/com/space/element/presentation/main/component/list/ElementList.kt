@@ -31,7 +31,8 @@ fun ElementListPreview() {
 		ElementList(
 			elementList = elementList,
 			elementListMode = ElementListMode.Normal,
-			onElementListModeChange = {}
+			onElementListModeChange = { throw NotImplementedError() },
+			onElementListItemClick = { throw NotImplementedError() }
 		)
 	}
 }
@@ -41,7 +42,8 @@ fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit
+	onElementListModeChange: (ElementListMode) -> Unit,
+	onElementListItemClick: (Element) -> Unit
 ) {
 	val searchState = elementListMode is ElementListMode.Search
 	var searchValue by rememberSaveable(searchState) {
@@ -86,11 +88,10 @@ fun ElementList(
 		)
 
 		if (elementList.isNotEmpty()) {
+			// viewModel.onElementItemClick(element)
 			ElementListContent(
 				elementList = elementList,
-				onClick = {
-					// viewModel.onElementItemClick(element)
-				}
+				onClick = onElementListItemClick
 			)
 		}
 

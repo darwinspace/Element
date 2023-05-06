@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,17 +25,14 @@ fun ElementExpressionResult(expressionResultState: ExpressionResultState) {
 
 @Composable
 private fun ElementExpressionResultValue(expressionResultState: ExpressionResultState.Value) {
-	Surface(
+	Box(
 		modifier = Modifier
 			.fillMaxWidth()
 			.horizontalScroll(rememberScrollState())
+			.padding(horizontal = 24.dp),
+		contentAlignment = Alignment.CenterEnd
 	) {
-		Box(
-			modifier = Modifier.padding(horizontal = 24.dp),
-			contentAlignment = Alignment.CenterEnd
-		) {
-			ElementExpressionResultText(expressionResultState.value)
-		}
+		ElementExpressionResultText(expressionResultState.value)
 	}
 }
 

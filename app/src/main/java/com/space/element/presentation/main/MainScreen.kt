@@ -6,15 +6,10 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -51,7 +46,8 @@ fun MainScreenPreview() {
 			elementListMode = elementListMode,
 			onElementListModeChange = { elementListMode = it },
 			onKeyboardButtonLongClick = { throw NotImplementedError() },
-			onKeyboardButtonClick = { throw NotImplementedError() }
+			onKeyboardButtonClick = { throw NotImplementedError() },
+			onElementListItemClick = { throw NotImplementedError() }
 		)
 	}
 }
@@ -68,6 +64,7 @@ fun MainScreen(
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
+	onElementListItemClick: (Element) -> Unit
 ) {
 	ColumnMainScreen(
 		expression = expression,
@@ -78,7 +75,8 @@ fun MainScreen(
 		onElementListModeChange = onElementListModeChange,
 		onExpressionSpaceClick = onExpressionSpaceClick,
 		onKeyboardButtonClick = onKeyboardButtonClick,
-		onKeyboardButtonLongClick = onKeyboardButtonLongClick
+		onKeyboardButtonLongClick = onKeyboardButtonLongClick,
+		onElementListItemClick = onElementListItemClick
 	)
 }
 
@@ -127,7 +125,7 @@ fun MainScreen(
 
 @Composable
 private fun HorizontalDivider(
-	color: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+	color: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
 	thickness: Dp = 2.dp
 ) {
 	Box(
@@ -138,8 +136,8 @@ private fun HorizontalDivider(
 	)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
 private fun ColumnMainScreen(
 	expression: List<ExpressionItem>,
 	expressionCursorPosition: Int,
@@ -147,24 +145,22 @@ private fun ColumnMainScreen(
 	onExpressionSpaceClick: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onElementListItemClick: (Element) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
 ) {
-	val bottomSheetPeekHeight = 52.dp
-
 	BottomSheetScaffold(
 		sheetContent = {
-			ElementListBottomSheet(
+			ElementListBottomSheetContent(
 				elementList = elementList,
 				elementListMode = elementListMode,
-				onElementListModeChange = onElementListModeChange
+				onElementListModeChange = onElementListModeChange,
+				onElementListItemClick = onElementListItemClick
 			)
 		},
 		sheetShape = RectangleShape,
-		sheetElevation = 0.dp,
-		sheetPeekHeight = bottomSheetPeekHeight,
-		backgroundColor = MaterialTheme.colorScheme.surface
+		sheetTonalElevation = 0.dp
 	) { contentPadding ->
 		MainContent(
 			modifier = Modifier
@@ -181,48 +177,23 @@ private fun ColumnMainScreen(
 }
 
 @Composable
-private fun ElementListBottomSheet(
+private fun ElementListBottomSheetContent(
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit
+	onElementListModeChange: (ElementListMode) -> Unit,
+	onElementListItemClick: (Element) -> Unit,
 ) {
 	val bottomSheetHeight = 512.dp
 
-	Surface {
-		Column {
-			ElementListPeek(
-				modifier = Modifier
-					.height(28.dp)
-					.fillMaxWidth()
-			)
-
-			ElementList(
-				modifier = Modifier
-					.height(bottomSheetHeight)
-					.fillMaxWidth(),
-				elementList = elementList,
-				elementListMode = elementListMode,
-				onElementListModeChange = onElementListModeChange
-			)
-		}
-	}
-}
-
-@Composable
-private fun ElementListPeek(modifier: Modifier) {
-	val color = MaterialTheme.colorScheme.onPrimaryContainer
-	val width = 72.dp
-	val height = 4.dp
-
-	Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
-		Box(
-			modifier = Modifier
-				.padding(top = 16.dp)
-				.clip(CircleShape)
-				.background(color)
-				.size(width, height)
-		)
-	}
+	ElementList(
+		modifier = Modifier
+			.height(bottomSheetHeight)
+			.fillMaxWidth(),
+		elementList = elementList,
+		elementListMode = elementListMode,
+		onElementListModeChange = onElementListModeChange,
+		onElementListItemClick = onElementListItemClick
+	)
 }
 
 @Composable

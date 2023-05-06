@@ -32,11 +32,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
@@ -49,21 +48,8 @@ import kotlin.time.Duration.Companion.milliseconds
 private val CursorWidth = 3.dp
 private val CursorHeight = 32.dp
 
-private val StartContentSpace = 4.dp
-private val ContentSpace = 8.dp
+private val ContentSpace = 4.dp
 private val FrameHeight = 96.dp
-
-private val getItemSpaceWidth: (List<ExpressionItem>, Int) -> Dp = { expression, index ->
-	val isNumberItem: (ExpressionItem?) -> Boolean = { it is ExpressionItem.NumberItem }
-	val currentIsNumberItem = isNumberItem(expression[index])
-	val nextIsNumberItem = isNumberItem(expression.getOrNull(index + 1))
-
-	if (currentIsNumberItem && nextIsNumberItem) {
-		CursorWidth
-	} else {
-		ContentSpace
-	}
-}
 
 @Composable
 private fun Operator.getColor(): Color {
@@ -82,43 +68,37 @@ fun ElementExpression(
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
-	Surface {
-		LazyRow(
-			modifier = Modifier
-				.fillMaxWidth()
-				.height(FrameHeight),
-			contentPadding = PaddingValues(
-				start = 24.dp - StartContentSpace, end = 24.dp
-			),
-			horizontalArrangement = Arrangement.spacedBy(0.dp),
-			verticalAlignment = Alignment.CenterVertically,
-			state = state
-		) {
-			item {
-				ExpressionItemSpace(
-					width = StartContentSpace,
-					cursorVisible = expression.isEmpty() || expressionCursorPosition == 0,
-					onClick = {
-						onExpressionSpaceClick(0)
-					}
-				)
+	LazyRow(
+		modifier = Modifier
+			.fillMaxWidth()
+			.height(FrameHeight),
+		contentPadding = PaddingValues(
+			start = 24.dp - ContentSpace, end = 24.dp
+		),
+		horizontalArrangement = Arrangement.spacedBy(0.dp),
+		verticalAlignment = Alignment.CenterVertically,
+		state = state
+	) {
+		item {
+			ExpressionItemSpace(
+				cursorVisible = expressionCursorPosition == 0
+			) {
+				onExpressionSpaceClick(0)
 			}
+		}
 
-			itemsIndexed(expression) { index, item ->
-				ExpressionItemRow(
-					expressionItem = item,
-					cursorVisible = expressionCursorPosition == index + 1,
-					spaceWidth = getItemSpaceWidth(expression, index),
-					onSpaceClick = {
-						onExpressionSpaceClick(index + 1)
-					}
-				)
+		itemsIndexed(expression) { index, item ->
+			ExpressionItemRow(
+				expressionItem = item,
+				cursorVisible = expressionCursorPosition == index + 1
+			) {
+				onExpressionSpaceClick(index + 1)
 			}
+		}
 
-			scope.launch {
-				delay(200.milliseconds)
-				state.animateScrollToItem(expressionCursorPosition)
-			}
+		scope.launch {
+			delay(200.milliseconds)
+			state.animateScrollToItem(expressionCursorPosition)
 		}
 	}
 }
@@ -127,7 +107,6 @@ fun ElementExpression(
 private fun ExpressionItemRow(
 	expressionItem: ExpressionItem,
 	cursorVisible: Boolean,
-	spaceWidth: Dp,
 	onSpaceClick: () -> Unit
 ) {
 	Row(
@@ -136,7 +115,6 @@ private fun ExpressionItemRow(
 		ExpressionItem(expressionItem)
 
 		ExpressionItemSpace(
-			width = spaceWidth,
 			cursorVisible = cursorVisible,
 			onClick = onSpaceClick
 		)
@@ -145,7 +123,6 @@ private fun ExpressionItemRow(
 
 @Composable
 private fun ExpressionItemSpace(
-	width: Dp,
 	cursorVisible: Boolean,
 	onClick: () -> Unit
 ) {
@@ -156,7 +133,7 @@ private fun ExpressionItemSpace(
 				indication = null,
 				onClick = onClick
 			)
-			.width(width)
+			.width(ContentSpace)
 			.height(FrameHeight),
 		contentAlignment = Alignment.Center,
 		content = {
@@ -190,7 +167,7 @@ private fun ExpressionElementItem(element: Element) {
 
 	val shape = MaterialTheme.shapes.small
 	val padding = PaddingValues(12.dp, 6.dp)
-	val tonalElevation = 5.dp
+	val tonalElevation = 12.dp
 	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
 	val border = BorderStroke(width = 2.dp, color = borderColor)
 
@@ -249,18 +226,20 @@ private fun ExpressionItemText(
 @Composable
 private fun Cursor() {
 	val infiniteTransition = rememberInfiniteTransition()
-	val alpha by infiniteTransition.animateFloat(
+	val alphaValue by infiniteTransition.animateFloat(
 		initialValue = 0f,
 		targetValue = 1f,
 		animationSpec = infiniteRepeatable(
-			animation = tween(durationMillis = 1200),
-			repeatMode = RepeatMode.Reverse
+			animation = tween(durationMillis = 800),
+			repeatMode = RepeatMode.Restart
 		)
 	)
 
 	Box(
 		modifier = Modifier
-			.alpha(alpha)
+			.graphicsLayer {
+				alpha = alphaValue
+			}
 			.background(MaterialTheme.colorScheme.primary)
 			.width(CursorWidth)
 			.height(CursorHeight)

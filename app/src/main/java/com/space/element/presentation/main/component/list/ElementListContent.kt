@@ -19,11 +19,11 @@ fun ElementListContent(
 		// contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
-		elementItems(elementList, onClick)
+		elementListItems(elementList, onClick)
 	}
 }
 
-fun LazyListScope.elementItems(
+fun LazyListScope.elementListItems(
 	elementList: List<Element>,
 	onClick: (Element) -> Unit
 ) {

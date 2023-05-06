@@ -190,7 +190,7 @@ class MainViewModel @Inject constructor(
 		expressionResult = Empty
 	}
 
-	fun onElementItemClick(element: Element) {
+	fun onElementListItemClick(element: Element) {
 		val item = ElementItem(element)
 		onAppendExpressionItem(item)
 	}
