@@ -1,5 +1,6 @@
 package com.space.element.presentation.main.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -13,9 +14,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,10 +35,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
@@ -148,7 +149,14 @@ private fun ExpressionItemSpace(
 private fun ExpressionItem(expressionItem: ExpressionItem) {
 	when (expressionItem) {
 		is ExpressionItem.ElementItem -> {
-			ExpressionElementItem(expressionItem.element)
+			var contentVisible by rememberSaveable(expressionItem) { mutableStateOf(false) }
+			ExpressionElementItem(
+				element = expressionItem.element,
+				contentVisible = contentVisible,
+				onClick = {
+					contentVisible = !contentVisible
+				}
+			)
 		}
 
 		is ExpressionItem.OperatorItem -> {
@@ -162,31 +170,26 @@ private fun ExpressionItem(expressionItem: ExpressionItem) {
 }
 
 @Composable
-private fun ExpressionElementItem(element: Element) {
-	var visible by rememberSaveable { mutableStateOf(true) }
-
-	val shape = MaterialTheme.shapes.small
-	val padding = PaddingValues(12.dp, 6.dp)
-	val tonalElevation = 12.dp
-	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-	val border = BorderStroke(width = 2.dp, color = borderColor)
-
+private fun ExpressionElementItem(
+	element: Element,
+	contentVisible: Boolean,
+	onClick: () -> Unit
+) {
 	Surface(
-		modifier = Modifier
-			.clip(shape)
-			.clickable(
-				role = Role.Button,
-				onClick = {
-					visible = !visible
-				}
-			),
-		shape = shape,
-		border = border,
-		tonalElevation = tonalElevation
+		shape = MaterialTheme.shapes.small,
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+		),
+		tonalElevation = 12.dp,
+		onClick = onClick
 	) {
-		Box(modifier = Modifier.padding(padding)) {
-			val text = if (visible) element.name else element.value.format()
-			ExpressionElementItemName(text)
+		Row(modifier = Modifier.padding(12.dp, 6.dp)) {
+			ExpressionElementItemName(element.name)
+
+			AnimatedVisibility(visible = contentVisible) {
+				ExpressionElementItemValue(element.value)
+			}
 		}
 	}
 }
@@ -197,6 +200,18 @@ private fun ExpressionElementItemName(elementName: String) {
 		text = elementName,
 		style = MaterialTheme.typography.titleSmall
 	)
+}
+
+@Composable
+fun ExpressionElementItemValue(elementValue: String) {
+	Row(verticalAlignment = Alignment.CenterVertically) {
+		Spacer(modifier = Modifier.requiredWidth(12.dp))
+
+		Text(
+			text = "= $elementValue",
+			style = MaterialTheme.typography.bodyMedium
+		)
+	}
 }
 
 @Composable

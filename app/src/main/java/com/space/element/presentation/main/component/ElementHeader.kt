@@ -16,11 +16,9 @@ fun ElementHeader(
 	expressionResultState: ExpressionResultState,
 	onExpressionSpaceClick: (Int) -> Unit
 ) {
-	val tonalElevation = 6.dp
-
 	Surface(
 		modifier = modifier,
-		tonalElevation = tonalElevation
+		tonalElevation = 6.dp
 	) {
 		Column {
 			ElementExpression(

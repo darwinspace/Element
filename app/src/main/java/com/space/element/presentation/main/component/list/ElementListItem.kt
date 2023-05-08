@@ -1,9 +1,7 @@
 package com.space.element.presentation.main.component.list
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -12,8 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,37 +35,28 @@ fun ElementListItem(
 	element: Element,
 	onClick: () -> Unit
 ) {
-	val (name, value) = element
-
-	val space = 24.dp
-	val padding = PaddingValues(20.dp)
-	val textStyle = MaterialTheme.typography.titleSmall
-	val shape = MaterialTheme.shapes.medium
-	val tonalElevation = 6.dp
-
-	val borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-	val border = BorderStroke(width = 2.dp, color = borderColor)
-
 	Surface(
-		modifier = modifier
-			.clip(shape)
-			.clickable(role = Role.Button, onClick = onClick),
-		shape = shape,
-		tonalElevation = tonalElevation,
-		border = border
+		modifier = modifier,
+		shape = MaterialTheme.shapes.medium,
+		tonalElevation = 6.dp,
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+		),
+		onClick = onClick
 	) {
 		Row(
-			modifier = Modifier.padding(padding),
-			horizontalArrangement = Arrangement.spacedBy(space),
+			modifier = Modifier.padding(20.dp),
+			horizontalArrangement = Arrangement.spacedBy(24.dp),
 			verticalAlignment = Alignment.CenterVertically
 		) {
 			Text(
 				modifier = Modifier.weight(1f),
-				text = name,
+				text = element.name,
 				textAlign = TextAlign.Justify,
-				style = textStyle
+				style = MaterialTheme.typography.titleSmall
 			)
-			Text(text = value, style = textStyle)
+			Text(text = element.value, style = MaterialTheme.typography.titleSmall)
 		}
 	}
 }
