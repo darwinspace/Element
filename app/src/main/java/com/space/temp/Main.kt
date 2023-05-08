@@ -24,6 +24,7 @@ fun Screen() {
 			modifier = Modifier.fillMaxSize(),
 			elementList = listOf(),
 			elementListMode = ElementListMode.Normal,
+			onAddElementList = { _, _->},
 			onElementListModeChange = {},
 			onElementListItemClick = {}
 		)

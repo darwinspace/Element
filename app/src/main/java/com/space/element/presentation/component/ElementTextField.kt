@@ -30,7 +30,10 @@ fun ElementTextFieldPreview() {
 				value = "",
 				onValueChange = {},
 				placeholder = {
-					Text("Placeholder")
+					Text(
+						text = "Placeholder",
+						style = MaterialTheme.typography.bodyMedium
+					)
 				}
 			)
 		}
@@ -44,10 +47,11 @@ fun ElementTextField(
 	onValueChange: (String) -> Unit,
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
-	textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+	textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
 	singleLine: Boolean = true,
 	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 	placeholder: @Composable (() -> Unit)? = null,
+	trailingIcon: @Composable (() -> Unit)? = null,
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = MaterialTheme.shapes.small,
 	colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
@@ -70,6 +74,7 @@ fun ElementTextField(
 				visualTransformation = VisualTransformation.None,
 				interactionSource = interactionSource,
 				placeholder = placeholder,
+				trailingIcon = trailingIcon,
 				colors = colors,
 				contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 				container = {

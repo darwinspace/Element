@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
@@ -29,7 +28,7 @@ import com.space.element.presentation.theme.ElementTheme
 import java.util.*
 import kotlin.random.Random
 
-private fun getPreviewExpressionList() : List<ExpressionItem> {
+private fun getPreviewExpressionList(): List<ExpressionItem> {
 	return listOf(
 		NumberItem(number = '9'),
 		OperatorItem(Operator.Addition),
@@ -70,6 +69,7 @@ fun MainScreenPreview() {
 			onExpressionSpaceClick = { expressionCursorPosition = it },
 			elementList = emptyList(),
 			elementListMode = elementListMode,
+			onAddElementList = { _, _ -> },
 			onElementListModeChange = { elementListMode = it },
 			onKeyboardButtonLongClick = { throw NotImplementedError() },
 			onKeyboardButtonClick = {
@@ -90,6 +90,7 @@ fun MainScreen(
 	onExpressionSpaceClick: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
@@ -101,6 +102,7 @@ fun MainScreen(
 		expressionResult = expressionResult,
 		elementList = elementList,
 		elementListMode = elementListMode,
+		onAddElementList = onAddElementList,
 		onElementListItemClick = onElementListItemClick,
 		onElementListModeChange = onElementListModeChange,
 		onExpressionSpaceClick = onExpressionSpaceClick,
@@ -125,8 +127,6 @@ fun MainScreen(
 //				ElementListMode.Normal
 //			)
 //
-//			VerticalDivider()
-//
 //			MainContent(
 //				modifier = Modifier
 //					.fillMaxHeight()
@@ -139,31 +139,6 @@ fun MainScreen(
 //	}
 //}
 
-//@Composable
-//private fun VerticalDivider(
-//	color: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-//	thickness: Dp = 2.dp
-//) {
-//	Box(
-//		modifier = Modifier
-//			.fillMaxHeight()
-//			.width(thickness)
-//			.background(color = color)
-//	)
-//}
-
-@Composable
-private fun HorizontalDivider(
-	color: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
-	thickness: Dp = 2.dp
-) {
-	Box(
-		modifier = Modifier
-			.fillMaxWidth()
-			.height(thickness)
-			.background(color = color)
-	)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,6 +149,7 @@ private fun ColumnMainScreen(
 	onExpressionSpaceClick: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onAddElementList: (String, String) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
@@ -184,6 +160,7 @@ private fun ColumnMainScreen(
 			ElementListBottomSheetContent(
 				elementList = elementList,
 				elementListMode = elementListMode,
+				onAddElementList = onAddElementList,
 				onElementListModeChange = onElementListModeChange,
 				onElementListItemClick = onElementListItemClick
 			)
@@ -207,6 +184,7 @@ private fun ColumnMainScreen(
 private fun ElementListBottomSheetContent(
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 ) {
@@ -218,6 +196,7 @@ private fun ElementListBottomSheetContent(
 			.fillMaxWidth(),
 		elementList = elementList,
 		elementListMode = elementListMode,
+		onAddElementList = onAddElementList,
 		onElementListModeChange = onElementListModeChange,
 		onElementListItemClick = onElementListItemClick
 	)

@@ -1,6 +1,5 @@
 package com.space.element.presentation.main.component.keyboard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,6 @@ fun ElementKeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
 	color: Color = keyboardButton.getSurfaceColor(),
-	borderColor: Color = contentColorFor(color).copy(alpha = 0.1f),
 	onClick: (KeyboardButton) -> Unit,
 	onLongClick: (KeyboardButton) -> Unit,
 	content: @Composable BoxScope.(KeyboardButton) -> Unit
@@ -62,11 +60,7 @@ fun ElementKeyboardButton(
 				}
 			),
 		shape = MaterialTheme.shapes.medium,
-		color = color,
-		border = BorderStroke(
-			width = 2.dp,
-			color = borderColor
-		)
+		color = color
 	) {
 		Box(
 			modifier = Modifier

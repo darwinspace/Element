@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -42,6 +41,7 @@ import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
 import com.space.element.presentation.main.model.Operator
 import com.space.element.presentation.main.model.OperatorType
+import com.space.element.util.format
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -177,10 +177,6 @@ private fun ExpressionElementItem(
 ) {
 	Surface(
 		shape = MaterialTheme.shapes.small,
-		border = BorderStroke(
-			width = 2.dp,
-			color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-		),
 		tonalElevation = 12.dp,
 		onClick = onClick
 	) {
@@ -208,7 +204,7 @@ fun ExpressionElementItemValue(elementValue: String) {
 		Spacer(modifier = Modifier.requiredWidth(12.dp))
 
 		Text(
-			text = "= $elementValue",
+			text = "= ${elementValue.toDouble().format()}",
 			style = MaterialTheme.typography.bodyMedium
 		)
 	}

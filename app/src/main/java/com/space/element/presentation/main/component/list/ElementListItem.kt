@@ -1,6 +1,5 @@
 package com.space.element.presentation.main.component.list
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -39,10 +38,6 @@ fun ElementListItem(
 		modifier = modifier,
 		shape = MaterialTheme.shapes.medium,
 		tonalElevation = 6.dp,
-		border = BorderStroke(
-			width = 2.dp,
-			color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-		),
 		onClick = onClick
 	) {
 		Row(
@@ -56,7 +51,10 @@ fun ElementListItem(
 				textAlign = TextAlign.Justify,
 				style = MaterialTheme.typography.titleSmall
 			)
-			Text(text = element.value, style = MaterialTheme.typography.titleSmall)
+			Text(
+				text = element.value,
+				style = MaterialTheme.typography.bodyMedium
+			)
 		}
 	}
 }

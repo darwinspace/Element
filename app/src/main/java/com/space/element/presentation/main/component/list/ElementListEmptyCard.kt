@@ -1,6 +1,5 @@
 package com.space.element.presentation.main.component.list
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -33,23 +32,15 @@ fun getText(): AnnotatedString {
 
 @Composable
 fun EmptyElementListCard() {
-	val space = 32.dp
-
-	val text = getText()
-
-	val borderColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f)
-	val border = BorderStroke(width = 2.dp, color = borderColor)
-
 	Surface(
 		shape = MaterialTheme.shapes.medium,
-		color = MaterialTheme.colorScheme.primaryContainer,
-		border = border
+		color = MaterialTheme.colorScheme.primaryContainer
 	) {
 		Text(
-			text = text,
+			text = getText(),
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(space),
+				.padding(32.dp),
 			style = MaterialTheme.typography.bodyMedium,
 			textAlign = TextAlign.Center
 		)
