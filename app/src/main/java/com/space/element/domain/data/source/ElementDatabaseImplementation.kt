@@ -14,10 +14,8 @@ class ElementDatabaseImplementation @Inject constructor(
 ) : ElementDatabase {
 	override fun getList(): Flow<List<Element>> {
 		return dataStore.data.map { preferences ->
-			preferences.asMap().map {
-				val name = it.key.name
-				val value = it.value.toString()
-				Element(name, value)
+			preferences.asMap().map { (key, value) ->
+				Element(key.name, value.toString())
 			}
 		}
 	}
