@@ -12,9 +12,9 @@ import com.space.element.presentation.main.model.ExpressionResultState
 fun ElementHeader(
 	modifier: Modifier = Modifier,
 	expression: List<ExpressionItem>,
-	expressionCursorPosition: Int,
 	expressionResultState: ExpressionResultState,
-	onExpressionSpaceClick: (Int) -> Unit
+	expressionCursorPosition: Int,
+	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
 	Surface(
 		modifier = modifier,
@@ -24,7 +24,7 @@ fun ElementHeader(
 			ElementExpression(
 				expression = expression,
 				expressionCursorPosition = expressionCursorPosition,
-				onExpressionSpaceClick = onExpressionSpaceClick
+				onExpressionCursorPositionChange = onExpressionCursorPositionChange
 			)
 
 			ElementExpressionResult(

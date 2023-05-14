@@ -13,9 +13,9 @@ fun MainView() {
 
 	MainScreen(
 		expression = viewModel.expression,
-		expressionCursorPosition = viewModel.expressionCursorPosition,
 		expressionResult = viewModel.expressionResult,
-		onExpressionSpaceClick = viewModel::onExpressionSpaceClick,
+		expressionCursorPosition = viewModel.expressionCursorPosition,
+		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
 		elementList = elementList,
 		elementListMode = viewModel.elementListMode,
 		onAddElementList = viewModel::addElement,

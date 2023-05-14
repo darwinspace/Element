@@ -209,7 +209,7 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun onExpressionSpaceClick(position: Int) {
+	fun onExpressionCursorPositionChange(position: Int) {
 		expressionCursorPosition = position
 	}
 

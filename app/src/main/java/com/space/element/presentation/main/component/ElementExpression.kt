@@ -63,7 +63,7 @@ private fun Operator.getColor(): Color {
 fun ElementExpression(
 	expression: List<ExpressionItem>,
 	expressionCursorPosition: Int,
-	onExpressionSpaceClick: (Int) -> Unit
+	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
@@ -83,7 +83,7 @@ fun ElementExpression(
 			ExpressionItemSpace(
 				cursorVisible = expressionCursorPosition == 0
 			) {
-				onExpressionSpaceClick(0)
+				onExpressionCursorPositionChange(0)
 			}
 		}
 
@@ -92,7 +92,7 @@ fun ElementExpression(
 				expressionItem = item,
 				cursorVisible = expressionCursorPosition == index + 1
 			) {
-				onExpressionSpaceClick(index + 1)
+				onExpressionCursorPositionChange(index + 1)
 			}
 		}
 

@@ -66,7 +66,7 @@ fun MainScreenPreview() {
 			expression = expression,
 			expressionCursorPosition = expressionCursorPosition,
 			expressionResult = ExpressionResultState.Value(value = 10.0),
-			onExpressionSpaceClick = { expressionCursorPosition = it },
+			onExpressionCursorPositionChange = { expressionCursorPosition = it },
 			elementList = emptyList(),
 			elementListMode = elementListMode,
 			onAddElementList = { _, _ -> },
@@ -87,7 +87,7 @@ fun MainScreen(
 	expression: List<ExpressionItem>,
 	expressionCursorPosition: Int,
 	expressionResult: ExpressionResultState,
-	onExpressionSpaceClick: (Int) -> Unit,
+	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
 	onAddElementList: (String, String) -> Unit,
@@ -98,14 +98,14 @@ fun MainScreen(
 ) {
 	ColumnMainScreen(
 		expression = expression,
-		expressionCursorPosition = expressionCursorPosition,
 		expressionResult = expressionResult,
+		expressionCursorPosition = expressionCursorPosition,
+		onExpressionCursorPositionChange = onExpressionCursorPositionChange,
 		elementList = elementList,
 		elementListMode = elementListMode,
 		onAddElementList = onAddElementList,
 		onElementListItemClick = onElementListItemClick,
 		onElementListModeChange = onElementListModeChange,
-		onExpressionSpaceClick = onExpressionSpaceClick,
 		onKeyboardButtonClick = onKeyboardButtonClick,
 		onKeyboardButtonLongClick = onKeyboardButtonLongClick
 	)
@@ -146,7 +146,7 @@ private fun ColumnMainScreen(
 	expression: List<ExpressionItem>,
 	expressionCursorPosition: Int,
 	expressionResult: ExpressionResultState,
-	onExpressionSpaceClick: (Int) -> Unit,
+	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
 	onAddElementList: (String, String) -> Unit,
@@ -171,9 +171,9 @@ private fun ColumnMainScreen(
 				.fillMaxSize()
 				.padding(contentPadding),
 			expression = expression,
-			expressionCursorPosition = expressionCursorPosition,
 			expressionResult = expressionResult,
-			onExpressionSpaceClick = onExpressionSpaceClick,
+			expressionCursorPosition = expressionCursorPosition,
+			onExpressionCursorPositionChange = onExpressionCursorPositionChange,
 			onKeyboardButtonClick = onKeyboardButtonClick,
 			onKeyboardButtonLongClick = onKeyboardButtonLongClick
 		)
@@ -208,7 +208,7 @@ private fun MainContent(
 	expression: List<ExpressionItem>,
 	expressionCursorPosition: Int,
 	expressionResult: ExpressionResultState,
-	onExpressionSpaceClick: (Int) -> Unit,
+	onExpressionCursorPositionChange: (Int) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onKeyboardButtonLongClick: (KeyboardButton) -> Unit
 ) {
@@ -218,9 +218,9 @@ private fun MainContent(
 				.weight(1f)
 				.verticalScroll(rememberScrollState()),
 			expression = expression,
-			expressionCursorPosition = expressionCursorPosition,
 			expressionResultState = expressionResult,
-			onExpressionSpaceClick = onExpressionSpaceClick
+			expressionCursorPosition = expressionCursorPosition,
+			onExpressionCursorPositionChange = onExpressionCursorPositionChange
 		)
 
 		ElementKeyboard(
