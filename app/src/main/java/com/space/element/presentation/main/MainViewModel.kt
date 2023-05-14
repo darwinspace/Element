@@ -38,6 +38,14 @@ class MainViewModel @Inject constructor(
 	private val removeElementFromList: RemoveElementFromList,
 	private val executeExpression: ExecuteExpression
 ) : ViewModel() {
+	val expression = mutableStateListOf<ExpressionItem>()
+
+	var expressionResult by mutableStateOf<ExpressionResultState>(Empty)
+		private set
+
+	var expressionCursorPosition by mutableStateOf(0)
+		private set
+
 	val elementList = getElementList().stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
@@ -45,13 +53,6 @@ class MainViewModel @Inject constructor(
 	)
 
 	var elementListMode by mutableStateOf<ElementListMode>(ElementListMode.Normal)
-
-	val expression = mutableStateListOf<ExpressionItem>()
-
-	var expressionCursorPosition by mutableStateOf(0)
-		private set
-
-	var expressionResult by mutableStateOf<ExpressionResultState>(Empty)
 		private set
 
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
