@@ -72,7 +72,6 @@ fun MainScreenPreview() {
 			elementListMode = elementListMode,
 			onAddElementList = { name, value -> elementList.add(Element(name, value)) },
 			onElementListModeChange = { elementListMode = it },
-			onKeyboardButtonLongClick = { throw NotImplementedError() },
 			onKeyboardButtonClick = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() }
 		)
@@ -91,7 +90,6 @@ fun MainScreen(
 	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
 	onElementListItemClick: (Element) -> Unit
 ) {
 	ColumnMainScreen(
@@ -104,8 +102,7 @@ fun MainScreen(
 		onAddElementList = onAddElementList,
 		onElementListItemClick = onElementListItemClick,
 		onElementListModeChange = onElementListModeChange,
-		onKeyboardButtonClick = onKeyboardButtonClick,
-		onKeyboardButtonLongClick = onKeyboardButtonLongClick
+		onKeyboardButtonClick = onKeyboardButtonClick
 	)
 }
 
@@ -150,8 +147,7 @@ private fun ColumnMainScreen(
 	onAddElementList: (String, String) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onKeyboardButtonLongClick: (KeyboardButton) -> Unit,
+	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	BottomSheetScaffold(
 		sheetContent = {
@@ -172,8 +168,7 @@ private fun ColumnMainScreen(
 			expressionResult = expressionResult,
 			expressionCursorPosition = expressionCursorPosition,
 			onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-			onKeyboardButtonClick = onKeyboardButtonClick,
-			onKeyboardButtonLongClick = onKeyboardButtonLongClick
+			onKeyboardButtonClick = onKeyboardButtonClick
 		)
 	}
 }
@@ -207,8 +202,7 @@ private fun MainContent(
 	expressionCursorPosition: Int,
 	expressionResult: ExpressionResultState,
 	onExpressionCursorPositionChange: (Int) -> Unit,
-	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onKeyboardButtonLongClick: (KeyboardButton) -> Unit
+	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	Column(modifier = modifier) {
 		ElementHeader(
@@ -224,7 +218,6 @@ private fun MainContent(
 		ElementKeyboard(
 			contentGap = 16.dp,
 			contentPadding = PaddingValues(16.dp),
-			onButtonLongClick = onKeyboardButtonLongClick,
 			onButtonClick = onKeyboardButtonClick
 		)
 	}

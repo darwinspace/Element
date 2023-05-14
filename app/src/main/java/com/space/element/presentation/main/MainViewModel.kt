@@ -72,12 +72,6 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun onKeyboardButtonLongClick(keyboardButton: KeyboardButton) {
-		if (keyboardButton == KeyboardButton.Delete) {
-			onDeleteLongClick()
-		}
-	}
-
 	fun onKeyboardButtonClick(keyboardButton: KeyboardButton) {
 		when (keyboardButton.type) {
 			KeyboardButtonType.Dot,
@@ -90,13 +84,16 @@ class MainViewModel @Inject constructor(
 				onDeleteOperatorButtonClick()
 			}
 
-			KeyboardButtonType.Function -> Unit
 			KeyboardButtonType.Equal -> {
 				onEqualOperatorButtonClick()
 			}
 
 			KeyboardButtonType.Number -> {
 				onNumberButtonClick(keyboardButton)
+			}
+
+			KeyboardButtonType.Clear -> {
+				onClearButtonClick()
 			}
 		}
 	}
@@ -109,7 +106,7 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	private fun onDeleteLongClick() {
+	private fun onClearButtonClick() {
 		emptyExpression()
 		emptyResult()
 	}
@@ -197,11 +194,11 @@ class MainViewModel @Inject constructor(
 		onAppendExpressionItem(item)
 	}
 
-	fun removeElementItem(element: Element) {
-		viewModelScope.launch {
-			removeElementFromList(element)
-		}
-	}
+//	fun removeElementItem(element: Element) {
+//		viewModelScope.launch {
+//			removeElementFromList(element)
+//		}
+//	}
 
 	fun addElement(elementName: String, elementValue: String) {
 		viewModelScope.launch {

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardBackspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -24,12 +24,7 @@ fun ElementKeyboardPreview() {
 		ElementKeyboard(
 			contentGap = 16.dp,
 			contentPadding = PaddingValues(16.dp),
-			onButtonLongClick = {
-				throw NotImplementedError()
-			},
-			onButtonClick = {
-				throw NotImplementedError()
-			}
+			onButtonClick = { throw NotImplementedError() }
 		)
 	}
 }
@@ -38,14 +33,12 @@ fun ElementKeyboardPreview() {
 fun ElementKeyboard(
 	contentGap: Dp,
 	contentPadding: PaddingValues,
-	onButtonLongClick: (KeyboardButton) -> Unit,
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
 		ElementKeyboardContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
-			onButtonLongClick = onButtonLongClick,
 			onButtonClick = onButtonClick
 		)
 	}
@@ -55,7 +48,6 @@ fun ElementKeyboard(
 private fun ElementKeyboardContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
-	onButtonLongClick: (KeyboardButton) -> Unit,
 	onButtonClick: (KeyboardButton) -> Unit,
 ) {
 	Column(
@@ -66,34 +58,33 @@ private fun ElementKeyboardContent(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
 			ElementKeyboardButton(
-				keyboardButton = KeyboardButton.Delete,
+				keyboardButton = KeyboardButton.Clear,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
@@ -105,32 +96,31 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
@@ -142,32 +132,31 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
@@ -179,32 +168,31 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
@@ -214,34 +202,33 @@ private fun ElementKeyboardContent(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
 			ElementKeyboardButton(
-				keyboardButton = KeyboardButton.Function,
+				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}
+
 			ElementKeyboardButton(
-				keyboardButton = KeyboardButton.Dot,
+				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				Icon(imageVector = Icons.Default.KeyboardBackspace, contentDescription = null)
 			}
+
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
-				onClick = onButtonClick,
-				onLongClick = onButtonLongClick
+				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
 			}

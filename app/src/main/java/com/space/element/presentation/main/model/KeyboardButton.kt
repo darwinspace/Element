@@ -11,7 +11,7 @@ enum class KeyboardButton(val symbol: Char, val type: KeyboardButtonType) {
 	Seven(symbol = '7', type = KeyboardButtonType.Number),
 	Eight(symbol = '8', type = KeyboardButtonType.Number),
 	Nine(symbol = '9', type = KeyboardButtonType.Number),
-	Delete(symbol = '?', type = KeyboardButtonType.Delete),
+	Clear(symbol = 'C', type = KeyboardButtonType.Clear),
 	Dot(symbol = '.', type = KeyboardButtonType.Dot),
 	Open(symbol = Operator.Open.symbol, type = KeyboardButtonType.Parentheses),
 	Close(symbol = Operator.Close.symbol, type = KeyboardButtonType.Parentheses),
@@ -19,6 +19,6 @@ enum class KeyboardButton(val symbol: Char, val type: KeyboardButtonType) {
 	Subtraction(symbol = Operator.Subtraction.symbol, type = KeyboardButtonType.Operator),
 	Multiplication(symbol = Operator.Multiplication.symbol, type = KeyboardButtonType.Operator),
 	Division(symbol = Operator.Division.symbol, type = KeyboardButtonType.Operator),
-	Function(symbol = 'f', type = KeyboardButtonType.Function),
+	Delete(symbol = '?', type = KeyboardButtonType.Delete),
 	Equal(symbol = '=', type = KeyboardButtonType.Equal)
 }
