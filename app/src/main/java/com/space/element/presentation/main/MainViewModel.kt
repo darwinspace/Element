@@ -213,7 +213,7 @@ class MainViewModel @Inject constructor(
 		expressionCursorPosition = position
 	}
 
-	fun onElementListModeChange(elementListMode: ElementListMode) {
-		this.elementListMode = elementListMode
+	fun onElementListModeChange(mode: ElementListMode) {
+		elementListMode = mode
 	}
 }
