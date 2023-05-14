@@ -26,7 +26,6 @@ import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.Operator
 import com.space.element.presentation.theme.ElementTheme
 import java.util.*
-import kotlin.random.Random
 
 private fun getPreviewExpressionList(): List<ExpressionItem> {
 	return listOf(
@@ -57,25 +56,24 @@ private fun getPreviewExpressionList(): List<ExpressionItem> {
 )
 @Composable
 fun MainScreenPreview() {
-	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
-	var expressionCursorPosition by remember { mutableStateOf(0) }
 	val expression = remember { getPreviewExpressionList().toMutableStateList() }
+	var expressionCursorPosition by remember { mutableStateOf(0) }
+
+	val elementList = remember { mutableStateListOf<Element>() }
+	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 
 	ElementTheme {
 		MainScreen(
 			expression = expression,
-			expressionCursorPosition = expressionCursorPosition,
 			expressionResult = ExpressionResultState.Value(value = 10.0),
+			expressionCursorPosition = expressionCursorPosition,
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
-			elementList = emptyList(),
+			elementList = elementList,
 			elementListMode = elementListMode,
-			onAddElementList = { _, _ -> },
+			onAddElementList = { name, value -> elementList.add(Element(name, value)) },
 			onElementListModeChange = { elementListMode = it },
 			onKeyboardButtonLongClick = { throw NotImplementedError() },
-			onKeyboardButtonClick = {
-				val digit = Random.nextInt(0, 9).digitToChar()
-				expression.add(NumberItem(digit))
-			},
+			onKeyboardButtonClick = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() }
 		)
 	}
