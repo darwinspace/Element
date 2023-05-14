@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -69,7 +69,7 @@ fun ElementListHeader(
 					Icon(imageVector = Icons.Default.Close, contentDescription = null)
 				}
 
-				Spacer(modifier = Modifier.requiredWidth(16.dp))
+				Spacer(modifier = Modifier.width(16.dp))
 			}
 		}
 
@@ -81,7 +81,7 @@ fun ElementListHeader(
 
 		AnimatedVisibility(visible = mode !is Create) {
 			Row {
-				Spacer(modifier = Modifier.requiredWidth(16.dp))
+				Spacer(modifier = Modifier.width(16.dp))
 
 				ElementIconButton(
 					onClick = {
@@ -137,7 +137,7 @@ fun CreateElementForm(
 			)
 		)
 
-		Spacer(modifier = Modifier.requiredHeight(24.dp))
+		Spacer(modifier = Modifier.height(24.dp))
 
 		ElementTextField(
 			modifier = Modifier.fillMaxWidth(),

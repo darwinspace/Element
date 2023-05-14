@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -201,7 +200,7 @@ private fun ExpressionElementItemName(elementName: String) {
 @Composable
 fun ExpressionElementItemValue(elementValue: String) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
-		Spacer(modifier = Modifier.requiredWidth(12.dp))
+		Spacer(modifier = Modifier.width(12.dp))
 
 		Text(
 			text = "= ${elementValue.toDouble().format()}",
