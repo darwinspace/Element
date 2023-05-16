@@ -9,9 +9,9 @@ import com.space.element.domain.data.repository.ElementRepositoryImplementation
 import com.space.element.domain.data.source.ElementDatabase
 import com.space.element.domain.data.source.ElementDatabaseImplementation
 import com.space.element.domain.repository.ElementRepository
-import com.space.element.domain.use_case.element_list.AddElementToList
+import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList
-import com.space.element.domain.use_case.element_list.RemoveElementFromList
+import com.space.element.domain.use_case.element_list.DeleteElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import dagger.Module
 import dagger.Provides
@@ -51,14 +51,14 @@ object MainModule {
 
 	@Provides
 	@Singleton
-	fun provideAddToElementList(repository: ElementRepository): AddElementToList {
-		return AddElementToList(repository)
+	fun provideAddToElementList(repository: ElementRepository): AddElement {
+		return AddElement(repository)
 	}
 
 	@Provides
 	@Singleton
-	fun provideRemoveElementFromList(repository: ElementRepository): RemoveElementFromList {
-		return RemoveElementFromList(repository)
+	fun provideRemoveElementFromList(repository: ElementRepository): DeleteElement {
+		return DeleteElement(repository)
 	}
 
 	@Provides

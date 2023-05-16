@@ -4,7 +4,7 @@ import com.space.element.domain.model.Element
 import com.space.element.domain.repository.ElementRepository
 import javax.inject.Inject
 
-class RemoveElementFromList @Inject constructor(private val repository: ElementRepository) {
+class DeleteElement @Inject constructor(private val repository: ElementRepository) {
 	suspend operator fun invoke(/*context: Context,*/ element: Element) {
 		repository.removeElementFromList(/*context,*/ element)
 	}
