@@ -14,13 +14,12 @@ import com.space.element.domain.model.ExpressionItem.OperatorItem
 import com.space.element.domain.use_case.element_list.AddElementToList
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElementFromList
-import com.space.element.domain.use_case.expression.ExecuteExpression
+import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ExpressionResult.ExpressionException
+import com.space.element.presentation.main.model.ExpressionResult.Error
 import com.space.element.presentation.main.model.ExpressionResult.Value
 import com.space.element.presentation.main.model.ExpressionResultState
-import com.space.element.presentation.main.model.ExpressionResultState.Empty
-import com.space.element.presentation.main.model.ExpressionResultState.Error
+import com.space.element.presentation.main.model.ExpressionResultState.*
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
 import com.space.element.presentation.main.model.Operator
@@ -36,7 +35,7 @@ class MainViewModel @Inject constructor(
 	getElementList: GetElementList,
 	private val addElementToList: AddElementToList,
 	private val removeElementFromList: RemoveElementFromList,
-	private val executeExpression: ExecuteExpression
+	private val evaluateExpression: EvaluateExpression
 ) : ViewModel() {
 	val expression = mutableStateListOf<ExpressionItem>()
 
@@ -99,9 +98,9 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun expressionChanged() {
-		val result = executeExpression(expression)
+		val result = evaluateExpression(expression)
 		expressionResult = when (result) {
-			is ExpressionException -> Error(result.exception)
+			is Error -> ExpressionResultState.Error(result.exception)
 			is Value -> ExpressionResultState.Value(result.value)
 		}
 	}

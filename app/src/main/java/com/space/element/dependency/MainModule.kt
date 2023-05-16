@@ -12,7 +12,7 @@ import com.space.element.domain.repository.ElementRepository
 import com.space.element.domain.use_case.element_list.AddElementToList
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElementFromList
-import com.space.element.domain.use_case.expression.ExecuteExpression
+import com.space.element.domain.use_case.expression.EvaluateExpression
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,7 +63,7 @@ object MainModule {
 
 	@Provides
 	@Singleton
-	fun provideExecuteExpression(): ExecuteExpression {
-		return ExecuteExpression()
+	fun provideExecuteExpression(): EvaluateExpression {
+		return EvaluateExpression()
 	}
 }
