@@ -3,6 +3,7 @@ package com.space.element.presentation.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,6 +53,15 @@ class MainViewModel @Inject constructor(
 	)
 
 	var elementListMode by mutableStateOf<ElementListMode>(ElementListMode.Normal)
+		private set
+
+	var searchValue by mutableStateOf(String())
+		private set
+
+	var elementName by mutableStateOf(String())
+		private set
+
+	var elementValue by mutableStateOf(String())
 		private set
 
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
