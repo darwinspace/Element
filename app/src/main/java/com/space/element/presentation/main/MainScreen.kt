@@ -37,6 +37,15 @@ private fun getPreviewExpressionList(): List<ExpressionItem> {
 	)
 }
 
+private fun getPreviewElementList(): List<Element> {
+	return buildList {
+		repeat(10) {
+			val element = Element("Item $it", it.toString())
+			add(element)
+		}
+	}
+}
+
 //@Preview(
 //	uiMode = Configuration.UI_MODE_NIGHT_YES,
 //	device = "spec:width=411dp,height=891dp,orientation=landscape"
@@ -59,7 +68,7 @@ fun MainScreenPreview() {
 	val expression = remember { getPreviewExpressionList().toMutableStateList() }
 	var expressionCursorPosition by remember { mutableStateOf(0) }
 
-	val elementList = remember { mutableStateListOf<Element>() }
+	val elementList = remember { getPreviewElementList().toMutableStateList() }
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 
 	ElementTheme {
@@ -73,7 +82,8 @@ fun MainScreenPreview() {
 			onAddElementList = { name, value -> elementList.add(Element(name, value)) },
 			onElementListModeChange = { elementListMode = it },
 			onKeyboardButtonClick = { throw NotImplementedError() },
-			onElementListItemClick = { throw NotImplementedError() }
+			onElementListItemClick = { throw NotImplementedError() },
+			onElementListItemLongClick = { elementList.remove(it) }
 		)
 	}
 }
@@ -82,15 +92,16 @@ fun MainScreenPreview() {
 @Composable
 fun MainScreen(
 	expression: List<ExpressionItem>,
-	expressionCursorPosition: Int,
 	expressionResult: ExpressionResultState,
+	expressionCursorPosition: Int,
 	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
+	onElementListItemClick: (Element) -> Unit,
+	onElementListItemLongClick: (Element) -> Unit,
 	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onElementListItemClick: (Element) -> Unit
 ) {
 	ColumnMainScreen(
 		expression = expression,
@@ -99,8 +110,9 @@ fun MainScreen(
 		onExpressionCursorPositionChange = onExpressionCursorPositionChange,
 		elementList = elementList,
 		elementListMode = elementListMode,
-		onAddElementList = onAddElementList,
 		onElementListItemClick = onElementListItemClick,
+		onElementListItemLongClick = onElementListItemLongClick,
+		onAddElementList = onAddElementList,
 		onElementListModeChange = onElementListModeChange,
 		onKeyboardButtonClick = onKeyboardButtonClick
 	)
@@ -144,8 +156,9 @@ private fun ColumnMainScreen(
 	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
-	onAddElementList: (String, String) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
+	onElementListItemLongClick: (Element) -> Unit,
+	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
@@ -154,9 +167,10 @@ private fun ColumnMainScreen(
 			ElementListBottomSheetContent(
 				elementList = elementList,
 				elementListMode = elementListMode,
-				onAddElementList = onAddElementList,
 				onElementListModeChange = onElementListModeChange,
-				onElementListItemClick = onElementListItemClick
+				onElementListItemClick = onElementListItemClick,
+				onElementListItemLongClick = onElementListItemLongClick,
+				onAddElementList = onAddElementList
 			)
 		}
 	) { contentPadding ->
@@ -177,9 +191,10 @@ private fun ColumnMainScreen(
 private fun ElementListBottomSheetContent(
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
-	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
+	onElementListItemLongClick: (Element) -> Unit,
+	onAddElementList: (String, String) -> Unit,
 ) {
 	val bottomSheetHeight = 512.dp
 
@@ -189,9 +204,10 @@ private fun ElementListBottomSheetContent(
 			.fillMaxWidth(),
 		elementList = elementList,
 		elementListMode = elementListMode,
-		onAddElementList = onAddElementList,
 		onElementListModeChange = onElementListModeChange,
-		onElementListItemClick = onElementListItemClick
+		onElementListItemClick = onElementListItemClick,
+		onElementListItemLongClick = onElementListItemLongClick,
+		onAddElementList = onAddElementList
 	)
 }
 

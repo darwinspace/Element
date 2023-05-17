@@ -18,8 +18,9 @@ fun MainView() {
 		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
 		elementList = elementList,
 		elementListMode = viewModel.elementListMode,
-		onAddElementList = viewModel::addElement,
 		onElementListItemClick = viewModel::onElementListItemClick,
+		onElementListItemLongClick = viewModel::onElementListItemLongClick,
+		onAddElementList = viewModel::addElement,
 		onElementListModeChange = viewModel::onElementListModeChange,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)

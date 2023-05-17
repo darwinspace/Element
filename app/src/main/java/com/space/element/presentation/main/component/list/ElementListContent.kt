@@ -14,26 +14,28 @@ import com.space.element.domain.model.Element
 @Composable
 fun ElementListContent(
 	elementList: List<Element>,
-	onClick: (Element) -> Unit
+	onClick: (Element) -> Unit,
+	onLongClick: (Element) -> Unit,
 ) {
 	LazyColumn(
 		contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
-		elementListItems(elementList, onClick)
+		elementListItems(elementList, onClick,onLongClick)
 	}
 }
 
 fun LazyListScope.elementListItems(
 	elementList: List<Element>,
-	onClick: (Element) -> Unit
+	onClick: (Element) -> Unit,
+	onLongClick: (Element) -> Unit,
 ) {
 	items(elementList, { it.name }) { element ->
 		ElementListItem(
 			modifier = Modifier.fillMaxWidth(),
-			element = element
-		) {
-			onClick(element)
-		}
+			element = element,
+			onLongClick = onLongClick,
+			onClick = onClick
+		)
 	}
 }

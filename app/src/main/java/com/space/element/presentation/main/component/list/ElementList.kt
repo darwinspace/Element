@@ -47,6 +47,7 @@ fun ElementListPreview() {
 			elementListMode = Normal,
 			onElementListModeChange = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() },
+			onElementListItemLongClick = { throw NotImplementedError() },
 			onAddElementList = { _, _ -> }
 		)
 	}
@@ -57,9 +58,10 @@ fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: List<Element>,
 	elementListMode: ElementListMode,
-	onAddElementList: (String, String) -> Unit,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onElementListItemClick: (Element) -> Unit
+	onElementListItemClick: (Element) -> Unit,
+	onElementListItemLongClick: (Element) -> Unit,
+	onAddElementList: (String, String) -> Unit
 ) {
 	var searchValue by rememberSaveable(elementListMode is Search) {
 		mutableStateOf(String())
@@ -129,7 +131,8 @@ fun ElementList(
 			AnimatedVisibility(visible = elementList.isNotEmpty()) {
 				ElementListContent(
 					elementList = elementList,
-					onClick = onElementListItemClick
+					onClick = onElementListItemClick,
+					onLongClick = onElementListItemLongClick
 				)
 			}
 
