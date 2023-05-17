@@ -90,7 +90,7 @@ fun ElementList(
 	}
 
 
-	val createElementButtonEnabled = when (elementListMode) {
+	val createElementEnabled = when (elementListMode) {
 		Create -> isValidElement(elementName, elementValue)
 		Normal -> true
 		Search -> false
@@ -101,7 +101,7 @@ fun ElementList(
 			ElementListHeader(
 				mode = elementListMode,
 				onModeChange = onElementListModeChange,
-				createElementButtonEnabled = createElementButtonEnabled,
+				createElementEnabled = createElementEnabled,
 				onCreateElementClick = {
 					if (elementListMode is Create) {
 						onAddElementList(elementName, elementValue)

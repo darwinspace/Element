@@ -49,7 +49,7 @@ fun ElementListHeaderPreview() {
 fun ElementListHeader(
 	mode: ElementListMode,
 	onModeChange: (ElementListMode) -> Unit,
-	createElementButtonEnabled: Boolean,
+	createElementEnabled: Boolean,
 	onCreateElementClick: () -> Unit
 ) {
 	Row(
@@ -75,7 +75,7 @@ fun ElementListHeader(
 
 		CreateElementButton(
 			modifier = Modifier.weight(1f),
-			enabled = createElementButtonEnabled,
+			enabled = createElementEnabled,
 			onClick = onCreateElementClick
 		)
 
