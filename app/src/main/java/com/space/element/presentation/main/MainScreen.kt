@@ -78,12 +78,19 @@ fun MainScreenPreview() {
 			expressionCursorPosition = expressionCursorPosition,
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
 			elementList = elementList,
-			elementListMode = elementListMode,
-			onAddElementList = { name, value -> elementList.add(Element(name, value)) },
-			onElementListModeChange = { elementListMode = it },
-			onKeyboardButtonClick = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() },
-			onElementListItemLongClick = { elementList.remove(it) }
+			onElementListItemLongClick = { elementList.remove(it) },
+			elementListMode = elementListMode,
+			onElementListModeChange = { elementListMode = it },
+			searchValue = String(),
+			onSearchValueChange = { throw NotImplementedError() },
+			elementName = String(),
+			onElementNameChange = { throw NotImplementedError() },
+			elementValue = String(),
+			onElementValueChange = { throw NotImplementedError() },
+			createElementEnabled = true,
+			onCreateElementClick = { throw NotImplementedError() },
+			onKeyboardButtonClick = { throw NotImplementedError() }
 		)
 	}
 }
@@ -96,11 +103,18 @@ fun MainScreen(
 	expressionCursorPosition: Int,
 	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
-	elementListMode: ElementListMode,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListItemLongClick: (Element) -> Unit,
-	onAddElementList: (String, String) -> Unit,
+	elementListMode: ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
+	searchValue: String,
+	onSearchValueChange: (String) -> Unit,
+	elementName: String,
+	onElementNameChange: (String) -> Unit,
+	elementValue: String,
+	onElementValueChange: (String) -> Unit,
+	createElementEnabled: Boolean,
+	onCreateElementClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 ) {
 	ColumnMainScreen(
@@ -109,11 +123,18 @@ fun MainScreen(
 		expressionCursorPosition = expressionCursorPosition,
 		onExpressionCursorPositionChange = onExpressionCursorPositionChange,
 		elementList = elementList,
-		elementListMode = elementListMode,
 		onElementListItemClick = onElementListItemClick,
 		onElementListItemLongClick = onElementListItemLongClick,
-		onAddElementList = onAddElementList,
+		elementListMode = elementListMode,
 		onElementListModeChange = onElementListModeChange,
+		searchValue = searchValue,
+		onSearchValueChange = onSearchValueChange,
+		elementName = elementName,
+		onElementNameChange = onElementNameChange,
+		elementValue = elementValue,
+		onElementValueChange = onElementValueChange,
+		createElementEnabled = createElementEnabled,
+		onCreateElementClick = onCreateElementClick,
 		onKeyboardButtonClick = onKeyboardButtonClick
 	)
 }
@@ -155,11 +176,18 @@ private fun ColumnMainScreen(
 	expressionResult: ExpressionResultState,
 	onExpressionCursorPositionChange: (Int) -> Unit,
 	elementList: List<Element>,
-	elementListMode: ElementListMode,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListItemLongClick: (Element) -> Unit,
-	onAddElementList: (String, String) -> Unit,
+	elementListMode: ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
+	searchValue: String,
+	onSearchValueChange: (String) -> Unit,
+	elementName: String,
+	onElementNameChange: (String) -> Unit,
+	elementValue: String,
+	onElementValueChange: (String) -> Unit,
+	createElementEnabled: Boolean,
+	onCreateElementClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	BottomSheetScaffold(
@@ -170,7 +198,14 @@ private fun ColumnMainScreen(
 				onElementListModeChange = onElementListModeChange,
 				onElementListItemClick = onElementListItemClick,
 				onElementListItemLongClick = onElementListItemLongClick,
-				onAddElementList = onAddElementList
+				searchValue = searchValue,
+				onSearchValueChange = onSearchValueChange,
+				elementName = elementName,
+				onElementNameChange = onElementNameChange,
+				elementValue = elementValue,
+				onElementValueChange = onElementValueChange,
+				createElementEnabled = createElementEnabled,
+				onCreateElementClick = onCreateElementClick
 			)
 		}
 	) { contentPadding ->
@@ -190,11 +225,18 @@ private fun ColumnMainScreen(
 @Composable
 private fun ElementListBottomSheetContent(
 	elementList: List<Element>,
-	elementListMode: ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListItemLongClick: (Element) -> Unit,
-	onAddElementList: (String, String) -> Unit,
+	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit,
+	searchValue: String,
+	onSearchValueChange: (String) -> Unit,
+	elementName: String,
+	onElementNameChange: (String) -> Unit,
+	elementValue: String,
+	onElementValueChange: (String) -> Unit,
+	createElementEnabled: Boolean,
+	onCreateElementClick: () -> Unit
 ) {
 	val bottomSheetHeight = 512.dp
 
@@ -207,7 +249,14 @@ private fun ElementListBottomSheetContent(
 		onElementListModeChange = onElementListModeChange,
 		onElementListItemClick = onElementListItemClick,
 		onElementListItemLongClick = onElementListItemLongClick,
-		onAddElementList = onAddElementList
+		searchValue = searchValue,
+		onSearchValueChange = onSearchValueChange,
+		elementName = elementName,
+		onElementNameChange = onElementNameChange,
+		elementValue = elementValue,
+		onElementValueChange = onElementValueChange,
+		createElementEnabled = createElementEnabled,
+		onCreateElementClick = onCreateElementClick
 	)
 }
 

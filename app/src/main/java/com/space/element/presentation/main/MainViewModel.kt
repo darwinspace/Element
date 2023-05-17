@@ -3,7 +3,6 @@ package com.space.element.presentation.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,6 +29,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+/*
+	val createElementEnabled = when (elementListMode) {
+		Create -> isValidElement(elementName, elementValue)
+		Normal -> true
+		Search -> false
+	}
+
+*/
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -63,6 +71,18 @@ class MainViewModel @Inject constructor(
 
 	var elementValue by mutableStateOf(String())
 		private set
+
+	fun onSearchValueChange(value: String) {
+		searchValue = value
+	}
+
+	fun onElementNameChange(name: String) {
+		elementName = name
+	}
+
+	fun onElementValueChange(value: String) {
+		elementValue = value
+	}
 
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
 		expression.add(expressionCursorPosition, expressionItem)
@@ -209,7 +229,7 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun addElement(elementName: String, elementValue: String) {
+	private fun addElement(elementName: String, elementValue: String) {
 		viewModelScope.launch {
 			val element = Element(elementName, elementValue)
 			addElement(element)
@@ -222,5 +242,31 @@ class MainViewModel @Inject constructor(
 
 	fun onElementListModeChange(mode: ElementListMode) {
 		elementListMode = mode
+	}
+
+	fun onCreateElementClick() {
+		if (elementListMode is ElementListMode.Create) {
+			addElement(elementName, elementValue)
+		}
+
+		elementListMode = if (elementListMode is ElementListMode.Create) {
+			ElementListMode.Normal
+		} else {
+			ElementListMode.Create
+		}
+	}
+
+	private fun isValidCurrentElement(): Boolean {
+		return elementName.isNotBlank() && elementList.value.none {
+			it.name == elementName.trim()
+		} && elementValue.toDoubleOrNull() != null
+	}
+
+	fun isCreateElementEnabled(): Boolean {
+		return when (elementListMode) {
+			ElementListMode.Create -> isValidCurrentElement()
+			ElementListMode.Normal -> true
+			ElementListMode.Search -> false
+		}
 	}
 }

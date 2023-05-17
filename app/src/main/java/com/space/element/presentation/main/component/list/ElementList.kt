@@ -15,7 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,15 +31,21 @@ import com.space.element.presentation.main.model.ElementListMode.Normal
 import com.space.element.presentation.main.model.ElementListMode.Search
 import com.space.element.presentation.theme.ElementTheme
 
+@Composable
+private fun getElementListPreview(): List<Element> {
+	return List(10) {
+		Element(name = "Item $it", value = it.toString())
+	}
+}
+
 @Preview
 @Composable
 fun ElementListPreview() {
-	val elementList = List(10) {
-		Element(
-			name = "Item $it",
-			value = it.toString()
-		)
-	}
+	val elementList = getElementListPreview()
+
+	var searchValue by remember { mutableStateOf(String()) }
+	var elementName by remember { mutableStateOf(String()) }
+	var elementValue by remember { mutableStateOf(String()) }
 
 	ElementTheme {
 		ElementList(
@@ -48,7 +54,14 @@ fun ElementListPreview() {
 			onElementListModeChange = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() },
 			onElementListItemLongClick = { throw NotImplementedError() },
-			onAddElementList = { _, _ -> }
+			searchValue = searchValue,
+			onSearchValueChange = { searchValue = it },
+			elementName = elementName,
+			onElementNameChange = { elementName = it },
+			elementValue = elementValue,
+			onElementValueChange = { elementValue = it },
+			createElementEnabled = true,
+			onCreateElementClick = { throw NotImplementedError() }
 		)
 	}
 }
@@ -57,75 +70,46 @@ fun ElementListPreview() {
 fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: List<Element>,
-	elementListMode: ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	onElementListItemLongClick: (Element) -> Unit,
-	onAddElementList: (String, String) -> Unit
+	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit,
+	searchValue: String,
+	onSearchValueChange: (String) -> Unit,
+	elementName: String,
+	onElementNameChange: (String) -> Unit,
+	elementValue: String,
+	onElementValueChange: (String) -> Unit,
+	createElementEnabled: Boolean,
+	onCreateElementClick: () -> Unit
 ) {
-	var searchValue by rememberSaveable(elementListMode is Search) {
-		mutableStateOf(String())
-	}
-
-	var elementName by rememberSaveable(elementListMode is Create) {
-		mutableStateOf(String())
-	}
-
-	var elementValue by rememberSaveable(elementListMode is Create) {
-		mutableStateOf(String())
-	}
-
-	val isValidElementName: (String) -> Boolean = { name ->
-		name.isNotBlank() && elementList.none {
-			it.name == name.trim()
-		}
-	}
-
-	val isValidElementValue: (String) -> Boolean = { value ->
-		value.toDoubleOrNull() != null
-	}
-
-	val isValidElement: (String, String) -> Boolean = { name, value ->
-		isValidElementName(name) && isValidElementValue(value)
-	}
-
-
-	val createElementEnabled = when (elementListMode) {
-		Create -> isValidElement(elementName, elementValue)
-		Normal -> true
-		Search -> false
-	}
-
 	Surface(modifier = modifier) {
 		Column {
 			ElementListHeader(
 				mode = elementListMode,
 				onModeChange = onElementListModeChange,
 				createElementEnabled = createElementEnabled,
-				onCreateElementClick = {
-					if (elementListMode is Create) {
-						onAddElementList(elementName, elementValue)
-						onElementListModeChange(Normal)
-					} else {
-						onElementListModeChange(Create)
-					}
-				}
+				onCreateElementClick = onCreateElementClick
 			)
 
 			AnimatedVisibility(visible = elementListMode is Create) {
 				CreateElementForm(
 					elementName = elementName,
-					onElementNameChange = { elementName = it },
+					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,
-					onElementValueChange = { elementValue = it }
+					onElementValueChange = onElementValueChange
 				)
 			}
 
 			AnimatedVisibility(visible = elementListMode is Search) {
 				SearchElementTextField(
 					value = searchValue,
-					onValueChange = { searchValue = it }
+					onValueChange = onSearchValueChange
 				)
+			}
+
+			AnimatedVisibility(visible = elementList.isEmpty()) {
+				EmptyElementListCard()
 			}
 
 			AnimatedVisibility(visible = elementList.isNotEmpty()) {
@@ -134,10 +118,6 @@ fun ElementList(
 					onClick = onElementListItemClick,
 					onLongClick = onElementListItemLongClick
 				)
-			}
-
-			if (elementList.isEmpty()) {
-				EmptyElementListCard()
 			}
 
 			/*

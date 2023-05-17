@@ -17,11 +17,18 @@ fun MainView() {
 		expressionCursorPosition = viewModel.expressionCursorPosition,
 		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
 		elementList = elementList,
-		elementListMode = viewModel.elementListMode,
 		onElementListItemClick = viewModel::onElementListItemClick,
 		onElementListItemLongClick = viewModel::onElementListItemLongClick,
-		onAddElementList = viewModel::addElement,
+		elementListMode = viewModel.elementListMode,
 		onElementListModeChange = viewModel::onElementListModeChange,
+		searchValue = viewModel.searchValue,
+		onSearchValueChange = viewModel::onSearchValueChange,
+		elementName = viewModel.elementName,
+		onElementNameChange = viewModel::onElementNameChange,
+		elementValue = viewModel.elementValue,
+		onElementValueChange = viewModel::onElementValueChange,
+		createElementEnabled = viewModel.isCreateElementEnabled(),
+		onCreateElementClick = viewModel::onCreateElementClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)
 }
