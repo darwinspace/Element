@@ -35,16 +35,19 @@ private fun KeyboardButton.getSurfaceColor(): Color {
 fun ElementKeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
-	color: Color = keyboardButton.getSurfaceColor(),
+	enabled: Boolean = true,
+	containerColor: Color = keyboardButton.getSurfaceColor(),
+	contentColor: Color = contentColorFor(containerColor),
 	onClick: (KeyboardButton) -> Unit,
 	content: @Composable RowScope.(KeyboardButton) -> Unit
 ) {
 	Button(
 		modifier = modifier.heightIn(64.dp),
 		shape = MaterialTheme.shapes.medium,
+		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(
-			containerColor = color,
-			contentColor = contentColorFor(color)
+			containerColor = containerColor,
+			contentColor = contentColor
 		),
 		onClick = {
 			onClick(keyboardButton)
