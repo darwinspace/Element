@@ -33,7 +33,7 @@ fun getText(): AnnotatedString {
 @Composable
 fun EmptyElementListCard() {
 	Surface(
-		modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
+		modifier = Modifier.padding(24.dp),
 		shape = MaterialTheme.shapes.medium,
 		color = MaterialTheme.colorScheme.primaryContainer
 	) {
