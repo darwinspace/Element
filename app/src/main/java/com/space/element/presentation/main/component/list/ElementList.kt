@@ -119,12 +119,6 @@ fun ElementList(
 					onLongClick = onElementListItemLongClick
 				)
 			}
-
-			/*
-			if (filteredElements.isEmpty() && elements.isNotEmpty()) {
-				ElementEmptySearchListCard()
-			}
-			*/
 		}
 	}
 }
