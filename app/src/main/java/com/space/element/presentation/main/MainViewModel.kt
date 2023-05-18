@@ -12,32 +12,26 @@ import com.space.element.domain.model.ExpressionItem.ElementItem
 import com.space.element.domain.model.ExpressionItem.NumberItem
 import com.space.element.domain.model.ExpressionItem.OperatorItem
 import com.space.element.domain.use_case.element_list.AddElement
-import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.DeleteElement
+import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResult.Error
 import com.space.element.presentation.main.model.ExpressionResult.Value
 import com.space.element.presentation.main.model.ExpressionResultState
-import com.space.element.presentation.main.model.ExpressionResultState.*
+import com.space.element.presentation.main.model.ExpressionResultState.Empty
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
 import com.space.element.presentation.main.model.Operator
 import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-/*
-	val createElementEnabled = when (elementListMode) {
-		Create -> isValidElement(elementName, elementValue)
-		Normal -> true
-		Search -> false
-	}
-
-*/
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -54,34 +48,37 @@ class MainViewModel @Inject constructor(
 	var expressionCursorPosition by mutableStateOf(0)
 		private set
 
-	val elementList = getElementList().stateIn(
+	private var _elementListQuery = MutableStateFlow(String())
+	val elementListQuery = _elementListQuery.asStateFlow()
+
+	private val _elementList = getElementList()
+	val elementList = combine(_elementList, _elementListQuery) { list, query ->
+		list.filter { it.name.contains(query, ignoreCase = true) }
+	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
 		initialValue = emptyList()
 	)
 
-	var elementListMode by mutableStateOf<ElementListMode>(ElementListMode.Normal)
-		private set
+	private var _elementListMode = MutableStateFlow<ElementListMode>(ElementListMode.Normal)
+	val elementListMode = _elementListMode.asStateFlow()
 
-	var searchValue by mutableStateOf(String())
-		private set
+	private var _elementName = MutableStateFlow(String())
+	val elementName = _elementName.asStateFlow()
 
-	var elementName by mutableStateOf(String())
-		private set
+	private var _elementValue = MutableStateFlow(String())
+	val elementValue = _elementValue.asStateFlow()
 
-	var elementValue by mutableStateOf(String())
-		private set
-
-	fun onSearchValueChange(value: String) {
-		searchValue = value
+	fun onElementListQueryChange(value: String) {
+		_elementListQuery.value = value
 	}
 
 	fun onElementNameChange(name: String) {
-		elementName = name
+		_elementName.value = name
 	}
 
 	fun onElementValueChange(value: String) {
-		elementValue = value
+		_elementValue.value = value
 	}
 
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
@@ -241,32 +238,40 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onElementListModeChange(mode: ElementListMode) {
-		elementListMode = mode
+		_elementListMode.value = mode
 	}
 
 	fun onCreateElementClick() {
-		if (elementListMode is ElementListMode.Create) {
-			addElement(elementName, elementValue)
+		if (elementListMode.value is ElementListMode.Create) {
+			addElement(elementName.value, elementValue.value)
 		}
 
-		elementListMode = if (elementListMode is ElementListMode.Create) {
+		_elementListMode.value = if (elementListMode.value is ElementListMode.Create) {
 			ElementListMode.Normal
 		} else {
 			ElementListMode.Create
 		}
 	}
 
-	private fun isValidCurrentElement(): Boolean {
-		return elementName.isNotBlank() && elementList.value.none {
-			it.name == elementName.trim()
-		} && elementValue.toDoubleOrNull() != null
-	}
+	val createButtonEnabled = combine(
+		_elementList,
+		_elementListMode,
+		_elementName,
+		_elementValue
+	) { list, mode, elementName, elementValue ->
+		when (mode) {
+			ElementListMode.Create -> {
+				elementName.isNotBlank() && list.none {
+					it.name == elementName.trim()
+				} && elementValue.toDoubleOrNull() != null
+			}
 
-	fun isCreateElementEnabled(): Boolean {
-		return when (elementListMode) {
-			ElementListMode.Create -> isValidCurrentElement()
 			ElementListMode.Normal -> true
 			ElementListMode.Search -> false
 		}
-	}
+	}.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(),
+		initialValue = true
+	)
 }

@@ -11,6 +11,16 @@ fun MainView() {
 
 	val elementList by viewModel.elementList.collectAsState()
 
+	val elementListQuery by viewModel.elementListQuery.collectAsState()
+
+	val elementListMode by viewModel.elementListMode.collectAsState()
+
+	val elementName by viewModel.elementName.collectAsState()
+
+	val elementValue by viewModel.elementValue.collectAsState()
+
+	val createElementEnabled by viewModel.createButtonEnabled.collectAsState()
+
 	MainScreen(
 		expression = viewModel.expression,
 		expressionResult = viewModel.expressionResult,
@@ -19,15 +29,15 @@ fun MainView() {
 		elementList = elementList,
 		onElementListItemClick = viewModel::onElementListItemClick,
 		onElementListItemLongClick = viewModel::onElementListItemLongClick,
-		elementListMode = viewModel.elementListMode,
+		elementListMode = elementListMode,
 		onElementListModeChange = viewModel::onElementListModeChange,
-		searchValue = viewModel.searchValue,
-		onSearchValueChange = viewModel::onSearchValueChange,
-		elementName = viewModel.elementName,
+		elementListQuery = elementListQuery,
+		onElementListQueryChange = viewModel::onElementListQueryChange,
+		elementName = elementName,
 		onElementNameChange = viewModel::onElementNameChange,
-		elementValue = viewModel.elementValue,
+		elementValue = elementValue,
 		onElementValueChange = viewModel::onElementValueChange,
-		createElementEnabled = viewModel.isCreateElementEnabled(),
+		createElementEnabled = createElementEnabled,
 		onCreateElementClick = viewModel::onCreateElementClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)

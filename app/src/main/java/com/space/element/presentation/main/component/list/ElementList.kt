@@ -43,7 +43,7 @@ private fun getElementListPreview(): List<Element> {
 fun ElementListPreview() {
 	val elementList = getElementListPreview()
 
-	var searchValue by remember { mutableStateOf(String()) }
+	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
 
@@ -54,8 +54,8 @@ fun ElementListPreview() {
 			onElementListModeChange = { throw NotImplementedError() },
 			onElementListItemClick = { throw NotImplementedError() },
 			onElementListItemLongClick = { throw NotImplementedError() },
-			searchValue = searchValue,
-			onSearchValueChange = { searchValue = it },
+			elementListQuery = elementListQuery,
+			onElementListQueryChange = { elementListQuery = it },
 			elementName = elementName,
 			onElementNameChange = { elementName = it },
 			elementValue = elementValue,
@@ -74,8 +74,8 @@ fun ElementList(
 	onElementListItemLongClick: (Element) -> Unit,
 	elementListMode: ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	searchValue: String,
-	onSearchValueChange: (String) -> Unit,
+	elementListQuery: String,
+	onElementListQueryChange: (String) -> Unit,
 	elementName: String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: String,
@@ -103,8 +103,8 @@ fun ElementList(
 
 			AnimatedVisibility(visible = elementListMode is Search) {
 				SearchElementTextField(
-					value = searchValue,
-					onValueChange = onSearchValueChange
+					value = elementListQuery,
+					onValueChange = onElementListQueryChange
 				)
 			}
 
