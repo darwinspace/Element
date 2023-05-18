@@ -48,20 +48,25 @@ class MainViewModel @Inject constructor(
 	var expressionCursorPosition by mutableStateOf(0)
 		private set
 
+	private var _elementListMode = MutableStateFlow<ElementListMode>(ElementListMode.Normal)
+	val elementListMode = _elementListMode.asStateFlow()
+
 	private var _elementListQuery = MutableStateFlow(String())
 	val elementListQuery = _elementListQuery.asStateFlow()
 
 	private val _elementList = getElementList()
-	val elementList = combine(_elementList, _elementListQuery) { list, query ->
-		list.filter { it.name.contains(query, ignoreCase = true) }
-	}.stateIn(
-		scope = viewModelScope,
-		started = SharingStarted.WhileSubscribed(),
-		initialValue = emptyList()
-	)
-
-	private var _elementListMode = MutableStateFlow<ElementListMode>(ElementListMode.Normal)
-	val elementListMode = _elementListMode.asStateFlow()
+	val elementList =
+		combine(_elementList, _elementListMode, _elementListQuery) { list, mode, query ->
+			if (mode is ElementListMode.Search) {
+				list.filter { it.name.contains(query, ignoreCase = true) }
+			} else {
+				list
+			}
+		}.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(),
+			initialValue = emptyList()
+		)
 
 	private var _elementName = MutableStateFlow(String())
 	val elementName = _elementName.asStateFlow()
@@ -233,6 +238,14 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
+	private fun emptyElementName() {
+		_elementName.value = String()
+	}
+
+	private fun emptyElementValue() {
+		_elementValue.value = String()
+	}
+
 	fun onExpressionCursorPositionChange(position: Int) {
 		expressionCursorPosition = position
 	}
@@ -244,6 +257,8 @@ class MainViewModel @Inject constructor(
 	fun onCreateElementClick() {
 		if (elementListMode.value is ElementListMode.Create) {
 			addElement(elementName.value, elementValue.value)
+			emptyElementName()
+			emptyElementValue()
 		}
 
 		_elementListMode.value = if (elementListMode.value is ElementListMode.Create) {
