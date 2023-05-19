@@ -55,7 +55,7 @@ fun ElementListHeader(
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(start = 24.dp, top = 8.dp, end = 24.dp),
+			.padding(horizontal = 24.dp),
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
@@ -120,7 +120,7 @@ fun CreateElementForm(
 	elementValue: String,
 	onElementValueChange: (String) -> Unit
 ) {
-	Column(modifier = Modifier.padding(24.dp)) {
+	Column(modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)) {
 		ElementTextField(
 			modifier = Modifier.fillMaxWidth(),
 			value = elementName,
