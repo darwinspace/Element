@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardBackspace
+import androidx.compose.material.icons.outlined.KeyboardBackspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -222,7 +222,7 @@ private fun ElementKeyboardContent(
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.Default.KeyboardBackspace, contentDescription = null)
+				Icon(imageVector = Icons.Outlined.KeyboardBackspace, contentDescription = null)
 			}
 
 			ElementKeyboardButton(

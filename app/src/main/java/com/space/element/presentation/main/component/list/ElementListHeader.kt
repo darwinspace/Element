@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -56,7 +56,7 @@ fun ElementListHeader(
 						onModeChange(Normal)
 					}
 				) {
-					Icon(imageVector = Icons.Default.Close, contentDescription = null)
+					Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 				}
 
 				Spacer(modifier = Modifier.width(16.dp))
@@ -87,7 +87,7 @@ fun ElementListHeader(
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
-						Icon(imageVector = Icons.Default.Search, contentDescription = null)
+						Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
 					}
 
 					AnimatedVisibility(
@@ -95,7 +95,7 @@ fun ElementListHeader(
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
-						Icon(imageVector = Icons.Default.Close, contentDescription = null)
+						Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 					}
 				}
 			}

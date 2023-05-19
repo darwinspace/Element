@@ -1,5 +1,6 @@
 package com.space.element.presentation.main.component.list
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,7 +38,10 @@ private fun getElementListPreview(): List<Element> {
 	}
 }
 
-@Preview(device = "spec:width=360dp,height=640dp")
+@Preview(
+	device = "spec:width=360dp,height=640dp",
+	uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun ElementListPreview() {
 	val elementList = getElementListPreview()
@@ -139,7 +143,7 @@ fun SearchElementTextField(
 				)
 			},
 			trailingIcon = {
-				Icon(imageVector = Icons.Default.Search, contentDescription = null)
+				Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
 			},
 			keyboardOptions = KeyboardOptions(
 				imeAction = ImeAction.Search
