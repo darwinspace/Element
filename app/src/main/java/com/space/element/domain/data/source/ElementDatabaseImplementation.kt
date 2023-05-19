@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.space.element.domain.model.Element
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import javax.inject.Inject
 
 class ElementDatabaseImplementation @Inject constructor(
@@ -16,7 +17,7 @@ class ElementDatabaseImplementation @Inject constructor(
 		return dataStore.data.map { preferences ->
 			preferences.asMap().map { (key, value) ->
 				Element(key.name, value.toString())
-			}
+			}.reversed()
 		}
 	}
 

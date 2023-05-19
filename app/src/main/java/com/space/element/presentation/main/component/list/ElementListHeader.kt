@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.presentation.component.ElementButton
@@ -35,15 +34,6 @@ import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
 import com.space.element.presentation.main.model.ElementListMode.Normal
 import com.space.element.presentation.main.model.ElementListMode.Search
-import com.space.element.presentation.theme.ElementTheme
-
-@Preview
-@Composable
-fun ElementListHeaderPreview() {
-	ElementTheme {
-		// ElementListHeader()
-	}
-}
 
 @Composable
 fun ElementListHeader(

@@ -19,8 +19,7 @@ fun ElementListContent(
 ) {
 	LazyColumn(
 		contentPadding = PaddingValues(24.dp),
-		verticalArrangement = Arrangement.spacedBy(24.dp),
-		reverseLayout = true
+		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
 		elementListItems(elementList, onClick,onLongClick)
 	}

@@ -27,7 +27,6 @@ import com.space.element.domain.model.Element
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
-import com.space.element.presentation.main.model.ElementListMode.Normal
 import com.space.element.presentation.main.model.ElementListMode.Search
 import com.space.element.presentation.theme.ElementTheme
 
@@ -38,11 +37,11 @@ private fun getElementListPreview(): List<Element> {
 	}
 }
 
-@Preview
+@Preview(device = "spec:width=360dp,height=640dp")
 @Composable
 fun ElementListPreview() {
 	val elementList = getElementListPreview()
-
+	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
@@ -50,8 +49,8 @@ fun ElementListPreview() {
 	ElementTheme {
 		ElementList(
 			elementList = elementList,
-			elementListMode = Normal,
-			onElementListModeChange = { throw NotImplementedError() },
+			elementListMode = elementListMode,
+			onElementListModeChange = { elementListMode = it },
 			onElementListItemClick = { throw NotImplementedError() },
 			onElementListItemLongClick = { throw NotImplementedError() },
 			elementListQuery = elementListQuery,
