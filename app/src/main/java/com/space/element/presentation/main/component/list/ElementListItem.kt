@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,14 +39,16 @@ fun ElementListItem(
 	onClick: (Element) -> Unit
 ) {
 	Surface(
-		modifier = modifier.combinedClickable(
-			onLongClick = {
-				onLongClick(element)
-			},
-			onClick = {
-				onClick(element)
-			}
-		),
+		modifier = modifier
+			.clip(MaterialTheme.shapes.medium)
+			.combinedClickable(
+				onLongClick = {
+					onLongClick(element)
+				},
+				onClick = {
+					onClick(element)
+				}
+			),
 		shape = MaterialTheme.shapes.medium,
 		tonalElevation = 6.dp
 	) {
