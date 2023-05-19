@@ -118,8 +118,8 @@ fun ElementList(
 			AnimatedVisibility(visible = elementList.isNotEmpty()) {
 				ElementListContent(
 					elementList = elementList,
-					onClick = onElementListItemClick,
-					onLongClick = onElementListItemLongClick
+					onLongClick = onElementListItemLongClick,
+					onClick = onElementListItemClick
 				)
 			}
 		}

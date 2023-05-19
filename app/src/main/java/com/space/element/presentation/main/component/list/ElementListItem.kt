@@ -1,5 +1,7 @@
 package com.space.element.presentation.main.component.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ fun ElementListItemPreview() {
 	}
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ElementListItem(
 	modifier: Modifier = Modifier,
@@ -35,12 +38,16 @@ fun ElementListItem(
 	onClick: (Element) -> Unit
 ) {
 	Surface(
-		modifier = modifier,
+		modifier = modifier.combinedClickable(
+			onLongClick = {
+				onLongClick(element)
+			},
+			onClick = {
+				onClick(element)
+			}
+		),
 		shape = MaterialTheme.shapes.medium,
-		tonalElevation = 6.dp,
-		onClick = {
-			onClick(element)
-		}
+		tonalElevation = 6.dp
 	) {
 		Row(
 			modifier = Modifier.padding(20.dp),
