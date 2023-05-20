@@ -3,7 +3,7 @@ package com.space.element.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.space.element.presentation.main.MainView
+import com.space.element.presentation.main.MainScreen
 import com.space.element.presentation.theme.ElementTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		setContent {
 			ElementTheme {
-				MainView()
+				MainScreen()
 			}
 		}
 	}

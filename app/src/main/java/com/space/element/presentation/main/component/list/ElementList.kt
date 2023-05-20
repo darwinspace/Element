@@ -31,20 +31,19 @@ import com.space.element.presentation.main.model.ElementListMode.Create
 import com.space.element.presentation.main.model.ElementListMode.Search
 import com.space.element.presentation.theme.ElementTheme
 
-@Composable
-private fun getElementListPreview(): List<Element> {
+private fun getPreviewElementList(): List<Element> {
 	return List(10) {
-		Element(name = "Item $it", value = it.toString())
+		Element("Item $it", it.toString())
 	}
 }
 
 @Preview(
-	device = "spec:width=360dp,height=640dp",
+	device = "id:pixel_6",
 	uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 fun ElementListPreview() {
-	val elementList = getElementListPreview()
+	val elementList = remember { getPreviewElementList() }
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
@@ -73,12 +72,12 @@ fun ElementListPreview() {
 fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: List<Element>,
-	onElementListItemClick: (Element) -> Unit,
-	onElementListItemLongClick: (Element) -> Unit,
-	elementListMode: ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit,
 	elementListQuery: String,
 	onElementListQueryChange: (String) -> Unit,
+	elementListMode: ElementListMode,
+	onElementListModeChange: (ElementListMode) -> Unit,
+	onElementListItemLongClick: (Element) -> Unit,
+	onElementListItemClick: (Element) -> Unit,
 	elementName: String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: String,

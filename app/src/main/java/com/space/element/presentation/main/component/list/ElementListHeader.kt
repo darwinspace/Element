@@ -45,7 +45,7 @@ fun ElementListHeader(
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(horizontal = 24.dp),
+			.padding(start = 24.dp, end = 24.dp, top = 24.dp),
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
