@@ -43,7 +43,7 @@ fun ElementKeyboardButton(
 ) {
 	Button(
 		modifier = modifier.heightIn(64.dp),
-		shape = MaterialTheme.shapes.medium,
+		shape = MaterialTheme.shapes.large,
 		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(
 			containerColor = containerColor,
