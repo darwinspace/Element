@@ -20,22 +20,14 @@ class ElementDatabaseImplementation @Inject constructor(
 		}
 	}
 
-	private suspend fun setElementInList(element: Element) {
+	override suspend fun add(element: Element) {
 		dataStore.edit { preferences ->
 			val key = stringPreferencesKey(element.name)
 			preferences[key] = element.value
 		}
 	}
 
-	override suspend fun addElementToList(element: Element) {
-		setElementInList(element)
-	}
-
-	override suspend fun editElementFromList(element: Element) {
-		setElementInList(element)
-	}
-
-	override suspend fun removeElementFromList(element: Element) {
+	override suspend fun remove(element: Element) {
 		dataStore.edit { preferences ->
 			val key = stringPreferencesKey(element.name)
 			preferences.remove(key)

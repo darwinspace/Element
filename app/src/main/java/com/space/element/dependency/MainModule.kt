@@ -11,7 +11,7 @@ import com.space.element.domain.data.source.ElementDatabaseImplementation
 import com.space.element.domain.repository.ElementRepository
 import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList
-import com.space.element.domain.use_case.element_list.DeleteElement
+import com.space.element.domain.use_case.element_list.RemoveElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import dagger.Module
 import dagger.Provides
@@ -57,8 +57,8 @@ object MainModule {
 
 	@Provides
 	@Singleton
-	fun provideRemoveElementFromList(repository: ElementRepository): DeleteElement {
-		return DeleteElement(repository)
+	fun provideRemoveElementFromList(repository: ElementRepository): RemoveElement {
+		return RemoveElement(repository)
 	}
 
 	@Provides

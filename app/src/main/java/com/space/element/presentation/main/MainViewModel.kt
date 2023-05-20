@@ -12,8 +12,8 @@ import com.space.element.domain.model.ExpressionItem.ElementItem
 import com.space.element.domain.model.ExpressionItem.NumberItem
 import com.space.element.domain.model.ExpressionItem.OperatorItem
 import com.space.element.domain.use_case.element_list.AddElement
-import com.space.element.domain.use_case.element_list.DeleteElement
 import com.space.element.domain.use_case.element_list.GetElementList
+import com.space.element.domain.use_case.element_list.RemoveElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResult.Error
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
 	getElementList: GetElementList,
 	private val addElement: AddElement,
-	private val deleteElement: DeleteElement,
+	private val removeElement: RemoveElement,
 	private val evaluateExpression: EvaluateExpression
 ) : ViewModel() {
 	val expression = mutableStateListOf<ExpressionItem>()
@@ -227,7 +227,7 @@ class MainViewModel @Inject constructor(
 
 	fun onElementListItemLongClick(element: Element) {
 		viewModelScope.launch {
-			deleteElement(element)
+			removeElement(element)
 		}
 	}
 

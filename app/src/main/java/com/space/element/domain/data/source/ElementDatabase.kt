@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ElementDatabase {
 	fun getList(): Flow<List<Element>>
-	suspend fun addElementToList(element: Element)
-	suspend fun editElementFromList(element: Element)
-	suspend fun removeElementFromList(element: Element)
+	suspend fun add(element: Element)
+	suspend fun remove(element: Element)
 }

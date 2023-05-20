@@ -9,19 +9,15 @@ import javax.inject.Inject
 class ElementRepositoryImplementation @Inject constructor(
 	private val database: ElementDatabase
 ) : ElementRepository {
-	override fun getElementList(): Flow<List<Element>> {
+	override fun getList(): Flow<List<Element>> {
 		return database.getList()
 	}
 
-	override suspend fun addElementToList(element: Element) {
-		database.addElementToList(element)
+	override suspend fun add(element: Element) {
+		database.add(element)
 	}
 
-	override suspend fun editElementFromList(element: Element) {
-		database.editElementFromList(element)
-	}
-
-	override suspend fun removeElementFromList(element: Element) {
-		database.removeElementFromList(element)
+	override suspend fun remove(element: Element) {
+		database.remove(element)
 	}
 }

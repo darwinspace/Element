@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetElementList @Inject constructor(private val repository: ElementRepository) {
 	operator fun invoke(): Flow<List<Element>> {
-		return repository.getElementList()
+		return repository.getList()
 	}
 }
