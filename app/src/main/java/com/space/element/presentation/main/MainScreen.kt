@@ -1,13 +1,15 @@
 package com.space.element.presentation.main
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import com.space.element.domain.model.ExpressionItem.NumberItem
 import com.space.element.domain.model.ExpressionItem.OperatorItem
 import com.space.element.presentation.main.component.ElementHeader
 import com.space.element.presentation.main.component.keyboard.ElementKeyboard
+import com.space.element.presentation.main.component.keyboard.ElementKeyboardVariant
 import com.space.element.presentation.main.component.list.ElementList
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResultState
@@ -49,7 +52,10 @@ private fun getPreviewElementList(): List<Element> {
 	}
 }
 
-@Preview(device = "id:pixel_6")
+@Preview(device = "id:pixel_6_pro")
+@Preview(device = "id:pixel_c")
+@Preview(device = "id:desktop_medium")
+@Preview(device = "id:tv_1080p")
 @Composable
 fun MainScreenPreview() {
 	val expression = remember { getPreviewExpressionList().toMutableStateList() }
@@ -61,9 +67,9 @@ fun MainScreenPreview() {
 	ElementTheme {
 		MainScreen(
 			expression = expression,
-			expressionResult = ExpressionResultState.Value(value = 10.0),
 			expressionCursorPosition = expressionCursorPosition,
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
+			expressionResult = ExpressionResultState.Value(value = 10.0),
 			elementList = elementList,
 			onElementListItemClick = { throw NotImplementedError() },
 			onElementListItemLongClick = { elementList.remove(it) },
@@ -119,12 +125,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+private fun MainScreen(
 	expression: List<ExpressionItem>,
-	expressionResult: ExpressionResultState,
 	expressionCursorPosition: Int,
 	onExpressionCursorPositionChange: (Int) -> Unit,
+	expressionResult: ExpressionResultState,
 	elementList: List<Element>,
 	elementListQuery: String,
 	onElementListQueryChange: (String) -> Unit,
@@ -138,62 +145,122 @@ fun MainScreen(
 	onElementValueChange: (String) -> Unit,
 	createElementEnabled: Boolean,
 	onCreateElementClick: () -> Unit,
-	onKeyboardButtonClick: (KeyboardButton) -> Unit,
+	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
-	MainScreen(
-		elementListContent = {
-			ElementList(
-				elementList = elementList,
-				elementListMode = elementListMode,
-				onElementListModeChange = onElementListModeChange,
-				onElementListItemClick = onElementListItemClick,
-				onElementListItemLongClick = onElementListItemLongClick,
-				elementListQuery = elementListQuery,
-				onElementListQueryChange = onElementListQueryChange,
-				elementName = elementName,
-				onElementNameChange = onElementNameChange,
-				elementValue = elementValue,
-				onElementValueChange = onElementValueChange,
-				createElementEnabled = createElementEnabled,
-				onCreateElementClick = onCreateElementClick
-			)
-		}
-	) {
-		Column(
-			modifier = Modifier
-				.fillMaxSize()
-				.padding(it)
-		) {
-			ElementHeader(
-				modifier = Modifier
-					.weight(1f)
-					.verticalScroll(rememberScrollState()),
-				expression = expression,
-				expressionResultState = expressionResult,
-				expressionCursorPosition = expressionCursorPosition,
-				onExpressionCursorPositionChange = onExpressionCursorPositionChange
-			)
+	BoxWithConstraints {
+		val maxHeight = maxHeight
+		if (maxWidth >= 720.dp) {
+			Row {
+				Column(
+					modifier = Modifier.weight(1f)
+				) {
+					ElementHeader(
+						modifier = Modifier.weight(1f),
+						expression = expression,
+						expressionCursorPosition = expressionCursorPosition,
+						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+						expressionResultState = expressionResult
+					)
 
-			ElementKeyboard(
-				contentGap = 16.dp,
-				contentPadding = PaddingValues(16.dp),
-				onButtonClick = onKeyboardButtonClick
-			)
-		}
-	}
-}
+					if (maxHeight > 500.dp) {
+						ElementKeyboard(
+							onButtonClick = onKeyboardButtonClick
+						)
+					} else if (maxHeight > 400.dp) {
+						ElementKeyboardVariant(
+							contentGap = 12.dp,
+							contentPadding = PaddingValues(12.dp),
+							buttonHeight = 48.dp,
+							onButtonClick = onKeyboardButtonClick
+						)
+					} else {
+						ElementKeyboardVariant(
+							contentGap = 4.dp,
+							contentPadding = PaddingValues(4.dp),
+							buttonHeight = 48.dp,
+							onButtonClick = onKeyboardButtonClick
+						)
+					}
+				}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MainScreen(
-	elementListContent: @Composable () -> Unit,
-	content: @Composable (PaddingValues) -> Unit,
-) {
-	BottomSheetScaffold(
-		sheetContent = {
-			elementListContent()
+				Surface(
+					modifier = Modifier
+						.weight(1f)
+						.fillMaxHeight(),
+					tonalElevation = 1.dp
+				) {
+					ElementList(
+						elementList = elementList,
+						elementListMode = elementListMode,
+						onElementListModeChange = onElementListModeChange,
+						onElementListItemClick = onElementListItemClick,
+						onElementListItemLongClick = onElementListItemLongClick,
+						elementListQuery = elementListQuery,
+						onElementListQueryChange = onElementListQueryChange,
+						elementName = elementName,
+						onElementNameChange = onElementNameChange,
+						elementValue = elementValue,
+						onElementValueChange = onElementValueChange,
+						createElementEnabled = createElementEnabled,
+						onCreateElementClick = onCreateElementClick
+					)
+				}
+			}
+		} else {
+			BottomSheetScaffold(
+				sheetContent = {
+					ElementList(
+						elementList = elementList,
+						elementListMode = elementListMode,
+						onElementListModeChange = onElementListModeChange,
+						onElementListItemClick = onElementListItemClick,
+						onElementListItemLongClick = onElementListItemLongClick,
+						elementListQuery = elementListQuery,
+						onElementListQueryChange = onElementListQueryChange,
+						elementName = elementName,
+						onElementNameChange = onElementNameChange,
+						elementValue = elementValue,
+						onElementValueChange = onElementValueChange,
+						createElementEnabled = createElementEnabled,
+						onCreateElementClick = onCreateElementClick
+					)
+				},
+				sheetPeekHeight = 48.dp
+			) {
+				Column(
+					modifier = Modifier
+						.fillMaxSize()
+						.padding(it)
+				) {
+					ElementHeader(
+						modifier = Modifier.weight(1f),
+						expression = expression,
+						expressionCursorPosition = expressionCursorPosition,
+						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+						expressionResultState = expressionResult
+					)
+
+					if (maxHeight > 500.dp) {
+						ElementKeyboard(
+							onButtonClick = onKeyboardButtonClick
+						)
+					} else if (maxHeight > 400.dp) {
+						ElementKeyboardVariant(
+							contentGap = 12.dp,
+							contentPadding = PaddingValues(12.dp),
+							buttonHeight = 48.dp,
+							onButtonClick = onKeyboardButtonClick
+						)
+					} else {
+						ElementKeyboardVariant(
+							contentGap = 4.dp,
+							contentPadding = PaddingValues(4.dp),
+							buttonHeight = 48.dp,
+							onButtonClick = onKeyboardButtonClick
+						)
+					}
+				}
+			}
 		}
-	) {
-		content(it)
 	}
 }

@@ -11,6 +11,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
@@ -35,6 +36,7 @@ private fun KeyboardButton.getSurfaceColor(): Color {
 fun ElementKeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
+	height: Dp,
 	enabled: Boolean = true,
 	containerColor: Color = keyboardButton.getSurfaceColor(),
 	contentColor: Color = contentColorFor(containerColor),
@@ -42,7 +44,7 @@ fun ElementKeyboardButton(
 	content: @Composable RowScope.(KeyboardButton) -> Unit
 ) {
 	Button(
-		modifier = modifier.heightIn(64.dp),
+		modifier = modifier.heightIn(height),
 		shape = MaterialTheme.shapes.large,
 		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(
@@ -58,9 +60,11 @@ fun ElementKeyboardButton(
 }
 
 @Composable
+fun ElementKeyboardButtonText(text: String) {
+	Text(text = text, style = MaterialTheme.typography.titleMedium)
+}
+
+@Composable
 fun ElementKeyboardButtonSymbol(symbol: Char) {
-	Text(
-		text = symbol.toString(),
-		style = MaterialTheme.typography.titleMedium
-	)
+	ElementKeyboardButtonText(text = symbol.toString())
 }
