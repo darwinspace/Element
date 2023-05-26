@@ -6,6 +6,6 @@ enum class Operator(val symbol: Char, val type: OperatorType) {
 	Dot(type = OperatorType.Arithmetic, symbol = '.'),
 	Addition(type = OperatorType.Arithmetic, symbol = '+'),
 	Subtraction(type = OperatorType.Arithmetic, symbol = '-'),
-	Multiplication(type = OperatorType.Arithmetic, symbol = '×'),
+	Multiplication(type = OperatorType.Arithmetic, symbol = '*'),
 	Division(type = OperatorType.Arithmetic, symbol = '/')
 }
