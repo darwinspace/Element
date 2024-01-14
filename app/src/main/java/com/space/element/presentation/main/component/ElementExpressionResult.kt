@@ -41,6 +41,6 @@ fun ElementExpressionResultText(value: Double) {
 	Text(
 		text = value.format(),
 		textAlign = TextAlign.End,
-		style = MaterialTheme.typography.headlineMedium
+		style = MaterialTheme.typography.headlineLarge
 	)
 }

@@ -211,7 +211,9 @@ fun ExpressionElementItemValue(elementValue: String) {
 
 @Composable
 private fun ExpressionNumberItem(number: Char) {
-	ExpressionItemText(text = number.toString())
+	ExpressionItemText(
+		text = number.toString()
+	)
 }
 
 @Composable
@@ -231,7 +233,7 @@ private fun ExpressionItemText(
 	Text(
 		modifier = modifier,
 		text = text,
-		style = MaterialTheme.typography.titleLarge,
+		style = MaterialTheme.typography.displaySmall,
 		color = color
 	)
 }

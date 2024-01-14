@@ -2,6 +2,7 @@ package com.space.element.presentation.main.component.keyboard
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +12,8 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
@@ -25,7 +28,7 @@ private fun KeyboardButton.getSurfaceColor(): Color {
 		KeyboardButtonType.Number -> MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
 
 		KeyboardButtonType.Operator,
-		KeyboardButtonType.Parentheses -> MaterialTheme.colorScheme.primaryContainer
+		KeyboardButtonType.Parentheses -> MaterialTheme.colorScheme.secondaryContainer
 
 		KeyboardButtonType.Clear -> MaterialTheme.colorScheme.tertiaryContainer
 		KeyboardButtonType.Equal -> MaterialTheme.colorScheme.primary
@@ -43,9 +46,11 @@ fun ElementKeyboardButton(
 	onClick: (KeyboardButton) -> Unit,
 	content: @Composable RowScope.(KeyboardButton) -> Unit
 ) {
+	val hapticFeedback = LocalHapticFeedback.current
 	Button(
 		modifier = modifier.heightIn(height),
-		shape = MaterialTheme.shapes.large,
+		// shape = MaterialTheme.shapes.large,
+		shape = CircleShape,
 		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(
 			containerColor = containerColor,
@@ -53,6 +58,7 @@ fun ElementKeyboardButton(
 		),
 		onClick = {
 			onClick(keyboardButton)
+			hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
 		}
 	) {
 		content(keyboardButton)
@@ -61,7 +67,7 @@ fun ElementKeyboardButton(
 
 @Composable
 fun ElementKeyboardButtonText(text: String) {
-	Text(text = text, style = MaterialTheme.typography.titleMedium)
+	Text(text = text, style = MaterialTheme.typography.headlineMedium)
 }
 
 @Composable

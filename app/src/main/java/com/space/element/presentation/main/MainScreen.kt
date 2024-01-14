@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,11 +40,12 @@ import com.space.element.presentation.theme.ElementTheme
 
 private fun getPreviewExpressionList(): List<ExpressionItem> {
 	return listOf(
-		NumberItem(number = '9'),
-		OperatorItem(Operator.Addition),
 		NumberItem(number = '2'),
+		OperatorItem(Operator.Addition),
+		NumberItem(number = '1'),
+		NumberItem(number = '0'),
 		OperatorItem(Operator.Multiplication),
-		ElementItem(element = Element(name = "Taco 🌮", value = "20"))
+		ElementItem(element = Element(name = "Taco 🌮", value = "0.8"))
 	)
 }
 
@@ -53,9 +56,9 @@ private fun getPreviewElementList(): List<Element> {
 }
 
 @Preview(device = "id:pixel_6_pro")
-@Preview(device = "id:pixel_c")
-@Preview(device = "id:desktop_medium")
-@Preview(device = "id:tv_1080p")
+//@Preview(device = "id:pixel_c")
+//@Preview(device = "id:desktop_medium")
+//@Preview(device = "id:tv_1080p")
 @Composable
 fun MainScreenPreview() {
 	val expression = remember { getPreviewExpressionList().toMutableStateList() }
@@ -225,7 +228,12 @@ private fun MainScreen(
 						onCreateElementClick = onCreateElementClick
 					)
 				},
-				sheetPeekHeight = 48.dp
+				sheetPeekHeight = 48.dp,
+				sheetDragHandle = {
+					BottomSheetDefaults.DragHandle(
+						color = MaterialTheme.colorScheme.onSurface
+					)
+				}
 			) {
 				Column(
 					modifier = Modifier

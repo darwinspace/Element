@@ -10,15 +10,31 @@ import com.space.element.R
 
 val fontFamily = FontFamily(
 	Font(R.font.ibm_plex_mono),
+	Font(R.font.ibm_plex_mono_medium, weight = FontWeight.Medium),
 	Font(R.font.ibm_plex_mono_bold, weight = FontWeight.Bold),
 )
 
 val Typography = Typography(
+	displaySmall = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Medium,
+		fontSize = 40.sp
+	),
+	headlineLarge = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Medium,
+		fontSize = 32.sp
+	),
 	headlineMedium = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Bold,
+		fontWeight = FontWeight.Medium,
 		fontSize = 28.sp,
 		letterSpacing = 2.sp
+	),
+	headlineSmall = TextStyle(
+		fontFamily = fontFamily,
+		fontWeight = FontWeight.Medium,
+		fontSize = 24.sp
 	),
 	titleLarge = TextStyle(
 		fontFamily = fontFamily,

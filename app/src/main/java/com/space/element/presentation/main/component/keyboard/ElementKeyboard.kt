@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.KeyboardBackspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -33,7 +34,7 @@ fun ElementKeyboardPreview() {
 fun ElementKeyboard(
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
-	buttonHeight: Dp = 56.dp,
+	buttonHeight: Dp = 80.dp,
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
@@ -244,7 +245,7 @@ private fun ElementKeyboardContent(
 				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.Outlined.KeyboardBackspace, contentDescription = null)
+				Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
 			}
 
 			ElementKeyboardButton(

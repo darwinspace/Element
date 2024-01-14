@@ -1,6 +1,8 @@
 package com.space.element.presentation.main.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +20,10 @@ fun ElementHeader(
 ) {
 	Surface(
 		modifier = modifier,
+		shape = MaterialTheme.shapes.extraLarge.copy(
+			topStart = CornerSize(0.dp),
+			topEnd = CornerSize(0.dp)
+		),
 		tonalElevation = 6.dp
 	) {
 		Column {
