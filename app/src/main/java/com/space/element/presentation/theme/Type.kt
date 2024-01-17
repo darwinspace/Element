@@ -38,17 +38,17 @@ val Typography = Typography(
 	),
 	titleLarge = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Bold,
+		fontWeight = FontWeight.Medium,
 		fontSize = 24.sp
 	),
 	titleMedium = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Bold,
+		fontWeight = FontWeight.Medium,
 		fontSize = 20.sp
 	),
 	titleSmall = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Bold,
+		fontWeight = FontWeight.Medium,
 		fontSize = 16.sp
 	),
 	bodyLarge = TextStyle(

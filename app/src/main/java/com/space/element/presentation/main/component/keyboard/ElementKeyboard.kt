@@ -34,7 +34,7 @@ fun ElementKeyboardPreview() {
 fun ElementKeyboard(
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
-	buttonHeight: Dp = 80.dp,
+	buttonHeight: Dp = 70.dp,
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
@@ -129,7 +129,7 @@ private fun ElementKeyboardContent(
 			}
 
 			ElementKeyboardButton(
-				keyboardButton = KeyboardButton.Addition,
+				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
 				height = keyboardButtonHeight,
 				onClick = onButtonClick
@@ -209,7 +209,7 @@ private fun ElementKeyboardContent(
 			}
 
 			ElementKeyboardButton(
-				keyboardButton = KeyboardButton.Multiplication,
+				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
 				height = keyboardButtonHeight,
 				onClick = onButtonClick

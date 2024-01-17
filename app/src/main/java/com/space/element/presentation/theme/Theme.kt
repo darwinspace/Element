@@ -43,7 +43,7 @@ fun ElementTheme(
 	val view = LocalView.current
 	if (!view.isInEditMode) {
 		SideEffect {
-			val elevation = if(darkTheme) 3.dp else 12.dp
+			val elevation = if(darkTheme) 1.dp else 12.dp
 			val color = colorScheme.surfaceColorAtElevation(elevation)
 			val window = (view.context as Activity).window
 			window.statusBarColor = color.toArgb()

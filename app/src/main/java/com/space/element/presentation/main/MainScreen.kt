@@ -1,5 +1,6 @@
 package com.space.element.presentation.main
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,10 +16,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,16 +56,19 @@ private fun getPreviewElementList(): List<Element> {
 	}
 }
 
-@Preview(device = "id:pixel_6_pro")
+@Preview(
+	device = "spec:width=1920dp,height=1080dp,dpi=160",
+	uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
+)
 //@Preview(device = "id:pixel_c")
 //@Preview(device = "id:desktop_medium")
 //@Preview(device = "id:tv_1080p")
 @Composable
 fun MainScreenPreview() {
-	val expression = remember { getPreviewExpressionList().toMutableStateList() }
-	var expressionCursorPosition by remember { mutableStateOf(0) }
+	val expression = getPreviewExpressionList()
+	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
 
-	val elementList = remember { getPreviewElementList().toMutableStateList() }
+	val elementList = getPreviewElementList()
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 
 	ElementTheme {
@@ -75,7 +79,7 @@ fun MainScreenPreview() {
 			expressionResult = ExpressionResultState.Value(value = 10.0),
 			elementList = elementList,
 			onElementListItemClick = { throw NotImplementedError() },
-			onElementListItemLongClick = { elementList.remove(it) },
+			onElementListItemLongClick = { throw NotImplementedError() },
 			elementListMode = elementListMode,
 			onElementListModeChange = { elementListMode = it },
 			elementListQuery = String(),
@@ -153,60 +157,62 @@ private fun MainScreen(
 	BoxWithConstraints {
 		val maxHeight = maxHeight
 		if (maxWidth >= 720.dp) {
-			Row {
-				Column(
-					modifier = Modifier.weight(1f)
-				) {
-					ElementHeader(
-						modifier = Modifier.weight(1f),
-						expression = expression,
-						expressionCursorPosition = expressionCursorPosition,
-						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-						expressionResultState = expressionResult
-					)
+			Surface {
+				Row {
+					Column(
+						modifier = Modifier.weight(1f)
+					) {
+						ElementHeader(
+							modifier = Modifier.weight(1f),
+							expression = expression,
+							expressionCursorPosition = expressionCursorPosition,
+							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+							expressionResultState = expressionResult
+						)
 
-					if (maxHeight > 500.dp) {
-						ElementKeyboard(
-							onButtonClick = onKeyboardButtonClick
-						)
-					} else if (maxHeight > 400.dp) {
-						ElementKeyboardVariant(
-							contentGap = 12.dp,
-							contentPadding = PaddingValues(12.dp),
-							buttonHeight = 48.dp,
-							onButtonClick = onKeyboardButtonClick
-						)
-					} else {
-						ElementKeyboardVariant(
-							contentGap = 4.dp,
-							contentPadding = PaddingValues(4.dp),
-							buttonHeight = 48.dp,
-							onButtonClick = onKeyboardButtonClick
+						if (maxHeight > 500.dp) {
+							ElementKeyboard(
+								onButtonClick = onKeyboardButtonClick
+							)
+						} else if (maxHeight > 400.dp) {
+							ElementKeyboardVariant(
+								contentGap = 12.dp,
+								contentPadding = PaddingValues(12.dp),
+								buttonHeight = 48.dp,
+								onButtonClick = onKeyboardButtonClick
+							)
+						} else {
+							ElementKeyboardVariant(
+								contentGap = 4.dp,
+								contentPadding = PaddingValues(4.dp),
+								buttonHeight = 48.dp,
+								onButtonClick = onKeyboardButtonClick
+							)
+						}
+					}
+
+					Surface(
+						modifier = Modifier
+							.weight(1f)
+							.fillMaxHeight(),
+						tonalElevation = 1.dp
+					) {
+						ElementList(
+							elementList = elementList,
+							elementListMode = elementListMode,
+							onElementListModeChange = onElementListModeChange,
+							onElementListItemClick = onElementListItemClick,
+							onElementListItemLongClick = onElementListItemLongClick,
+							elementListQuery = elementListQuery,
+							onElementListQueryChange = onElementListQueryChange,
+							elementName = elementName,
+							onElementNameChange = onElementNameChange,
+							elementValue = elementValue,
+							onElementValueChange = onElementValueChange,
+							createElementEnabled = createElementEnabled,
+							onCreateElementClick = onCreateElementClick
 						)
 					}
-				}
-
-				Surface(
-					modifier = Modifier
-						.weight(1f)
-						.fillMaxHeight(),
-					tonalElevation = 1.dp
-				) {
-					ElementList(
-						elementList = elementList,
-						elementListMode = elementListMode,
-						onElementListModeChange = onElementListModeChange,
-						onElementListItemClick = onElementListItemClick,
-						onElementListItemLongClick = onElementListItemLongClick,
-						elementListQuery = elementListQuery,
-						onElementListQueryChange = onElementListQueryChange,
-						elementName = elementName,
-						onElementNameChange = onElementNameChange,
-						elementValue = elementValue,
-						onElementValueChange = onElementValueChange,
-						createElementEnabled = createElementEnabled,
-						onCreateElementClick = onCreateElementClick
-					)
 				}
 			}
 		} else {

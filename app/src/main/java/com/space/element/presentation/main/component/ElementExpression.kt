@@ -175,11 +175,11 @@ private fun ExpressionElementItem(
 	onClick: () -> Unit
 ) {
 	Surface(
-		shape = MaterialTheme.shapes.small,
+		shape = MaterialTheme.shapes.large,
 		tonalElevation = 12.dp,
 		onClick = onClick
 	) {
-		Row(modifier = Modifier.padding(12.dp, 6.dp)) {
+		Row(modifier = Modifier.padding(12.dp, 8.dp)) {
 			ExpressionElementItemName(element.name)
 
 			AnimatedVisibility(visible = contentVisible) {
@@ -193,7 +193,7 @@ private fun ExpressionElementItem(
 private fun ExpressionElementItemName(elementName: String) {
 	Text(
 		text = elementName,
-		style = MaterialTheme.typography.titleSmall
+		style = MaterialTheme.typography.headlineSmall
 	)
 }
 
@@ -204,7 +204,7 @@ fun ExpressionElementItemValue(elementValue: String) {
 
 		Text(
 			text = "= ${elementValue.toDouble().format()}",
-			style = MaterialTheme.typography.bodyMedium
+			style = MaterialTheme.typography.titleLarge
 		)
 	}
 }
@@ -242,11 +242,11 @@ private fun ExpressionItemText(
 private fun Cursor() {
 	val infiniteTransition = rememberInfiniteTransition()
 	val alphaValue by infiniteTransition.animateFloat(
-		initialValue = 0f,
-		targetValue = 1f,
+		initialValue = 1f,
+		targetValue = 0f,
 		animationSpec = infiniteRepeatable(
 			animation = tween(durationMillis = 800),
-			repeatMode = RepeatMode.Restart
+			repeatMode = RepeatMode.Reverse
 		)
 	)
 
