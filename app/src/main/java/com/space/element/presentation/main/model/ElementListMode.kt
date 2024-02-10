@@ -1,7 +1,7 @@
 package com.space.element.presentation.main.model
 
-sealed class ElementListMode {
-	object Normal : ElementListMode()
-	object Create : ElementListMode()
-	object Search : ElementListMode()
+sealed interface ElementListMode {
+	data object Normal : ElementListMode
+	data object Create : ElementListMode
+	data object Search : ElementListMode
 }

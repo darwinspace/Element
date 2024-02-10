@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Element</string>
+    <string name="app_name" translatable="false">Space Element</string>
     <string name="button_add_element">Create Element</string>
     <string name="empty_element_list_content_action">Tap</string>
     <string name="empty_element_list_content_reason">to add an element.</string>

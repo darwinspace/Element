@@ -1,9 +1,6 @@
 package com.space.element.presentation.main
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.space.element.domain.model.Element
@@ -19,7 +16,6 @@ import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResult.Error
 import com.space.element.presentation.main.model.ExpressionResult.Value
 import com.space.element.presentation.main.model.ExpressionResultState
-import com.space.element.presentation.main.model.ExpressionResultState.Empty
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
 import com.space.element.presentation.main.model.Operator
@@ -42,11 +38,12 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 	val expression = mutableStateListOf<ExpressionItem>()
 
-	var expressionResult by mutableStateOf<ExpressionResultState>(Empty)
-		private set
+	private var _expressionResult =
+		MutableStateFlow<ExpressionResultState>(ExpressionResultState.Empty)
+	val expressionResult = _expressionResult.asStateFlow()
 
-	var expressionCursorPosition by mutableStateOf(0)
-		private set
+	private var _expressionCursorPosition = MutableStateFlow(0)
+	val expressionCursorPosition = _expressionCursorPosition.asStateFlow()
 
 	private var _elementListMode = MutableStateFlow<ElementListMode>(ElementListMode.Normal)
 	val elementListMode = _elementListMode.asStateFlow()
@@ -87,7 +84,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun appendExpressionItem(expressionItem: ExpressionItem) {
-		expression.add(expressionCursorPosition, expressionItem)
+		expression.add(expressionCursorPosition.value, expressionItem)
 	}
 
 	private fun onAppendExpressionItem(expressionItem: ExpressionItem) {
@@ -97,7 +94,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun removeItem() {
-		val index = expressionCursorPosition - 1
+		val index = expressionCursorPosition.value - 1
 		expression.getOrNull(index)?.let {
 			expression.removeAt(index)
 		}
@@ -105,9 +102,7 @@ class MainViewModel @Inject constructor(
 
 	fun onKeyboardButtonClick(keyboardButton: KeyboardButton) {
 		when (keyboardButton.type) {
-			KeyboardButtonType.Dot,
-			KeyboardButtonType.Parentheses,
-			KeyboardButtonType.Operator -> {
+			KeyboardButtonType.Dot, KeyboardButtonType.Parentheses, KeyboardButtonType.Operator -> {
 				onOperatorButtonClick(keyboardButton)
 			}
 
@@ -131,7 +126,7 @@ class MainViewModel @Inject constructor(
 
 	private fun expressionChanged() {
 		val result = evaluateExpression(expression)
-		expressionResult = when (result) {
+		_expressionResult.value = when (result) {
 			is Error -> ExpressionResultState.Error(result.exception)
 			is Value -> ExpressionResultState.Value(result.value)
 		}
@@ -164,7 +159,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onEqualOperatorButtonClick() {
-		(expressionResult as? ExpressionResultState.Value)?.let { (value) ->
+		(expressionResult.value as? ExpressionResultState.Value)?.let { (value) ->
 			emptyExpression()
 			emptyResult()
 
@@ -187,7 +182,7 @@ class MainViewModel @Inject constructor(
 				appendExpressionItem(item)
 			}
 
-			expressionCursorPosition = expression.size
+			_expressionCursorPosition.value = expression.size
 		}
 	}
 
@@ -198,12 +193,12 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun increaseCursor() {
-		expressionCursorPosition += 1
+		_expressionCursorPosition.value += 1
 	}
 
 	private fun decreaseCursor() {
-		if (expressionCursorPosition > 0) {
-			expressionCursorPosition -= 1
+		if (expressionCursorPosition.value > 0) {
+			_expressionCursorPosition.value -= 1
 		}
 	}
 
@@ -213,11 +208,11 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun emptyExpressionCursor() {
-		expressionCursorPosition = 0
+		_expressionCursorPosition.value = 0
 	}
 
 	private fun emptyResult() {
-		expressionResult = Empty
+		_expressionResult.value = ExpressionResultState.Empty
 	}
 
 	fun onElementListItemClick(element: Element) {
@@ -247,7 +242,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onExpressionCursorPositionChange(position: Int) {
-		expressionCursorPosition = position
+		_expressionCursorPosition.value = position
 	}
 
 	fun onElementListModeChange(mode: ElementListMode) {
@@ -269,10 +264,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	val createButtonEnabled = combine(
-		_elementList,
-		_elementListMode,
-		_elementName,
-		_elementValue
+		_elementList, _elementListMode, _elementName, _elementValue
 	) { list, mode, elementName, elementValue ->
 		when (mode) {
 			ElementListMode.Create -> {
@@ -285,8 +277,6 @@ class MainViewModel @Inject constructor(
 			ElementListMode.Search -> false
 		}
 	}.stateIn(
-		scope = viewModelScope,
-		started = SharingStarted.WhileSubscribed(),
-		initialValue = true
+		scope = viewModelScope, started = SharingStarted.WhileSubscribed(), initialValue = true
 	)
 }

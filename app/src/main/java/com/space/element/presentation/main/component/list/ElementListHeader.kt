@@ -39,8 +39,9 @@ import com.space.element.presentation.main.model.ElementListMode.Search
 fun ElementListHeader(
 	mode: ElementListMode,
 	onModeChange: (ElementListMode) -> Unit,
-	createElementEnabled: Boolean,
-	onCreateElementClick: () -> Unit
+	isCreateElementButtonEnabled: () -> Boolean,
+	onCreateElementClick: () -> Unit,
+	isElementListEmpty: Boolean
 ) {
 	Row(
 		modifier = Modifier
@@ -65,11 +66,13 @@ fun ElementListHeader(
 
 		CreateElementButton(
 			modifier = Modifier.weight(1f),
-			enabled = createElementEnabled,
+			enabled = isCreateElementButtonEnabled,
 			onClick = onCreateElementClick
 		)
 
-		AnimatedVisibility(visible = mode !is Create) {
+		AnimatedVisibility(
+			visible = mode !is Create && !isElementListEmpty
+		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
 
@@ -105,58 +108,80 @@ fun ElementListHeader(
 
 @Composable
 fun CreateElementForm(
-	elementName: String,
+	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
-	elementValue: String,
+	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit
 ) {
 	Column(modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)) {
-		ElementTextField(
-			modifier = Modifier.fillMaxWidth(),
-			value = elementName,
-			onValueChange = onElementNameChange,
-			placeholder = {
-				Text(
-					text = stringResource(R.string.element_name),
-					style = MaterialTheme.typography.bodyMedium
-				)
-			},
-			keyboardOptions = KeyboardOptions(
-				capitalization = KeyboardCapitalization.Sentences,
-				imeAction = ImeAction.Next
-			)
+		ElementNameTextField(
+			elementName = elementName,
+			onElementNameChange = onElementNameChange
 		)
 
 		Spacer(modifier = Modifier.height(24.dp))
 
-		ElementTextField(
-			modifier = Modifier.fillMaxWidth(),
-			value = elementValue,
-			onValueChange = onElementValueChange,
-			placeholder = {
-				Text(
-					text = stringResource(R.string.element_value),
-					style = MaterialTheme.typography.bodyMedium
-				)
-			},
-			keyboardOptions = KeyboardOptions(
-				keyboardType = KeyboardType.Decimal,
-				imeAction = ImeAction.Done
-			)
+		ElementValueTextField(
+			elementValue = elementValue,
+			onElementValueChange = onElementValueChange
 		)
 	}
 }
 
 @Composable
+private fun ElementValueTextField(
+	elementValue: () -> String,
+	onElementValueChange: (String) -> Unit
+) {
+	ElementTextField(
+		modifier = Modifier.fillMaxWidth(),
+		value = elementValue(),
+		onValueChange = onElementValueChange,
+		placeholder = {
+			Text(
+				text = stringResource(R.string.element_value),
+				style = MaterialTheme.typography.bodyMedium
+			)
+		},
+		keyboardOptions = KeyboardOptions(
+			keyboardType = KeyboardType.Decimal,
+			imeAction = ImeAction.Done
+		)
+	)
+}
+
+@Composable
+private fun ElementNameTextField(
+	elementName: () -> String,
+	onElementNameChange: (String) -> Unit
+) {
+	ElementTextField(
+		modifier = Modifier.fillMaxWidth(),
+		value = elementName(),
+		onValueChange = onElementNameChange,
+		placeholder = {
+			Text(
+				text = stringResource(R.string.element_name),
+				style = MaterialTheme.typography.bodyMedium
+			)
+		},
+		keyboardOptions = KeyboardOptions(
+			capitalization = KeyboardCapitalization.Sentences,
+			imeAction = ImeAction.Next
+		)
+	)
+}
+
+@Composable
 private fun CreateElementButton(
 	modifier: Modifier = Modifier,
-	enabled: Boolean = true,
+	enabled: () -> Boolean = { true },
 	onClick: () -> Unit
 ) {
 	ElementButton(
 		modifier = modifier,
 		text = stringResource(R.string.button_add_element),
-		enabled = enabled,
+		enabled = enabled(),
 		onClick = onClick
 	)
 }

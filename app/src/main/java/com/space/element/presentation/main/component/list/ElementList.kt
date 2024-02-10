@@ -51,19 +51,19 @@ fun ElementListPreview() {
 
 	ElementTheme {
 		ElementList(
-			elementList = elementList,
-			elementListMode = elementListMode,
+			elementList = { elementList },
+			elementListMode = { elementListMode },
 			onElementListModeChange = { elementListMode = it },
 			onElementListItemClick = { throw NotImplementedError() },
 			onElementListItemLongClick = { throw NotImplementedError() },
-			elementListQuery = elementListQuery,
+			elementListQuery = { elementListQuery },
 			onElementListQueryChange = { elementListQuery = it },
-			elementName = elementName,
+			elementName = { elementName },
 			onElementNameChange = { elementName = it },
-			elementValue = elementValue,
+			elementValue = { elementValue },
 			onElementValueChange = { elementValue = it },
-			createElementEnabled = true,
-			onCreateElementClick = { throw NotImplementedError() }
+			isCreateElementButtonEnabled = { true },
+			onCreateElementClick = { }
 		)
 	}
 }
@@ -71,30 +71,33 @@ fun ElementListPreview() {
 @Composable
 fun ElementList(
 	modifier: Modifier = Modifier,
-	elementList: List<Element>,
-	elementListQuery: String,
+	elementList: () -> List<Element>,
+	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
-	elementListMode: ElementListMode,
+	elementListMode: () -> ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
 	onElementListItemLongClick: (Element) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
-	elementName: String,
+	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
-	elementValue: String,
+	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
-	createElementEnabled: Boolean,
+	isCreateElementButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit
 ) {
+	val mode = elementListMode()
+	val list = elementList()
 	Surface(modifier = modifier) {
 		Column {
 			ElementListHeader(
-				mode = elementListMode,
+				mode = mode,
 				onModeChange = onElementListModeChange,
-				createElementEnabled = createElementEnabled,
+				isCreateElementButtonEnabled = isCreateElementButtonEnabled,
+				isElementListEmpty = list.isEmpty(),
 				onCreateElementClick = onCreateElementClick
 			)
 
-			AnimatedVisibility(visible = elementListMode is Create) {
+			AnimatedVisibility(visible = mode is Create) {
 				CreateElementForm(
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
@@ -103,20 +106,20 @@ fun ElementList(
 				)
 			}
 
-			AnimatedVisibility(visible = elementListMode is Search) {
+			AnimatedVisibility(visible = mode is Search) {
 				SearchElementTextField(
 					value = elementListQuery,
 					onValueChange = onElementListQueryChange
 				)
 			}
 
-			AnimatedVisibility(visible = elementList.isEmpty()) {
+			AnimatedVisibility(visible = list.isEmpty()) {
 				EmptyElementListCard()
 			}
 
-			AnimatedVisibility(visible = elementList.isNotEmpty()) {
+			AnimatedVisibility(visible = list.isNotEmpty()) {
 				ElementListContent(
-					elementList = elementList,
+					elementList = list,
 					onLongClick = onElementListItemLongClick,
 					onClick = onElementListItemClick
 				)
@@ -127,13 +130,13 @@ fun ElementList(
 
 @Composable
 fun SearchElementTextField(
-	value: String,
+	value: () -> String,
 	onValueChange: (String) -> Unit
 ) {
 	Box(modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)) {
 		ElementTextField(
 			modifier = Modifier.fillMaxWidth(),
-			value = value,
+			value = value(),
 			onValueChange = onValueChange,
 			placeholder = {
 				Text(

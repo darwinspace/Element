@@ -5,9 +5,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.space.element.domain.data.repository.ElementRepositoryImplementation
-import com.space.element.domain.data.source.ElementDatabase
-import com.space.element.domain.data.source.ElementDatabaseImplementation
+import com.space.element.data.repository.ElementRepositoryImplementation
+import com.space.element.data.source.ElementDatabase
+import com.space.element.data.source.ElementDatabaseImplementation
 import com.space.element.domain.repository.ElementRepository
 import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList

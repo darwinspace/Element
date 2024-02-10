@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.ExpressionItem
@@ -13,9 +14,9 @@ import com.space.element.presentation.main.model.ExpressionResultState
 @Composable
 fun ElementHeader(
 	modifier: Modifier = Modifier,
-	expression: List<ExpressionItem>,
-	expressionResultState: ExpressionResultState,
-	expressionCursorPosition: Int,
+	expression: () -> SnapshotStateList<ExpressionItem>,
+	expressionResultState: () -> ExpressionResultState,
+	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
 	Surface(

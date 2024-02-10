@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,8 +62,8 @@ private fun Operator.getColor(): Color {
 
 @Composable
 fun ElementExpression(
-	expression: List<ExpressionItem>,
-	expressionCursorPosition: Int,
+	expression: () -> SnapshotStateList<ExpressionItem>,
+	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
 	val state = rememberLazyListState()
@@ -81,16 +82,16 @@ fun ElementExpression(
 	) {
 		item {
 			ExpressionItemSpace(
-				cursorVisible = expressionCursorPosition == 0
+				cursorVisible = expressionCursorPosition() == 0
 			) {
 				onExpressionCursorPositionChange(0)
 			}
 		}
 
-		itemsIndexed(expression) { index, item ->
+		itemsIndexed(expression()) { index, item ->
 			ExpressionItemRow(
 				expressionItem = item,
-				cursorVisible = expressionCursorPosition == index + 1
+				cursorVisible = expressionCursorPosition() == index + 1
 			) {
 				onExpressionCursorPositionChange(index + 1)
 			}
@@ -98,7 +99,7 @@ fun ElementExpression(
 
 		scope.launch {
 			delay(200.milliseconds)
-			state.animateScrollToItem(expressionCursorPosition)
+			state.animateScrollToItem(expressionCursorPosition())
 		}
 	}
 }

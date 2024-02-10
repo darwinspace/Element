@@ -17,9 +17,10 @@ import com.space.element.util.format
 
 
 @Composable
-fun ElementExpressionResult(expressionResultState: ExpressionResultState) {
-	if (expressionResultState is ExpressionResultState.Value) {
-		ElementExpressionResultValue(expressionResultState)
+fun ElementExpressionResult(expressionResultState: () -> ExpressionResultState) {
+	val resultState = expressionResultState()
+	if (resultState is ExpressionResultState.Value) {
+		ElementExpressionResultValue(resultState)
 	}
 }
 

@@ -1,6 +1,6 @@
-package com.space.element.domain.data.repository
+package com.space.element.data.repository
 
-import com.space.element.domain.data.source.ElementDatabase
+import com.space.element.data.source.ElementDatabase
 import com.space.element.domain.model.Element
 import com.space.element.domain.repository.ElementRepository
 import kotlinx.coroutines.flow.Flow

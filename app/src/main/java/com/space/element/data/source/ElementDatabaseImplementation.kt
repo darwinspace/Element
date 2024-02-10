@@ -1,4 +1,4 @@
-package com.space.element.domain.data.source
+package com.space.element.data.source
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
