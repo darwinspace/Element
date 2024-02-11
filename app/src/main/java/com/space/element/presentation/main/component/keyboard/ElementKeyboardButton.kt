@@ -1,7 +1,7 @@
 package com.space.element.presentation.main.component.keyboard
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButtonType
@@ -39,7 +38,6 @@ private fun KeyboardButton.getSurfaceColor(): Color {
 fun ElementKeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
-	height: Dp,
 	enabled: Boolean = true,
 	containerColor: Color = keyboardButton.getSurfaceColor(),
 	contentColor: Color = contentColorFor(containerColor),
@@ -48,8 +46,7 @@ fun ElementKeyboardButton(
 ) {
 	val hapticFeedback = LocalHapticFeedback.current
 	Button(
-		modifier = modifier.heightIn(height),
-		// shape = MaterialTheme.shapes.large,
+		modifier = modifier.aspectRatio(1f),
 		shape = CircleShape,
 		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(

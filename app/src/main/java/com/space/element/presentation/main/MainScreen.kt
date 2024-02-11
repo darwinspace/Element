@@ -150,14 +150,12 @@ private fun MainScreen(
 							ElementKeyboardVariant(
 								contentGap = 12.dp,
 								contentPadding = PaddingValues(12.dp),
-								buttonHeight = 48.dp,
 								onButtonClick = onKeyboardButtonClick
 							)
 						} else {
 							ElementKeyboardVariant(
 								contentGap = 4.dp,
 								contentPadding = PaddingValues(4.dp),
-								buttonHeight = 48.dp,
 								onButtonClick = onKeyboardButtonClick
 							)
 						}
@@ -234,14 +232,12 @@ private fun MainScreen(
 						ElementKeyboardVariant(
 							contentGap = 12.dp,
 							contentPadding = PaddingValues(12.dp),
-							buttonHeight = 48.dp,
 							onButtonClick = onKeyboardButtonClick
 						)
 					} else {
 						ElementKeyboardVariant(
 							contentGap = 4.dp,
 							contentPadding = PaddingValues(4.dp),
-							buttonHeight = 48.dp,
 							onButtonClick = onKeyboardButtonClick
 						)
 					}

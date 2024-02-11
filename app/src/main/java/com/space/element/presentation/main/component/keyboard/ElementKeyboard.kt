@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Backspace
-import androidx.compose.material.icons.outlined.KeyboardBackspace
+import androidx.compose.material.icons.automirrored.outlined.Backspace
+import androidx.compose.material.icons.automirrored.outlined.KeyboardBackspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -24,9 +24,8 @@ fun ElementKeyboardPreview() {
 	ElementTheme {
 		ElementKeyboard(
 			contentGap = 16.dp,
-			contentPadding = PaddingValues(16.dp),
-			onButtonClick = { throw NotImplementedError() }
-		)
+			contentPadding = PaddingValues(16.dp)
+		) { throw NotImplementedError() }
 	}
 }
 
@@ -34,14 +33,12 @@ fun ElementKeyboardPreview() {
 fun ElementKeyboard(
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
-	buttonHeight: Dp = 70.dp,
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
 		ElementKeyboardContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
-			keyboardButtonHeight = buttonHeight,
 			onButtonClick = onButtonClick
 		)
 	}
@@ -51,7 +48,6 @@ fun ElementKeyboard(
 private fun ElementKeyboardContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
-	keyboardButtonHeight: Dp,
 	onButtonClick: (KeyboardButton) -> Unit,
 ) {
 	Column(
@@ -64,7 +60,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -73,7 +68,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -82,7 +76,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -91,7 +84,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -104,7 +96,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -113,7 +104,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -122,7 +112,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -131,7 +120,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -144,7 +132,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -153,7 +140,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -162,7 +148,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -171,7 +156,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -184,7 +168,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -193,7 +176,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -202,7 +184,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -211,7 +192,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -224,7 +204,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -233,7 +212,6 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -242,16 +220,14 @@ private fun ElementKeyboardContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
+				Icon(imageVector = Icons.AutoMirrored.Outlined.Backspace, contentDescription = null)
 			}
 
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -264,14 +240,12 @@ private fun ElementKeyboardContent(
 fun ElementKeyboardVariant(
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
-	buttonHeight: Dp = 56.dp,
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface {
 		ElementKeyboardVariantContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
-			keyboardButtonHeight = buttonHeight,
 			onButtonClick = onButtonClick
 		)
 	}
@@ -281,7 +255,6 @@ fun ElementKeyboardVariant(
 private fun ElementKeyboardVariantContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
-	keyboardButtonHeight: Dp,
 	onButtonClick: (KeyboardButton) -> Unit,
 ) {
 	Column(
@@ -294,7 +267,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -303,7 +275,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -312,7 +283,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -321,7 +291,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -330,7 +299,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -343,7 +311,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -352,7 +319,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -361,7 +327,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -370,7 +335,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -379,7 +343,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -392,7 +355,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -401,7 +363,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -410,7 +371,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -419,7 +379,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -428,7 +387,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -441,7 +399,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -450,7 +407,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -459,7 +415,6 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)
@@ -470,16 +425,17 @@ private fun ElementKeyboardVariantContent(
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.Outlined.KeyboardBackspace, contentDescription = null)
+				Icon(
+					imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace,
+					contentDescription = null
+				)
 			}
 
 			ElementKeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
-				height = keyboardButtonHeight,
 				onClick = onButtonClick
 			) {
 				ElementKeyboardButtonSymbol(symbol = it.symbol)

@@ -71,7 +71,7 @@ fun ElementListHeader(
 		)
 
 		AnimatedVisibility(
-			visible = mode !is Create && !isElementListEmpty
+			visible = mode !is Create && !isElementListEmpty || mode is Search
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
