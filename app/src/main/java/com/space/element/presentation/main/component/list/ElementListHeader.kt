@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import com.space.element.presentation.component.ElementIconButton
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
+import com.space.element.presentation.main.model.ElementListMode.Edit
 import com.space.element.presentation.main.model.ElementListMode.Normal
 import com.space.element.presentation.main.model.ElementListMode.Search
 
@@ -50,7 +52,9 @@ fun ElementListHeader(
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
-		AnimatedVisibility(visible = mode is Create) {
+		AnimatedVisibility(
+			visible = mode is Create || mode is Edit
+		) {
 			Row {
 				ElementIconButton(
 					onClick = {
@@ -64,14 +68,39 @@ fun ElementListHeader(
 			}
 		}
 
-		CreateElementButton(
+		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			enabled = isCreateElementButtonEnabled,
-			onClick = onCreateElementClick
-		)
+			visible = mode !is Edit
+		) {
+			CreateElementButton(
+				modifier = Modifier.fillMaxWidth(),
+				enabled = isCreateElementButtonEnabled,
+				onClick = onCreateElementClick
+			)
+		}
 
 		AnimatedVisibility(
-			visible = mode !is Create && !isElementListEmpty || mode is Search
+			visible = mode is Normal || mode is Edit
+		) {
+			Row {
+				Spacer(modifier = Modifier.width(16.dp))
+
+				ElementIconButton(
+					onClick = {
+						if (mode is Normal) {
+							onModeChange(Edit)
+						} else if (mode is Edit) {
+							onModeChange(Normal)
+						}
+					}
+				) {
+					Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+				}
+			}
+		}
+
+		AnimatedVisibility(
+			visible = mode is Normal && !isElementListEmpty || mode is Search
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))

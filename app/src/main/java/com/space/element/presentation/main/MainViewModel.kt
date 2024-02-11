@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
 
 	private val _elementList = getElementList()
 	val elementList =
-		combine(_elementList, _elementListMode, _elementListQuery) { list, mode, query ->
+		combine(_elementList, elementListMode, elementListQuery) { list, mode, query ->
 			if (mode is ElementListMode.Search) {
 				list.filter { it.name.contains(query, ignoreCase = true) }
 			} else {
@@ -263,20 +263,29 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	val createButtonEnabled = combine(
-		_elementList, _elementListMode, _elementName, _elementValue
-	) { list, mode, elementName, elementValue ->
+	val isCreateElementButtonEnabled = combine(
+		elementList, elementListMode, elementName, elementValue, elementListQuery
+	) { list, mode, elementName, elementValue, elementListQuery ->
 		when (mode) {
 			ElementListMode.Create -> {
-				elementName.isNotBlank() && list.none {
-					it.name == elementName.trim()
-				} && elementValue.toDoubleOrNull() != null
+				elementName.isNotBlank() &&
+						elementValue.toDoubleOrNull() != null &&
+						list.none {
+							it.name == elementName.trim()
+						}
 			}
 
 			ElementListMode.Normal -> true
-			ElementListMode.Search -> false
+			ElementListMode.Edit -> false
+			ElementListMode.Search -> {
+				list.none {
+					it.name.contains(elementListQuery, ignoreCase = true)
+				}
+			}
 		}
 	}.stateIn(
-		scope = viewModelScope, started = SharingStarted.WhileSubscribed(), initialValue = true
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(),
+		initialValue = true
 	)
 }

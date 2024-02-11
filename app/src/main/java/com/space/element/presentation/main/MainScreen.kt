@@ -79,7 +79,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	val elementListMode by viewModel.elementListMode.collectAsState()
 	val elementName by viewModel.elementName.collectAsState()
 	val elementValue by viewModel.elementValue.collectAsState()
-	val isCreateElementButtonEnabled by viewModel.createButtonEnabled.collectAsState()
+	val isCreateElementButtonEnabled by viewModel.isCreateElementButtonEnabled.collectAsState()
 
 	MainScreen(
 		expression = { expression },
