@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -69,37 +70,39 @@ fun ElementExpression(
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
-	LazyRow(
-		modifier = Modifier
-			.fillMaxWidth()
-			.height(FrameHeight),
-		contentPadding = PaddingValues(
-			start = 24.dp - ContentSpace, end = 24.dp
-		),
-		horizontalArrangement = Arrangement.spacedBy(0.dp),
-		verticalAlignment = Alignment.CenterVertically,
-		state = state
-	) {
-		item {
-			ExpressionItemSpace(
-				cursorVisible = expressionCursorPosition() == 0
-			) {
-				onExpressionCursorPositionChange(0)
+	SelectionContainer {
+		LazyRow(
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(FrameHeight),
+			contentPadding = PaddingValues(
+				start = 24.dp - ContentSpace, end = 24.dp
+			),
+			horizontalArrangement = Arrangement.spacedBy(0.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			state = state
+		) {
+			item {
+				ExpressionItemSpace(
+					cursorVisible = expressionCursorPosition() == 0
+				) {
+					onExpressionCursorPositionChange(0)
+				}
 			}
-		}
 
-		itemsIndexed(expression()) { index, item ->
-			ExpressionItemRow(
-				expressionItem = item,
-				cursorVisible = expressionCursorPosition() == index + 1
-			) {
-				onExpressionCursorPositionChange(index + 1)
+			itemsIndexed(expression()) { index, item ->
+				ExpressionItemRow(
+					expressionItem = item,
+					cursorVisible = expressionCursorPosition() == index + 1
+				) {
+					onExpressionCursorPositionChange(index + 1)
+				}
 			}
-		}
 
-		scope.launch {
-			delay(200.milliseconds)
-			state.animateScrollToItem(expressionCursorPosition())
+			scope.launch {
+				delay(200.milliseconds)
+				state.animateScrollToItem(expressionCursorPosition())
+			}
 		}
 	}
 }

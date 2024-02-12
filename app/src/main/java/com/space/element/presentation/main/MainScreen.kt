@@ -1,5 +1,6 @@
 package com.space.element.presentation.main
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -204,11 +205,9 @@ private fun MainScreen(
 						onCreateElementClick = onCreateElementClick
 					)
 				},
-				sheetPeekHeight = 48.dp,
+				sheetPeekHeight = 52.dp,
 				sheetDragHandle = {
-					BottomSheetDefaults.DragHandle(
-						color = MaterialTheme.colorScheme.onSurface
-					)
+					DragHandle()
 				}
 			) {
 				Column(
@@ -244,5 +243,18 @@ private fun MainScreen(
 				}
 			}
 		}
+	}
+}
+
+@Composable
+private fun DragHandle() {
+	Surface(
+		modifier = Modifier.padding(top = 24.dp),
+		color = MaterialTheme.colorScheme.onSurface,
+		shape = MaterialTheme.shapes.extraLarge
+	) {
+		Box(
+			modifier = Modifier.size(width = 32.dp, height = 4.dp)
+		)
 	}
 }

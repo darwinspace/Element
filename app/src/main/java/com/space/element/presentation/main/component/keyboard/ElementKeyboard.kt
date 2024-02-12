@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
-import androidx.compose.material.icons.automirrored.outlined.KeyboardBackspace
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -428,7 +427,7 @@ private fun ElementKeyboardVariantContent(
 				onClick = onButtonClick
 			) {
 				Icon(
-					imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace,
+					imageVector = Icons.AutoMirrored.Outlined.Backspace,
 					contentDescription = null
 				)
 			}
