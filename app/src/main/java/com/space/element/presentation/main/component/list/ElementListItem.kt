@@ -50,7 +50,7 @@ fun ElementListItem(
 				}
 			),
 		shape = MaterialTheme.shapes.medium,
-		tonalElevation = 6.dp
+		color = MaterialTheme.colorScheme.secondaryContainer
 	) {
 		Row(
 			modifier = Modifier.padding(20.dp),

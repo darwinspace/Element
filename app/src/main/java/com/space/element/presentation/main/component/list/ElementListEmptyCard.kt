@@ -35,7 +35,7 @@ fun EmptyElementListCard() {
 	Surface(
 		modifier = Modifier.padding(24.dp),
 		shape = MaterialTheme.shapes.medium,
-		color = MaterialTheme.colorScheme.tertiaryContainer
+		color = MaterialTheme.colorScheme.primaryContainer
 	) {
 		Text(
 			text = getText(),

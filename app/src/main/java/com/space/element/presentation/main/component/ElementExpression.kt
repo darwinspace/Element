@@ -149,22 +149,28 @@ private fun ExpressionItemSpace(
 private fun ExpressionItem(expressionItem: ExpressionItem) {
 	when (expressionItem) {
 		is ExpressionItem.ElementItem -> {
-			var contentVisible by rememberSaveable(expressionItem) { mutableStateOf(false) }
+			var valueVisible by rememberSaveable(expressionItem) {
+				mutableStateOf(false)
+			}
 			ExpressionElementItem(
 				element = expressionItem.element,
-				contentVisible = contentVisible,
+				valueVisible = valueVisible,
 				onClick = {
-					contentVisible = !contentVisible
+					valueVisible = !valueVisible
 				}
 			)
 		}
 
 		is ExpressionItem.OperatorItem -> {
-			ExpressionOperatorItem(expressionItem.operator)
+			ExpressionOperatorItem(
+				operator = expressionItem.operator
+			)
 		}
 
 		is ExpressionItem.NumberItem -> {
-			ExpressionNumberItem(expressionItem.number)
+			ExpressionNumberItem(
+				number = expressionItem.number
+			)
 		}
 	}
 }
@@ -172,18 +178,18 @@ private fun ExpressionItem(expressionItem: ExpressionItem) {
 @Composable
 private fun ExpressionElementItem(
 	element: Element,
-	contentVisible: Boolean,
+	valueVisible: Boolean,
 	onClick: () -> Unit
 ) {
 	Surface(
 		shape = MaterialTheme.shapes.large,
-		tonalElevation = 12.dp,
+		color = MaterialTheme.colorScheme.secondaryContainer,
 		onClick = onClick
 	) {
 		Row(modifier = Modifier.padding(12.dp, 8.dp)) {
 			ExpressionElementItemName(element.name)
 
-			AnimatedVisibility(visible = contentVisible) {
+			AnimatedVisibility(visible = valueVisible) {
 				ExpressionElementItemValue(element.value)
 			}
 		}

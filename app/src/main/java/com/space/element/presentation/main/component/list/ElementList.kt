@@ -1,6 +1,5 @@
 package com.space.element.presentation.main.component.list
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,19 +30,14 @@ import com.space.element.presentation.main.model.ElementListMode.Create
 import com.space.element.presentation.main.model.ElementListMode.Search
 import com.space.element.presentation.theme.ElementTheme
 
-private fun getPreviewElementList(): List<Element> {
-	return List(10) {
-		Element("Item $it", it.toString())
-	}
-}
-
-@Preview(
-	device = "id:pixel_6",
-	uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@Preview
 @Composable
 fun ElementListPreview() {
-	val elementList = remember { getPreviewElementList() }
+	val elementList = remember {
+		List(10) {
+			Element("Item $it", it.toString())
+		}
+	}
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }

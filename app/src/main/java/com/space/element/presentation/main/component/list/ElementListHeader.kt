@@ -80,7 +80,7 @@ fun ElementListHeader(
 		}
 
 		AnimatedVisibility(
-			visible = mode is Normal || mode is Edit
+			visible = mode is Normal && !isElementListEmpty || mode is Edit
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))

@@ -52,24 +52,51 @@ class MainViewModel @Inject constructor(
 	val elementListQuery = _elementListQuery.asStateFlow()
 
 	private val _elementList = getElementList()
-	val elementList =
-		combine(_elementList, elementListMode, elementListQuery) { list, mode, query ->
-			if (mode is ElementListMode.Search) {
-				list.filter { it.name.contains(query, ignoreCase = true) }
-			} else {
-				list
-			}
-		}.stateIn(
-			scope = viewModelScope,
-			started = SharingStarted.WhileSubscribed(),
-			initialValue = emptyList()
-		)
+	val elementList = combine(
+		_elementList, elementListMode, elementListQuery
+	) { list, mode, query ->
+		if (mode is ElementListMode.Search) {
+			list.filter { it.name.contains(query, ignoreCase = true) }
+		} else {
+			list
+		}
+	}.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(),
+		initialValue = emptyList()
+	)
 
 	private var _elementName = MutableStateFlow(String())
 	val elementName = _elementName.asStateFlow()
 
 	private var _elementValue = MutableStateFlow(String())
 	val elementValue = _elementValue.asStateFlow()
+
+	val isCreateElementButtonEnabled = combine(
+		elementList, elementListMode, elementName, elementValue, elementListQuery
+	) { list, mode, elementName, elementValue, elementListQuery ->
+		when (mode) {
+			ElementListMode.Create -> {
+				elementName.isNotBlank() &&
+						elementValue.toDoubleOrNull() != null &&
+						list.none {
+							it.name == elementName.trim()
+						}
+			}
+
+			ElementListMode.Normal -> true
+			ElementListMode.Edit -> false
+			ElementListMode.Search -> {
+				list.none {
+					it.name.contains(elementListQuery, ignoreCase = true)
+				}
+			}
+		}
+	}.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(),
+		initialValue = true
+	)
 
 	fun onElementListQueryChange(value: String) {
 		_elementListQuery.value = value
@@ -262,30 +289,4 @@ class MainViewModel @Inject constructor(
 			ElementListMode.Create
 		}
 	}
-
-	val isCreateElementButtonEnabled = combine(
-		elementList, elementListMode, elementName, elementValue, elementListQuery
-	) { list, mode, elementName, elementValue, elementListQuery ->
-		when (mode) {
-			ElementListMode.Create -> {
-				elementName.isNotBlank() &&
-						elementValue.toDoubleOrNull() != null &&
-						list.none {
-							it.name == elementName.trim()
-						}
-			}
-
-			ElementListMode.Normal -> true
-			ElementListMode.Edit -> false
-			ElementListMode.Search -> {
-				list.none {
-					it.name.contains(elementListQuery, ignoreCase = true)
-				}
-			}
-		}
-	}.stateIn(
-		scope = viewModelScope,
-		started = SharingStarted.WhileSubscribed(),
-		initialValue = true
-	)
 }
