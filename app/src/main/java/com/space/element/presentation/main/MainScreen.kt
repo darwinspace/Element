@@ -99,7 +99,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		elementValue = { elementValue },
 		onElementValueChange = viewModel::onElementValueChange,
 		isCreateElementButtonEnabled = { isCreateElementButtonEnabled },
-		onCreateElementClick = viewModel::onCreateElementClick,
+		onCreateElementClick = viewModel::onElementListCreateElementButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)
 }
