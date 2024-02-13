@@ -57,16 +57,14 @@ fun MainScreenPreview() {
 			onElementListQueryChange = { },
 			elementListMode = { elementListMode },
 			onElementListModeChange = { elementListMode = it },
-			onElementListItemLongClick = { },
 			onElementListItemClick = { },
 			elementName = { String() },
 			onElementNameChange = { },
 			elementValue = { String() },
 			onElementValueChange = { },
 			isCreateElementButtonEnabled = { true },
-			onCreateElementClick = { },
-			onKeyboardButtonClick = { }
-		)
+			onCreateElementClick = { }
+		) { }
 	}
 }
 
@@ -84,16 +82,15 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 
 	MainScreen(
 		expression = { expression },
-		expressionResult = { expressionResult },
 		expressionCursorPosition = { expressionCursorPosition },
 		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
+		expressionResult = { expressionResult },
 		elementList = { elementList },
-		onElementListItemClick = viewModel::onElementListItemClick,
-		onElementListItemLongClick = viewModel::onElementListItemLongClick,
-		elementListMode = { elementListMode },
-		onElementListModeChange = viewModel::onElementListModeChange,
 		elementListQuery = { elementListQuery },
 		onElementListQueryChange = viewModel::onElementListQueryChange,
+		elementListMode = { elementListMode },
+		onElementListModeChange = viewModel::onElementListModeChange,
+		onElementListItemClick = viewModel::onElementListItemClick,
 		elementName = { elementName },
 		onElementNameChange = viewModel::onElementNameChange,
 		elementValue = { elementValue },
@@ -117,7 +114,6 @@ private fun MainScreen(
 	onElementListQueryChange: (String) -> Unit,
 	elementListMode: () -> ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onElementListItemLongClick: (Element) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
@@ -129,74 +125,16 @@ private fun MainScreen(
 ) {
 	BoxWithConstraints {
 		val maxHeight = maxHeight
-		if (maxWidth >= 720.dp) {
-			Surface {
-				Row {
-					Column(
-						modifier = Modifier.weight(1f)
-					) {
-						ElementHeader(
-							modifier = Modifier.weight(1f),
-							expression = expression,
-							expressionCursorPosition = expressionCursorPosition,
-							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-							expressionResultState = expressionResult
-						)
-
-						if (maxHeight > 500.dp) {
-							ElementKeyboard(
-								onButtonClick = onKeyboardButtonClick
-							)
-						} else if (maxHeight > 400.dp) {
-							ElementKeyboardVariant(
-								contentGap = 12.dp,
-								contentPadding = PaddingValues(12.dp),
-								onButtonClick = onKeyboardButtonClick
-							)
-						} else {
-							ElementKeyboardVariant(
-								contentGap = 4.dp,
-								contentPadding = PaddingValues(4.dp),
-								onButtonClick = onKeyboardButtonClick
-							)
-						}
-					}
-
-					Surface(
-						modifier = Modifier
-							.weight(1f)
-							.fillMaxHeight(),
-						tonalElevation = 1.dp
-					) {
-						ElementList(
-							elementList = elementList,
-							elementListMode = elementListMode,
-							onElementListModeChange = onElementListModeChange,
-							onElementListItemClick = onElementListItemClick,
-							onElementListItemLongClick = onElementListItemLongClick,
-							elementListQuery = elementListQuery,
-							onElementListQueryChange = onElementListQueryChange,
-							elementName = elementName,
-							onElementNameChange = onElementNameChange,
-							elementValue = elementValue,
-							onElementValueChange = onElementValueChange,
-							isCreateElementButtonEnabled = isCreateElementButtonEnabled,
-							onCreateElementClick = onCreateElementClick
-						)
-					}
-				}
-			}
-		} else {
+		if (maxWidth < 720.dp) {
 			BottomSheetScaffold(
 				sheetContent = {
 					ElementList(
 						elementList = elementList,
+						elementListQuery = elementListQuery,
+						onElementListQueryChange = onElementListQueryChange,
 						elementListMode = elementListMode,
 						onElementListModeChange = onElementListModeChange,
 						onElementListItemClick = onElementListItemClick,
-						onElementListItemLongClick = onElementListItemLongClick,
-						elementListQuery = elementListQuery,
-						onElementListQueryChange = onElementListQueryChange,
 						elementName = elementName,
 						onElementNameChange = onElementNameChange,
 						elementValue = elementValue,
@@ -241,6 +179,58 @@ private fun MainScreen(
 						)
 					}
 				}
+			}
+		} else {
+			Row {
+				Surface {
+					Column(
+						modifier = Modifier.weight(1f)
+					) {
+						ElementHeader(
+							modifier = Modifier.weight(1f),
+							expression = expression,
+							expressionCursorPosition = expressionCursorPosition,
+							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+							expressionResultState = expressionResult
+						)
+
+						if (maxHeight > 500.dp) {
+							ElementKeyboard(
+								onButtonClick = onKeyboardButtonClick
+							)
+						} else if (maxHeight > 400.dp) {
+							ElementKeyboardVariant(
+								contentGap = 12.dp,
+								contentPadding = PaddingValues(12.dp),
+								onButtonClick = onKeyboardButtonClick
+							)
+						} else {
+							ElementKeyboardVariant(
+								contentGap = 4.dp,
+								contentPadding = PaddingValues(4.dp),
+								onButtonClick = onKeyboardButtonClick
+							)
+						}
+					}
+				}
+
+				ElementList(
+					modifier = Modifier
+						.weight(1f)
+						.fillMaxHeight(),
+					elementList = elementList,
+					elementListQuery = elementListQuery,
+					onElementListQueryChange = onElementListQueryChange,
+					elementListMode = elementListMode,
+					onElementListModeChange = onElementListModeChange,
+					onElementListItemClick = onElementListItemClick,
+					elementName = elementName,
+					onElementNameChange = onElementNameChange,
+					elementValue = elementValue,
+					onElementValueChange = onElementValueChange,
+					isCreateElementButtonEnabled = isCreateElementButtonEnabled,
+					onCreateElementClick = onCreateElementClick
+				)
 			}
 		}
 	}

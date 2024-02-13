@@ -77,19 +77,14 @@ class MainViewModel @Inject constructor(
 	) { list, mode, elementName, elementValue, elementListQuery ->
 		when (mode) {
 			ElementListMode.Create -> {
-				elementName.isNotBlank() &&
-						elementValue.toDoubleOrNull() != null &&
-						list.none {
-							it.name == elementName.trim()
-						}
+				elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
+						list.none { it.name == elementName.trim() }
 			}
 
 			ElementListMode.Normal -> true
 			ElementListMode.Edit -> false
 			ElementListMode.Search -> {
-				list.none {
-					it.name.contains(elementListQuery, ignoreCase = true)
-				}
+				elementListQuery.isNotBlank() && list.none { it.name == elementListQuery.trim() }
 			}
 		}
 	}.stateIn(
@@ -200,31 +195,29 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onKeyboardEqualOperatorButtonClick() {
-		(expressionResult.value as? ExpressionResultState.Value)?.let { (value) ->
-			emptyExpression()
-			emptyResult()
+		val (value) = expressionResult.value as? ExpressionResultState.Value ?: return
 
-			val valueReversed = value.format().reversed()
+		emptyExpression()
+		emptyResult()
 
-			valueReversed.forEach { character ->
-				if (Operator.Dot.symbol == character) {
-					val item = OperatorItem(Operator.Dot)
-					addExpressionItem(item)
-				}
-
-				if (character.isDigit()) {
-					val item = NumberItem(character)
-					addExpressionItem(item)
-				}
-			}
-
-			if (value < 0) {
-				val item = OperatorItem(Operator.Subtraction)
+		value.format().reversed().forEach { character ->
+			if (Operator.Dot.symbol == character) {
+				val item = OperatorItem(Operator.Dot)
 				addExpressionItem(item)
 			}
 
-			_expressionCursorPosition.value = expression.size
+			if (character.isDigit()) {
+				val item = NumberItem(character)
+				addExpressionItem(item)
+			}
 		}
+
+		if (value < 0) {
+			val item = OperatorItem(Operator.Subtraction)
+			addExpressionItem(item)
+		}
+
+		_expressionCursorPosition.value = expression.size
 	}
 
 	private fun increaseCursor() {
@@ -270,6 +263,9 @@ class MainViewModel @Inject constructor(
 			addElement(elementName.value, elementValue.value)
 			emptyElementName()
 			emptyElementValue()
+		} else if (elementListMode.value is ElementListMode.Search) {
+			_elementName.value = elementListQuery.value
+			_elementListQuery.value = String()
 		}
 
 		_elementListMode.value = if (elementListMode.value is ElementListMode.Create) {
@@ -282,11 +278,5 @@ class MainViewModel @Inject constructor(
 	fun onElementListItemClick(element: Element) {
 		val item = ElementItem(element)
 		onAddExpressionItem(item)
-	}
-
-	fun onElementListItemLongClick(element: Element) {
-		viewModelScope.launch {
-			removeElement(element)
-		}
 	}
 }

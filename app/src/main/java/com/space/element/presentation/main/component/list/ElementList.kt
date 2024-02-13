@@ -68,19 +68,17 @@ fun ElementListPreview() {
 	ElementTheme {
 		ElementList(
 			elementList = { elementList },
+			elementListQuery = { elementListQuery },
+			onElementListQueryChange = { elementListQuery = it },
 			elementListMode = { elementListMode },
 			onElementListModeChange = { elementListMode = it },
 			onElementListItemClick = { throw NotImplementedError() },
-			onElementListItemLongClick = { throw NotImplementedError() },
-			elementListQuery = { elementListQuery },
-			onElementListQueryChange = { elementListQuery = it },
 			elementName = { elementName },
 			onElementNameChange = { elementName = it },
 			elementValue = { elementValue },
 			onElementValueChange = { elementValue = it },
-			isCreateElementButtonEnabled = { true },
-			onCreateElementClick = { }
-		)
+			isCreateElementButtonEnabled = { true }
+		) { }
 	}
 }
 
@@ -92,7 +90,6 @@ fun ElementList(
 	onElementListQueryChange: (String) -> Unit,
 	elementListMode: () -> ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onElementListItemLongClick: (Element) -> Unit,
 	onElementListItemClick: (Element) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
@@ -134,21 +131,16 @@ fun ElementList(
 			}
 
 			AnimatedVisibility(
-				visible = list.isEmpty(),
-				enter = fadeIn(),
-				exit = fadeOut()
+				visible = list.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = list.isNotEmpty(),
-				enter = fadeIn(),
-				exit = fadeOut()
+				visible = list.isNotEmpty()
 			) {
 				ElementListContent(
 					elementList = list,
-					onLongClick = onElementListItemLongClick,
 					onClick = onElementListItemClick
 				)
 			}
@@ -352,7 +344,6 @@ fun ElementListSearchTextField(
 @Composable
 fun ElementListContent(
 	elementList: List<Element>,
-	onLongClick: (Element) -> Unit,
 	onClick: (Element) -> Unit
 ) {
 	LazyColumn(
