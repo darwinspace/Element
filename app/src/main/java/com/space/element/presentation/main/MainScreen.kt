@@ -29,11 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
 import com.space.element.presentation.main.component.ElementHeader
-import com.space.element.presentation.main.component.keyboard.ElementKeyboard
-import com.space.element.presentation.main.component.keyboard.ElementKeyboardVariant
-import com.space.element.presentation.main.component.list.ElementList
+import com.space.element.presentation.main.component.ElementKeyboard
+import com.space.element.presentation.main.component.ElementKeyboardVariant
+import com.space.element.presentation.main.component.ElementList
 import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ExpressionResultState
+import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.theme.ElementTheme
 
@@ -51,7 +51,7 @@ fun MainScreenPreview() {
 			expression = { expression },
 			expressionCursorPosition = { expressionCursorPosition },
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
-			expressionResult = { ExpressionResultState.Value(value = 10.0) },
+			expressionResult = { ExpressionResult.Value(value = 10.0) },
 			elementList = { elementList },
 			elementListQuery = { String() },
 			onElementListQueryChange = { },
@@ -101,14 +101,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	)
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
 	expression: () -> SnapshotStateList<ExpressionItem>,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit,
-	expressionResult: () -> ExpressionResultState,
+	expressionResult: () -> ExpressionResult,
 	elementList: () -> List<Element>,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
@@ -145,7 +144,15 @@ private fun MainScreen(
 				},
 				sheetPeekHeight = 52.dp,
 				sheetDragHandle = {
-					DragHandle()
+					Surface(
+						modifier = Modifier.padding(top = 24.dp),
+						color = MaterialTheme.colorScheme.onSurface,
+						shape = MaterialTheme.shapes.extraLarge
+					) {
+						Box(
+							modifier = Modifier.size(width = 32.dp, height = 4.dp)
+						)
+					}
 				}
 			) {
 				Column(
@@ -158,7 +165,7 @@ private fun MainScreen(
 						expression = expression,
 						expressionCursorPosition = expressionCursorPosition,
 						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-						expressionResultState = expressionResult
+						expressionResult = expressionResult
 					)
 
 					if (maxHeight > 500.dp) {
@@ -191,7 +198,7 @@ private fun MainScreen(
 							expression = expression,
 							expressionCursorPosition = expressionCursorPosition,
 							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-							expressionResultState = expressionResult
+							expressionResult = expressionResult
 						)
 
 						if (maxHeight > 500.dp) {
@@ -236,15 +243,3 @@ private fun MainScreen(
 	}
 }
 
-@Composable
-private fun DragHandle() {
-	Surface(
-		modifier = Modifier.padding(top = 24.dp),
-		color = MaterialTheme.colorScheme.onSurface,
-		shape = MaterialTheme.shapes.extraLarge
-	) {
-		Box(
-			modifier = Modifier.size(width = 32.dp, height = 4.dp)
-		)
-	}
-}

@@ -1,24 +1,62 @@
 package com.space.element.presentation.main.model
 
-enum class KeyboardButton(val symbol: Char, val type: KeyboardButtonType) {
-	Zero(symbol = '0', type = KeyboardButtonType.Number),
-	One(symbol = '1', type = KeyboardButtonType.Number),
-	Two(symbol = '2', type = KeyboardButtonType.Number),
-	Three(symbol = '3', type = KeyboardButtonType.Number),
-	Four(symbol = '4', type = KeyboardButtonType.Number),
-	Five(symbol = '5', type = KeyboardButtonType.Number),
-	Six(symbol = '6', type = KeyboardButtonType.Number),
-	Seven(symbol = '7', type = KeyboardButtonType.Number),
-	Eight(symbol = '8', type = KeyboardButtonType.Number),
-	Nine(symbol = '9', type = KeyboardButtonType.Number),
-	Clear(symbol = 'C', type = KeyboardButtonType.Clear),
-	Dot(symbol = '.', type = KeyboardButtonType.Dot),
-	Open(symbol = Operator.Open.symbol, type = KeyboardButtonType.Parentheses),
-	Close(symbol = Operator.Close.symbol, type = KeyboardButtonType.Parentheses),
-	Addition(symbol = Operator.Addition.symbol, type = KeyboardButtonType.Operator),
-	Subtraction(symbol = Operator.Subtraction.symbol, type = KeyboardButtonType.Operator),
-	Multiplication(symbol = Operator.Multiplication.symbol, type = KeyboardButtonType.Operator),
-	Division(symbol = Operator.Division.symbol, type = KeyboardButtonType.Operator),
-	Delete(symbol = '?', type = KeyboardButtonType.Delete),
-	Equal(symbol = '=', type = KeyboardButtonType.Equal)
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+sealed class KeyboardButton(val symbol: Char, val type: Type) {
+	enum class Type {
+		Number, Operator, Delete, Clear, Parentheses, Dot, Equal
+	}
+	
+	data object Zero : KeyboardButton(symbol = '0', type = Type.Number)
+	data object One : KeyboardButton(symbol = '1', type = Type.Number)
+	data object Two : KeyboardButton(symbol = '2', type = Type.Number)
+	data object Three : KeyboardButton(symbol = '3', type = Type.Number)
+	data object Four : KeyboardButton(symbol = '4', type = Type.Number)
+	data object Five : KeyboardButton(symbol = '5', type = Type.Number)
+	data object Six : KeyboardButton(symbol = '6', type = Type.Number)
+	data object Seven : KeyboardButton(symbol = '7', type = Type.Number)
+	data object Eight : KeyboardButton(symbol = '8', type = Type.Number)
+	data object Nine : KeyboardButton(symbol = '9', type = Type.Number)
+	data object Clear : KeyboardButton(symbol = 'C', type = Type.Clear)
+	data object Dot : KeyboardButton(symbol = '.', type = Type.Dot)
+	data object Open :
+		KeyboardButton(symbol = ExpressionOperator.Open.symbol, type = Type.Parentheses)
+
+	data object Close :
+		KeyboardButton(symbol = ExpressionOperator.Close.symbol, type = Type.Parentheses)
+
+	data object Addition :
+		KeyboardButton(symbol = ExpressionOperator.Addition.symbol, type = Type.Operator)
+
+	data object Subtraction :
+		KeyboardButton(symbol = ExpressionOperator.Subtraction.symbol, type = Type.Operator)
+
+	data object Multiplication :
+		KeyboardButton(symbol = ExpressionOperator.Multiplication.symbol, type = Type.Operator)
+
+	data object Division :
+		KeyboardButton(symbol = ExpressionOperator.Division.symbol, type = Type.Operator)
+
+	data object Delete : KeyboardButton(symbol = '?', type = Type.Delete)
+	data object Equal : KeyboardButton(symbol = '=', type = Type.Equal)
+
+	@Composable
+	fun getSurfaceColor(): Color {
+		val elevation = 1.dp
+		return when (type) {
+			Type.Dot,
+			Type.Delete,
+			Type.Number -> MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
+
+			Type.Operator,
+			Type.Parentheses -> MaterialTheme.colorScheme.secondaryContainer
+
+			Type.Clear -> MaterialTheme.colorScheme.tertiaryContainer
+			Type.Equal -> MaterialTheme.colorScheme.primary
+		}
+	}
 }

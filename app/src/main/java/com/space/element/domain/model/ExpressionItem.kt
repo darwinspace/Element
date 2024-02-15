@@ -1,6 +1,6 @@
 package com.space.element.domain.model
 
-import com.space.element.presentation.main.model.Operator
+import com.space.element.presentation.main.model.ExpressionOperator
 
 sealed interface ExpressionItem {
 	data class ElementItem(val element: Element) : ExpressionItem {
@@ -11,7 +11,7 @@ sealed interface ExpressionItem {
 		override fun toString() = number.toString()
 	}
 
-	data class OperatorItem(val operator: Operator) : ExpressionItem {
+	data class OperatorItem(val operator: ExpressionOperator) : ExpressionItem {
 		override fun toString() = operator.symbol.toString()
 	}
 }

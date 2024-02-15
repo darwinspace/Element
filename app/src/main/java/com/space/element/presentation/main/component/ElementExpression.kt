@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,11 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
-import com.space.element.presentation.main.model.Operator
-import com.space.element.presentation.main.model.OperatorType
+import com.space.element.presentation.main.model.ExpressionResult
+import com.space.element.presentation.main.model.ExpressionOperator
 import com.space.element.util.format
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,14 +55,6 @@ private val CursorHeight = 32.dp
 
 private val ContentSpace = 4.dp
 private val FrameHeight = 96.dp
-
-@Composable
-private fun Operator.getColor(): Color {
-	return when (type) {
-		OperatorType.Arithmetic -> MaterialTheme.colorScheme.primary
-		OperatorType.Parentheses -> MaterialTheme.colorScheme.tertiary
-	}
-}
 
 @Composable
 fun ElementExpression(
@@ -142,7 +137,7 @@ private fun ExpressionItemSpace(
 		contentAlignment = Alignment.Center,
 		content = {
 			if (cursorVisible) {
-				Cursor()
+				ExpressionCursor()
 			}
 		}
 	)
@@ -227,7 +222,7 @@ private fun ExpressionNumberItem(number: Char) {
 }
 
 @Composable
-private fun ExpressionOperatorItem(operator: Operator) {
+private fun ExpressionOperatorItem(operator: ExpressionOperator) {
 	ExpressionItemText(
 		text = operator.symbol.toString(),
 		color = operator.getColor()
@@ -249,7 +244,7 @@ private fun ExpressionItemText(
 }
 
 @Composable
-private fun Cursor() {
+private fun ExpressionCursor() {
 	val infiniteTransition = rememberInfiniteTransition()
 	val alphaValue by infiniteTransition.animateFloat(
 		initialValue = 1f,
@@ -265,8 +260,37 @@ private fun Cursor() {
 			.graphicsLayer {
 				alpha = alphaValue
 			}
-			.background(MaterialTheme.colorScheme.primary)
+			.background(color = MaterialTheme.colorScheme.primary)
 			.width(CursorWidth)
 			.height(CursorHeight)
+	)
+}
+@Composable
+fun ElementExpressionResult(expressionResult: () -> ExpressionResult) {
+	val resultState = expressionResult()
+	if (resultState is ExpressionResult.Value) {
+		ElementExpressionResultValue(resultState)
+	}
+}
+
+@Composable
+private fun ElementExpressionResultValue(expressionResult: ExpressionResult.Value) {
+	Box(
+		modifier = Modifier
+			.fillMaxWidth()
+			.horizontalScroll(rememberScrollState())
+			.padding(horizontal = 24.dp),
+		contentAlignment = Alignment.CenterEnd
+	) {
+		ElementExpressionResultText(expressionResult.value)
+	}
+}
+
+@Composable
+fun ElementExpressionResultText(value: Double) {
+	Text(
+		text = value.format(),
+		textAlign = TextAlign.End,
+		style = MaterialTheme.typography.headlineLarge
 	)
 }

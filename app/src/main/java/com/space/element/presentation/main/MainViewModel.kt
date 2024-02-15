@@ -13,12 +13,9 @@ import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ExpressionResult.Error
-import com.space.element.presentation.main.model.ExpressionResult.Value
-import com.space.element.presentation.main.model.ExpressionResultState
+import com.space.element.presentation.main.model.ExpressionOperator
+import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
-import com.space.element.presentation.main.model.KeyboardButtonType
-import com.space.element.presentation.main.model.Operator
 import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +36,7 @@ class MainViewModel @Inject constructor(
 	val expression = mutableStateListOf<ExpressionItem>()
 
 	private var _expressionResult =
-		MutableStateFlow<ExpressionResultState>(ExpressionResultState.Empty)
+		MutableStateFlow<ExpressionResult>(ExpressionResult.Empty)
 	val expressionResult = _expressionResult.asStateFlow()
 
 	private var _expressionCursorPosition = MutableStateFlow(0)
@@ -94,11 +91,7 @@ class MainViewModel @Inject constructor(
 	)
 
 	private fun onExpressionChange() {
-		val result = evaluateExpression(expression)
-		_expressionResult.value = when (result) {
-			is Error -> ExpressionResultState.Error(result.exception)
-			is Value -> ExpressionResultState.Value(result.value)
-		}
+		_expressionResult.value = evaluateExpression(expression)
 	}
 
 	fun onExpressionCursorPositionChange(position: Int) {
@@ -138,25 +131,25 @@ class MainViewModel @Inject constructor(
 
 	fun onKeyboardButtonClick(keyboardButton: KeyboardButton) {
 		when (keyboardButton.type) {
-			KeyboardButtonType.Dot,
-			KeyboardButtonType.Parentheses,
-			KeyboardButtonType.Operator -> {
+			KeyboardButton.Type.Dot,
+			KeyboardButton.Type.Parentheses,
+			KeyboardButton.Type.Operator -> {
 				onKeyboardOperatorButtonClick(keyboardButton)
 			}
 
-			KeyboardButtonType.Delete -> {
+			KeyboardButton.Type.Delete -> {
 				onKeyboardDeleteOperatorButtonClick()
 			}
 
-			KeyboardButtonType.Equal -> {
+			KeyboardButton.Type.Equal -> {
 				onKeyboardEqualOperatorButtonClick()
 			}
 
-			KeyboardButtonType.Number -> {
+			KeyboardButton.Type.Number -> {
 				onKeyboardNumberButtonClick(keyboardButton)
 			}
 
-			KeyboardButtonType.Clear -> {
+			KeyboardButton.Type.Clear -> {
 				onKeyboardClearButtonClick()
 			}
 		}
@@ -168,14 +161,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onKeyboardOperatorButtonClick(keyboardButton: KeyboardButton) {
-		val operator: Operator = when (keyboardButton) {
-			KeyboardButton.Open -> Operator.Open
-			KeyboardButton.Close -> Operator.Close
-			KeyboardButton.Addition -> Operator.Addition
-			KeyboardButton.Subtraction -> Operator.Subtraction
-			KeyboardButton.Multiplication -> Operator.Multiplication
-			KeyboardButton.Division -> Operator.Division
-			KeyboardButton.Dot -> Operator.Dot
+		val operator: ExpressionOperator = when (keyboardButton) {
+			KeyboardButton.Open -> ExpressionOperator.Open
+			KeyboardButton.Close -> ExpressionOperator.Close
+			KeyboardButton.Addition -> ExpressionOperator.Addition
+			KeyboardButton.Subtraction -> ExpressionOperator.Subtraction
+			KeyboardButton.Multiplication -> ExpressionOperator.Multiplication
+			KeyboardButton.Division -> ExpressionOperator.Division
+			KeyboardButton.Dot -> ExpressionOperator.Dot
 			else -> throw IllegalStateException()
 		}
 
@@ -195,14 +188,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onKeyboardEqualOperatorButtonClick() {
-		val (value) = expressionResult.value as? ExpressionResultState.Value ?: return
+		val (value) = expressionResult.value as? ExpressionResult.Value ?: return
 
 		emptyExpression()
 		emptyResult()
 
 		value.format().reversed().forEach { character ->
-			if (Operator.Dot.symbol == character) {
-				val item = OperatorItem(Operator.Dot)
+			if (ExpressionOperator.Dot.symbol == character) {
+				val item = OperatorItem(ExpressionOperator.Dot)
 				addExpressionItem(item)
 			}
 
@@ -213,7 +206,7 @@ class MainViewModel @Inject constructor(
 		}
 
 		if (value < 0) {
-			val item = OperatorItem(Operator.Subtraction)
+			val item = OperatorItem(ExpressionOperator.Subtraction)
 			addExpressionItem(item)
 		}
 
@@ -240,7 +233,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun emptyResult() {
-		_expressionResult.value = ExpressionResultState.Empty
+		_expressionResult.value = ExpressionResult.Empty
 	}
 
 	private fun addElement(elementName: String, elementValue: String) {

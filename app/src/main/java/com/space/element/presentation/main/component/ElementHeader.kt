@@ -9,13 +9,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.ExpressionItem
-import com.space.element.presentation.main.model.ExpressionResultState
+import com.space.element.presentation.main.model.ExpressionResult
 
 @Composable
 fun ElementHeader(
 	modifier: Modifier = Modifier,
 	expression: () -> SnapshotStateList<ExpressionItem>,
-	expressionResultState: () -> ExpressionResultState,
+	expressionResult: () -> ExpressionResult,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
@@ -35,7 +35,7 @@ fun ElementHeader(
 			)
 
 			ElementExpressionResult(
-				expressionResultState = expressionResultState
+				expressionResult = expressionResult
 			)
 		}
 	}

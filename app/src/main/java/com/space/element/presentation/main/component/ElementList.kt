@@ -1,4 +1,4 @@
-package com.space.element.presentation.main.component.list
+package com.space.element.presentation.main.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
@@ -206,7 +207,21 @@ fun ElementListHeader(
 						}
 					}
 				) {
-					Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+					AnimatedVisibility(
+						visible = mode is ElementListMode.Normal,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+					}
+
+					AnimatedVisibility(
+						visible = mode is ElementListMode.Edit,
+						enter = fadeIn(),
+						exit = fadeOut()
+					) {
+						Icon(imageVector = Icons.Outlined.Done, contentDescription = null)
+					}
 				}
 			}
 		}
