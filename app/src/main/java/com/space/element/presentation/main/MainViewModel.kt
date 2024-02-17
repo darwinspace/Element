@@ -18,6 +18,7 @@ import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -91,7 +92,9 @@ class MainViewModel @Inject constructor(
 	)
 
 	private fun onExpressionChange() {
-		_expressionResult.value = evaluateExpression(expression)
+		viewModelScope.launch(Dispatchers.IO) {
+			_expressionResult.value = evaluateExpression(expression)
+		}
 	}
 
 	fun onExpressionCursorPositionChange(position: Int) {
@@ -126,7 +129,7 @@ class MainViewModel @Inject constructor(
 
 	private fun removeExpressionItem() {
 		val index = expressionCursorPosition.value - 1
-		expression.getOrNull(index)?.let(expression::remove)
+		expression.getOrNull(index)?.let { expression.removeAt(index) }
 	}
 
 	fun onKeyboardButtonClick(keyboardButton: KeyboardButton) {

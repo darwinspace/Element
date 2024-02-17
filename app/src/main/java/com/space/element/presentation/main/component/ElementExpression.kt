@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
-import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.ExpressionOperator
+import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.util.format
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -79,19 +79,21 @@ fun ElementExpression(
 		) {
 			item {
 				ExpressionItemSpace(
-					cursorVisible = expressionCursorPosition() == 0
-				) {
-					onExpressionCursorPositionChange(0)
-				}
+					cursorVisible = expressionCursorPosition() == 0,
+					onClick = {
+						onExpressionCursorPositionChange(0)
+					}
+				)
 			}
 
 			itemsIndexed(expression()) { index, item ->
 				ExpressionItemRow(
 					expressionItem = item,
-					cursorVisible = expressionCursorPosition() == index + 1
-				) {
-					onExpressionCursorPositionChange(index + 1)
-				}
+					cursorVisible = expressionCursorPosition() == index + 1,
+					onSpaceClick = {
+						onExpressionCursorPositionChange(index + 1)
+					}
+				)
 			}
 
 			scope.launch {

@@ -1,6 +1,7 @@
 package com.space.element.presentation.main.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
@@ -78,8 +79,9 @@ fun ElementListPreview() {
 			onElementNameChange = { elementName = it },
 			elementValue = { elementValue },
 			onElementValueChange = { elementValue = it },
-			isCreateElementButtonEnabled = { true }
-		) { }
+			isCreateElementButtonEnabled = { true },
+			onCreateElementClick = { }
+		)
 	}
 }
 
@@ -383,10 +385,19 @@ fun ElementListItem(
 	element: Element,
 	onClick: () -> Unit
 ) {
+	val selected by remember { mutableStateOf(false) }
+	val color by animateColorAsState(
+		targetValue = if (selected) {
+			MaterialTheme.colorScheme.secondary
+		} else {
+			MaterialTheme.colorScheme.secondaryContainer
+		},
+		label = "Surface Color"
+	)
 	Surface(
 		modifier = modifier,
 		shape = MaterialTheme.shapes.medium,
-		color = MaterialTheme.colorScheme.secondaryContainer,
+		color = color,
 		onClick = onClick
 	) {
 		Row(

@@ -71,7 +71,7 @@ dependencies {
 
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
-    implementation 'com.notkamui.libs:keval:0.9.0'
+    implementation 'net.objecthunter:exp4j:0.4.8'
 
     implementation 'com.google.dagger:hilt-android:2.50'
     kapt 'com.google.dagger:hilt-compiler:2.50'
