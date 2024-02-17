@@ -51,10 +51,10 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 private val CursorWidth = 3.dp
-private val CursorHeight = 32.dp
+private val CursorHeight = 48.dp
 
 private val ContentSpace = 4.dp
-private val FrameHeight = 96.dp
+private val ContentHeight = 96.dp
 
 @Composable
 fun ElementExpression(
@@ -69,7 +69,7 @@ fun ElementExpression(
 		LazyRow(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(FrameHeight),
+				.height(ContentHeight),
 			contentPadding = PaddingValues(
 				start = 24.dp - ContentSpace, end = 24.dp
 			),
@@ -135,7 +135,7 @@ private fun ExpressionItemSpace(
 				onClick = onClick
 			)
 			.width(ContentSpace)
-			.height(FrameHeight),
+			.height(ContentHeight),
 		contentAlignment = Alignment.Center,
 		content = {
 			if (cursorVisible) {

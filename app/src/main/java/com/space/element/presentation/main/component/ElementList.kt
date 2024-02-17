@@ -12,16 +12,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +36,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -46,8 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.domain.model.Element
-import com.space.element.presentation.component.ElementButton
-import com.space.element.presentation.component.ElementIconButton
+import com.space.element.domain.model.ElementListItem
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
@@ -59,7 +65,7 @@ import com.space.element.presentation.theme.ElementTheme
 fun ElementListPreview() {
 	val elementList = remember {
 		List(10) {
-			Element("Item $it", it.toString())
+			Element(name = "Item $it", value = it.toString())
 		}
 	}
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
@@ -70,16 +76,17 @@ fun ElementListPreview() {
 	ElementTheme {
 		ElementList(
 			elementList = { elementList },
+			onElementListItemClick = { throw NotImplementedError() },
 			elementListQuery = { elementListQuery },
 			onElementListQueryChange = { elementListQuery = it },
 			elementListMode = { elementListMode },
 			onElementListModeChange = { elementListMode = it },
-			onElementListItemClick = { throw NotImplementedError() },
 			elementName = { elementName },
 			onElementNameChange = { elementName = it },
 			elementValue = { elementValue },
 			onElementValueChange = { elementValue = it },
 			isCreateElementButtonEnabled = { true },
+			onRemoveClick = { },
 			onCreateElementClick = { }
 		)
 	}
@@ -89,27 +96,33 @@ fun ElementListPreview() {
 fun ElementList(
 	modifier: Modifier = Modifier,
 	elementList: () -> List<Element>,
+	onElementListItemClick: (Element) -> Unit,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
 	elementListMode: () -> ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onElementListItemClick: (Element) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
+	onRemoveClick: (List<Element>) -> Unit,
 	onCreateElementClick: () -> Unit
 ) {
 	val mode = elementListMode()
-	val list = elementList()
+	val data = elementList()
+	// TODO: Use remember with listSaver.
+	val list = remember(data, mode) {
+		data.map { ElementListItem(element = it, selected = false) }.toMutableStateList()
+	}
 	Surface(modifier = modifier) {
 		Column {
 			ElementListHeader(
+				elementList = list,
 				mode = mode,
 				onModeChange = onElementListModeChange,
-				isElementListEmpty = list.isEmpty(),
 				isCreateElementButtonEnabled = isCreateElementButtonEnabled,
+				onRemoveClick = onRemoveClick,
 				onCreateElementClick = onCreateElementClick
 			)
 
@@ -143,7 +156,8 @@ fun ElementList(
 				visible = list.isNotEmpty()
 			) {
 				ElementListContent(
-					elementList = list,
+					mode = mode,
+					list = list,
 					onClick = onElementListItemClick
 				)
 			}
@@ -153,10 +167,11 @@ fun ElementList(
 
 @Composable
 fun ElementListHeader(
+	elementList: List<ElementListItem>,
 	mode: ElementListMode,
 	onModeChange: (ElementListMode) -> Unit,
-	isElementListEmpty: Boolean,
 	isCreateElementButtonEnabled: () -> Boolean,
+	onRemoveClick: (List<Element>) -> Unit,
 	onCreateElementClick: () -> Unit
 ) {
 	Row(
@@ -170,7 +185,8 @@ fun ElementListHeader(
 			visible = mode is Create || mode is ElementListMode.Edit
 		) {
 			Row {
-				ElementIconButton(
+				FilledTonalIconButton(
+					modifier = Modifier.size(48.dp),
 					onClick = {
 						onModeChange(ElementListMode.Normal)
 					}
@@ -186,55 +202,68 @@ fun ElementListHeader(
 			modifier = Modifier.weight(1f),
 			visible = mode !is ElementListMode.Edit
 		) {
-			ElementButton(
-				modifier = Modifier.fillMaxWidth(),
-				text = stringResource(R.string.button_add_element),
+			Button(
+				modifier = Modifier
+					.fillMaxWidth()
+					.heightIn(48.dp),
 				enabled = isCreateElementButtonEnabled(),
+				shape = MaterialTheme.shapes.small,
 				onClick = onCreateElementClick
-			)
+			) {
+				Text(text = stringResource(R.string.button_add_element))
+			}
 		}
 
 		AnimatedVisibility(
-			visible = mode is ElementListMode.Normal && !isElementListEmpty || mode is ElementListMode.Edit
+			visible = mode is ElementListMode.Normal && elementList.isNotEmpty() || mode is ElementListMode.Edit
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
 
-				ElementIconButton(
-					onClick = {
-						if (mode is ElementListMode.Normal) {
-							onModeChange(ElementListMode.Edit)
-						} else if (mode is ElementListMode.Edit) {
-							onModeChange(ElementListMode.Normal)
-						}
-					}
-				) {
-					AnimatedVisibility(
+				Box {
+					androidx.compose.animation.AnimatedVisibility(
 						visible = mode is ElementListMode.Normal,
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
-						Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+						FilledTonalIconButton(
+							modifier = Modifier.size(48.dp),
+							onClick = {
+								onModeChange(ElementListMode.Edit)
+							}
+						) {
+							Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+						}
 					}
 
-					AnimatedVisibility(
+					androidx.compose.animation.AnimatedVisibility(
 						visible = mode is ElementListMode.Edit,
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
-						Icon(imageVector = Icons.Outlined.Done, contentDescription = null)
+						FilledIconButton(
+							modifier = Modifier.size(48.dp),
+							enabled = elementList.count { it.selected } > 0,
+							onClick = {
+								val selected = elementList.filter { it.selected }.map { it.element }
+								onRemoveClick(selected)
+							}
+						) {
+							Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+						}
 					}
 				}
 			}
 		}
 
 		AnimatedVisibility(
-			visible = mode is ElementListMode.Normal && !isElementListEmpty || mode is Search
+			visible = mode is ElementListMode.Normal && elementList.isNotEmpty() || mode is Search
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
 
-				ElementIconButton(
+				FilledTonalIconButton(
+					modifier = Modifier.size(48.dp),
 					onClick = {
 						if (mode is ElementListMode.Normal) {
 							onModeChange(Search)
@@ -360,21 +389,25 @@ fun ElementListSearchTextField(
 
 @Composable
 fun ElementListContent(
-	elementList: List<Element>,
+	mode: ElementListMode,
+	list: SnapshotStateList<ElementListItem>,
 	onClick: (Element) -> Unit
 ) {
 	LazyColumn(
 		contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
-		items(elementList, { it.name }) { element ->
+		itemsIndexed(list, { _, item -> item.element.name }) { index, item ->
 			ElementListItem(
 				modifier = Modifier.fillMaxWidth(),
-				element = element,
-				onClick = {
-					onClick(element)
+				elementListItem = item
+			) {
+				if (mode is ElementListMode.Edit) {
+					list[index] = item.copy(selected = !item.selected)
+				} else {
+					onClick(item.element)
 				}
-			)
+			}
 		}
 	}
 }
@@ -382,17 +415,16 @@ fun ElementListContent(
 @Composable
 fun ElementListItem(
 	modifier: Modifier = Modifier,
-	element: Element,
+	elementListItem: ElementListItem,
 	onClick: () -> Unit
 ) {
-	val selected by remember { mutableStateOf(false) }
 	val color by animateColorAsState(
-		targetValue = if (selected) {
+		targetValue = if (elementListItem.selected) {
 			MaterialTheme.colorScheme.secondary
 		} else {
 			MaterialTheme.colorScheme.secondaryContainer
 		},
-		label = "Surface Color"
+		label = "ElementListItemSurfaceColor"
 	)
 	Surface(
 		modifier = modifier,
@@ -407,13 +439,13 @@ fun ElementListItem(
 		) {
 			Text(
 				modifier = Modifier.weight(1f),
-				text = element.name,
+				text = elementListItem.element.name,
 				textAlign = TextAlign.Justify,
 				style = MaterialTheme.typography.titleSmall
 			)
 
 			Text(
-				text = element.value,
+				text = elementListItem.element.value,
 				style = MaterialTheme.typography.bodyMedium
 			)
 		}

@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
@@ -31,18 +30,16 @@ import com.space.element.presentation.theme.ElementTheme
 fun ElementTextFieldPreview() {
 	var text by remember { mutableStateOf(String()) }
 	ElementTheme {
-		Surface {
-			ElementTextField(
-				value = text,
-				onValueChange = { text = it },
-				placeholder = {
-					Text(
-						text = "Placeholder",
-						style = MaterialTheme.typography.bodyMedium
-					)
-				}
-			)
-		}
+		ElementTextField(
+			value = text,
+			onValueChange = { text = it },
+			placeholder = {
+				Text(
+					text = "Placeholder",
+					style = MaterialTheme.typography.bodyMedium
+				)
+			}
+		)
 	}
 }
 

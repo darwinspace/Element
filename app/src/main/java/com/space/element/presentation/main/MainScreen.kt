@@ -53,18 +53,20 @@ fun MainScreenPreview() {
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
 			expressionResult = { ExpressionResult.Value(value = 10.0) },
 			elementList = { elementList },
+			onElementListItemClick = { },
 			elementListQuery = { String() },
 			onElementListQueryChange = { },
 			elementListMode = { elementListMode },
 			onElementListModeChange = { elementListMode = it },
-			onElementListItemClick = { },
 			elementName = { String() },
 			onElementNameChange = { },
 			elementValue = { String() },
 			onElementValueChange = { },
 			isCreateElementButtonEnabled = { true },
-			onCreateElementClick = { }
-		) { }
+			onCreateElementClick = { },
+			onKeyboardButtonClick = { },
+			onRemoveClick = { }
+		)
 	}
 }
 
@@ -86,18 +88,19 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
 		expressionResult = { expressionResult },
 		elementList = { elementList },
+		onElementListItemClick = viewModel::onElementListItemClick,
 		elementListQuery = { elementListQuery },
 		onElementListQueryChange = viewModel::onElementListQueryChange,
 		elementListMode = { elementListMode },
 		onElementListModeChange = viewModel::onElementListModeChange,
-		onElementListItemClick = viewModel::onElementListItemClick,
 		elementName = { elementName },
 		onElementNameChange = viewModel::onElementNameChange,
 		elementValue = { elementValue },
 		onElementValueChange = viewModel::onElementValueChange,
 		isCreateElementButtonEnabled = { isCreateElementButtonEnabled },
 		onCreateElementClick = viewModel::onElementListCreateElementButtonClick,
-		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
+		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
+		onRemoveClick = viewModel::onRemoveClick
 	)
 }
 
@@ -109,18 +112,19 @@ private fun MainScreen(
 	onExpressionCursorPositionChange: (Int) -> Unit,
 	expressionResult: () -> ExpressionResult,
 	elementList: () -> List<Element>,
+	onElementListItemClick: (Element) -> Unit,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
 	elementListMode: () -> ElementListMode,
 	onElementListModeChange: (ElementListMode) -> Unit,
-	onElementListItemClick: (Element) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit,
-	onKeyboardButtonClick: (KeyboardButton) -> Unit
+	onKeyboardButtonClick: (KeyboardButton) -> Unit,
+	onRemoveClick: (List<Element>) -> Unit
 ) {
 	BoxWithConstraints {
 		val maxHeight = maxHeight
@@ -129,17 +133,18 @@ private fun MainScreen(
 				sheetContent = {
 					ElementList(
 						elementList = elementList,
+						onElementListItemClick = onElementListItemClick,
 						elementListQuery = elementListQuery,
 						onElementListQueryChange = onElementListQueryChange,
 						elementListMode = elementListMode,
 						onElementListModeChange = onElementListModeChange,
-						onElementListItemClick = onElementListItemClick,
 						elementName = elementName,
 						onElementNameChange = onElementNameChange,
 						elementValue = elementValue,
 						onElementValueChange = onElementValueChange,
 						isCreateElementButtonEnabled = isCreateElementButtonEnabled,
-						onCreateElementClick = onCreateElementClick
+						onCreateElementClick = onCreateElementClick,
+						onRemoveClick = onRemoveClick
 					)
 				},
 				sheetPeekHeight = 52.dp,
@@ -226,17 +231,18 @@ private fun MainScreen(
 						.weight(1f)
 						.fillMaxHeight(),
 					elementList = elementList,
+					onElementListItemClick = onElementListItemClick,
 					elementListQuery = elementListQuery,
 					onElementListQueryChange = onElementListQueryChange,
 					elementListMode = elementListMode,
 					onElementListModeChange = onElementListModeChange,
-					onElementListItemClick = onElementListItemClick,
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,
 					onElementValueChange = onElementValueChange,
 					isCreateElementButtonEnabled = isCreateElementButtonEnabled,
-					onCreateElementClick = onCreateElementClick
+					onCreateElementClick = onCreateElementClick,
+					onRemoveClick = onRemoveClick
 				)
 			}
 		}

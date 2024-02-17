@@ -82,7 +82,8 @@ class MainViewModel @Inject constructor(
 			ElementListMode.Normal -> true
 			ElementListMode.Edit -> false
 			ElementListMode.Search -> {
-				elementListQuery.isNotBlank() && list.none { it.name == elementListQuery.trim() }
+				elementListQuery.isNotBlank() &&
+						list.none { it.name == elementListQuery.trim() }
 			}
 		}
 	}.stateIn(
@@ -274,5 +275,11 @@ class MainViewModel @Inject constructor(
 	fun onElementListItemClick(element: Element) {
 		val item = ElementItem(element)
 		onAddExpressionItem(item)
+	}
+
+	fun onRemoveClick(list: List<Element>) {
+		viewModelScope.launch {
+			list.forEach { removeElement(it) }
+		}
 	}
 }
