@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionItem
@@ -50,11 +50,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-private val CursorWidth = 3.dp
-private val CursorHeight = 48.dp
-
 private val ContentSpace = 4.dp
 private val ContentHeight = 96.dp
+
+private val CursorWidth = 3.dp
+private val CursorHeight = 48.dp
 
 @Composable
 fun ElementExpression(
@@ -73,7 +73,7 @@ fun ElementExpression(
 			contentPadding = PaddingValues(
 				start = 24.dp - ContentSpace, end = 24.dp
 			),
-			horizontalArrangement = Arrangement.spacedBy(0.dp),
+			horizontalArrangement = Arrangement.Start,
 			verticalAlignment = Alignment.CenterVertically,
 			state = state
 		) {
@@ -247,52 +247,47 @@ private fun ExpressionItemText(
 
 @Composable
 private fun ExpressionCursor() {
-	val infiniteTransition = rememberInfiniteTransition()
+	val infiniteTransition = rememberInfiniteTransition(label = "ExpressionCursorAnimation")
 	val alphaValue by infiniteTransition.animateFloat(
 		initialValue = 1f,
 		targetValue = 0f,
 		animationSpec = infiniteRepeatable(
 			animation = tween(durationMillis = 800),
 			repeatMode = RepeatMode.Reverse
-		)
+		),
+		label = "ExpressionCursorAnimation"
 	)
 
 	Box(
 		modifier = Modifier
-			.graphicsLayer {
-				alpha = alphaValue
-			}
+			.graphicsLayer { alpha = alphaValue }
 			.background(color = MaterialTheme.colorScheme.primary)
-			.width(CursorWidth)
-			.height(CursorHeight)
+			.size(width = CursorWidth, height = CursorHeight)
 	)
 }
+
 @Composable
 fun ElementExpressionResult(expressionResult: () -> ExpressionResult) {
-	val resultState = expressionResult()
-	if (resultState is ExpressionResult.Value) {
-		ElementExpressionResultValue(resultState)
+	val state = expressionResult()
+	if (state is ExpressionResult.Value) {
+		ElementExpressionResultValue(state)
 	}
 }
 
 @Composable
 private fun ElementExpressionResultValue(expressionResult: ExpressionResult.Value) {
+	val scrollState = rememberScrollState()
 	Box(
 		modifier = Modifier
 			.fillMaxWidth()
-			.horizontalScroll(rememberScrollState())
-			.padding(horizontal = 24.dp),
+			.horizontalScroll(scrollState),
 		contentAlignment = Alignment.CenterEnd
 	) {
-		ElementExpressionResultText(expressionResult.value)
+		Text(
+			modifier = Modifier.padding(horizontal = 24.dp),
+			text = expressionResult.value.format(),
+			style = MaterialTheme.typography.headlineLarge
+		)
 	}
 }
 
-@Composable
-fun ElementExpressionResultText(value: Double) {
-	Text(
-		text = value.format(),
-		textAlign = TextAlign.End,
-		style = MaterialTheme.typography.headlineLarge
-	)
-}

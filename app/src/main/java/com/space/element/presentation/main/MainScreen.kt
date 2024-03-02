@@ -1,5 +1,6 @@
 package com.space.element.presentation.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,12 +39,12 @@ import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.theme.ElementTheme
 
-@Preview
+@Preview(device = "spec:width=405dp,height=900dp")
 @Composable
 fun MainScreenPreview() {
 	val expression = remember { mutableStateListOf<ExpressionItem>() }
 	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
-
+	val expressionResult = remember { ExpressionResult.Value(value = 0.0) }
 	val elementList = remember { mutableStateListOf<Element>() }
 	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
 
@@ -51,7 +53,7 @@ fun MainScreenPreview() {
 			expression = { expression },
 			expressionCursorPosition = { expressionCursorPosition },
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
-			expressionResult = { ExpressionResult.Value(value = 10.0) },
+			expressionResult = { expressionResult },
 			elementList = { elementList },
 			onElementListItemClick = { },
 			elementListQuery = { String() },
@@ -126,9 +128,19 @@ private fun MainScreen(
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onRemoveClick: (List<Element>) -> Unit
 ) {
+	/**
+	 *  TODO: Everything should be controlled here.
+	 *  - Paddings
+	 *  - TextStyles
+	 *  - Sizes
+	 * */
 	BoxWithConstraints {
 		val maxHeight = maxHeight
 		if (maxWidth < 720.dp) {
+			val sheetPeekHeight = 52.dp
+			val sheetDragHandleWidth = 32.dp
+			val sheetDragHandleHeight = 4.dp
+			val sheetDragHandleTopPadding = (sheetPeekHeight - sheetDragHandleHeight) / 2
 			BottomSheetScaffold(
 				sheetContent = {
 					ElementList(
@@ -147,15 +159,18 @@ private fun MainScreen(
 						onRemoveClick = onRemoveClick
 					)
 				},
-				sheetPeekHeight = 52.dp,
+				sheetPeekHeight = sheetPeekHeight,
 				sheetDragHandle = {
 					Surface(
-						modifier = Modifier.padding(top = 24.dp),
+						modifier = Modifier.padding(top = sheetDragHandleTopPadding),
 						color = MaterialTheme.colorScheme.onSurface,
 						shape = MaterialTheme.shapes.extraLarge
 					) {
 						Box(
-							modifier = Modifier.size(width = 32.dp, height = 4.dp)
+							modifier = Modifier.size(
+								width = sheetDragHandleWidth,
+								height = sheetDragHandleHeight
+							)
 						)
 					}
 				}
@@ -194,10 +209,10 @@ private fun MainScreen(
 			}
 		} else {
 			Row {
-				Surface {
-					Column(
-						modifier = Modifier.weight(1f)
-					) {
+				Surface(
+					modifier = Modifier.weight(1f)
+				) {
+					Column {
 						ElementHeader(
 							modifier = Modifier.weight(1f),
 							expression = expression,
@@ -208,16 +223,19 @@ private fun MainScreen(
 
 						if (maxHeight > 500.dp) {
 							ElementKeyboard(
+								modifier = Modifier.background(Color.Blue),
 								onButtonClick = onKeyboardButtonClick
 							)
 						} else if (maxHeight > 400.dp) {
 							ElementKeyboardVariant(
+								modifier = Modifier.background(Color.Yellow),
 								contentGap = 12.dp,
 								contentPadding = PaddingValues(12.dp),
 								onButtonClick = onKeyboardButtonClick
 							)
 						} else {
 							ElementKeyboardVariant(
+								modifier = Modifier.background(Color.Magenta),
 								contentGap = 4.dp,
 								contentPadding = PaddingValues(4.dp),
 								onButtonClick = onKeyboardButtonClick

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Backspace
+import androidx.compose.material.icons.automirrored.outlined.KeyboardBackspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -246,7 +246,7 @@ private fun ElementKeyboardContent(
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.AutoMirrored.Outlined.Backspace, contentDescription = null)
+				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
 			}
 
 			ElementKeyboardButton(
@@ -442,7 +442,7 @@ private fun ElementKeyboardVariantContent(
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.AutoMirrored.Outlined.Backspace, contentDescription = null)
+				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
 			}
 
 			ElementKeyboardButton(

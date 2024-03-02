@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +53,7 @@ fun ElementTextField(
 	enabled: Boolean = true,
 	textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
 	singleLine: Boolean = true,
+	keyboardActions: KeyboardActions = KeyboardActions.Default,
 	keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 	placeholder: @Composable (() -> Unit)? = null,
 	trailingIcon: @Composable (() -> Unit)? = null,
@@ -66,6 +68,7 @@ fun ElementTextField(
 		modifier = modifier,
 		textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onSurface),
 		singleLine = singleLine,
+		keyboardActions = keyboardActions,
 		keyboardOptions = keyboardOptions,
 		cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 		decorationBox = @Composable {

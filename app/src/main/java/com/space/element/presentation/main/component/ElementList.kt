@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
@@ -115,6 +115,7 @@ fun ElementList(
 	val list = remember(data, mode) {
 		data.map { ElementListItem(element = it, selected = false) }.toMutableStateList()
 	}
+
 	Surface(modifier = modifier) {
 		Column {
 			ElementListHeader(
@@ -133,7 +134,13 @@ fun ElementList(
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,
-					onElementValueChange = onElementValueChange
+					onElementValueChange = onElementValueChange,
+					onDone = {
+						val enabled = isCreateElementButtonEnabled()
+						if (enabled) {
+							onCreateElementClick()
+						}
+					}
 				)
 			}
 
@@ -298,21 +305,22 @@ fun ElementListHeaderElementForm(
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
-	onElementValueChange: (String) -> Unit
+	onElementValueChange: (String) -> Unit,
+	onDone: () -> Unit
 ) {
 	Column(
-		modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp)
+		modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
+		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
 		ElementNameTextField(
 			elementName = elementName,
 			onElementNameChange = onElementNameChange
 		)
 
-		Spacer(modifier = Modifier.height(24.dp))
-
 		ElementValueTextField(
 			elementValue = elementValue,
-			onElementValueChange = onElementValueChange
+			onElementValueChange = onElementValueChange,
+			onDone = onDone
 		)
 	}
 }
@@ -342,7 +350,8 @@ private fun ElementNameTextField(
 @Composable
 private fun ElementValueTextField(
 	elementValue: () -> String,
-	onElementValueChange: (String) -> Unit
+	onElementValueChange: (String) -> Unit,
+	onDone: () -> Unit
 ) {
 	ElementTextField(
 		modifier = Modifier.fillMaxWidth(),
@@ -353,6 +362,9 @@ private fun ElementValueTextField(
 				text = stringResource(R.string.element_value),
 				style = MaterialTheme.typography.bodyMedium
 			)
+		},
+		keyboardActions = KeyboardActions {
+			onDone()
 		},
 		keyboardOptions = KeyboardOptions(
 			keyboardType = KeyboardType.Decimal,
