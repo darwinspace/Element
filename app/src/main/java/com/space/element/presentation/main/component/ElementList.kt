@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
@@ -106,7 +107,7 @@ fun ElementList(
 	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
-	onRemoveClick: (List<Element>) -> Unit,
+	onRemoveClick: (List<ElementListItem>) -> Unit,
 	onCreateElementClick: () -> Unit
 ) {
 	val mode = elementListMode()
@@ -178,7 +179,7 @@ fun ElementListHeader(
 	mode: ElementListMode,
 	onModeChange: (ElementListMode) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
-	onRemoveClick: (List<Element>) -> Unit,
+	onRemoveClick: (List<ElementListItem>) -> Unit,
 	onCreateElementClick: () -> Unit
 ) {
 	Row(
@@ -221,6 +222,19 @@ fun ElementListHeader(
 			}
 		}
 
+		AnimatedVisibility(visible = mode is ElementListMode.Normal) {
+			Row {
+				Spacer(modifier = Modifier.width(16.dp))
+
+				FilledTonalIconButton(
+					modifier = Modifier.size(48.dp),
+					onClick = { /*TODO*/ }
+				) {
+					Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
+				}
+			}
+		}
+
 		AnimatedVisibility(
 			visible = mode is ElementListMode.Normal && elementList.isNotEmpty() || mode is ElementListMode.Edit
 		) {
@@ -250,10 +264,10 @@ fun ElementListHeader(
 					) {
 						FilledIconButton(
 							modifier = Modifier.size(48.dp),
-							enabled = elementList.count { it.selected } > 0,
+							enabled = elementList.any { it.selected },
 							onClick = {
-								val selected = elementList.filter { it.selected }.map { it.element }
-								onRemoveClick(selected)
+								onRemoveClick(elementList)
+								onModeChange(ElementListMode.Normal)
 							}
 						) {
 							Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)

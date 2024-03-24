@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.space.element.domain.model.Element
+import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionItem
 import com.space.element.presentation.main.component.ElementHeader
 import com.space.element.presentation.main.component.ElementKeyboard
@@ -126,7 +127,7 @@ private fun MainScreen(
 	isCreateElementButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onRemoveClick: (List<Element>) -> Unit
+	onRemoveClick: (List<ElementListItem>) -> Unit
 ) {
 	/**
 	 *  TODO: Everything should be controlled here.

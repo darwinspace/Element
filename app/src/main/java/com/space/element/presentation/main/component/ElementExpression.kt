@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,41 +64,39 @@ fun ElementExpression(
 	val state = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
-	SelectionContainer {
-		LazyRow(
-			modifier = Modifier
-				.fillMaxWidth()
-				.height(ContentHeight),
-			contentPadding = PaddingValues(
-				start = 24.dp - ContentSpace, end = 24.dp
-			),
-			horizontalArrangement = Arrangement.Start,
-			verticalAlignment = Alignment.CenterVertically,
-			state = state
-		) {
-			item {
-				ExpressionItemSpace(
-					cursorVisible = expressionCursorPosition() == 0,
-					onClick = {
-						onExpressionCursorPositionChange(0)
-					}
-				)
-			}
+	LazyRow(
+		modifier = Modifier
+			.fillMaxWidth()
+			.height(ContentHeight),
+		contentPadding = PaddingValues(
+			start = 24.dp - ContentSpace, end = 24.dp
+		),
+		horizontalArrangement = Arrangement.Start,
+		verticalAlignment = Alignment.CenterVertically,
+		state = state
+	) {
+		item {
+			ExpressionItemSpace(
+				cursorVisible = expressionCursorPosition() == 0,
+				onClick = {
+					onExpressionCursorPositionChange(0)
+				}
+			)
+		}
 
-			itemsIndexed(expression()) { index, item ->
-				ExpressionItemRow(
-					expressionItem = item,
-					cursorVisible = expressionCursorPosition() == index + 1,
-					onSpaceClick = {
-						onExpressionCursorPositionChange(index + 1)
-					}
-				)
-			}
+		itemsIndexed(expression()) { index, item ->
+			ExpressionItemRow(
+				expressionItem = item,
+				cursorVisible = expressionCursorPosition() == index + 1,
+				onSpaceClick = {
+					onExpressionCursorPositionChange(index + 1)
+				}
+			)
+		}
 
-			scope.launch {
-				delay(200.milliseconds)
-				state.animateScrollToItem(expressionCursorPosition())
-			}
+		scope.launch {
+			delay(200.milliseconds)
+			state.animateScrollToItem(expressionCursorPosition())
 		}
 	}
 }

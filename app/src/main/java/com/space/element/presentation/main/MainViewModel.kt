@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.space.element.domain.model.Element
+import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionItem
 import com.space.element.domain.model.ExpressionItem.ElementItem
 import com.space.element.domain.model.ExpressionItem.NumberItem
@@ -277,9 +278,9 @@ class MainViewModel @Inject constructor(
 		onAddExpressionItem(item)
 	}
 
-	fun onRemoveClick(list: List<Element>) {
+	fun onRemoveClick(list: List<ElementListItem>) {
 		viewModelScope.launch {
-			list.forEach { removeElement(it) }
+			list.filter { it.selected }.map { it.element }.forEach { removeElement(it) }
 		}
 	}
 }
