@@ -26,6 +26,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -58,6 +59,9 @@ import com.space.element.domain.model.ElementListItem
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ElementListMode.Create
+import com.space.element.presentation.main.model.ElementListMode.Edit
+import com.space.element.presentation.main.model.ElementListMode.Function
+import com.space.element.presentation.main.model.ElementListMode.Normal
 import com.space.element.presentation.main.model.ElementListMode.Search
 import com.space.element.presentation.theme.ElementTheme
 
@@ -69,7 +73,7 @@ fun ElementListPreview() {
 			Element(name = "Item $it", value = it.toString())
 		}
 	}
-	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
+	var elementListMode by remember { mutableStateOf<ElementListMode>(Normal) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
@@ -190,13 +194,13 @@ fun ElementListHeader(
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		AnimatedVisibility(
-			visible = mode is Create || mode is ElementListMode.Edit
+			visible = mode is Create || mode is Edit || mode is Function
 		) {
 			Row {
 				FilledTonalIconButton(
 					modifier = Modifier.size(48.dp),
 					onClick = {
-						onModeChange(ElementListMode.Normal)
+						onModeChange(Normal)
 					}
 				) {
 					Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
@@ -208,7 +212,7 @@ fun ElementListHeader(
 
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			visible = mode !is ElementListMode.Edit
+			visible = mode is Normal || mode is Create || mode is Search
 		) {
 			Button(
 				modifier = Modifier
@@ -222,13 +226,35 @@ fun ElementListHeader(
 			}
 		}
 
-		AnimatedVisibility(visible = mode is ElementListMode.Normal) {
+		AnimatedVisibility(
+			modifier = Modifier.weight(1f),
+			visible = mode is Function
+		) {
+			Button(
+				modifier = Modifier
+					.fillMaxWidth()
+					.heightIn(48.dp),
+				enabled = true,
+				shape = MaterialTheme.shapes.small,
+				colors = ButtonDefaults.buttonColors(
+					containerColor = MaterialTheme.colorScheme.tertiary,
+					contentColor = MaterialTheme.colorScheme.onTertiary
+				),
+				onClick = onCreateElementClick
+			) {
+				Text(text = "Create function")
+			}
+		}
+
+		AnimatedVisibility(visible = mode is Normal) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
 
 				FilledTonalIconButton(
 					modifier = Modifier.size(48.dp),
-					onClick = { /*TODO*/ }
+					onClick = {
+						onModeChange(Function)
+					}
 				) {
 					Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
 				}
@@ -236,21 +262,21 @@ fun ElementListHeader(
 		}
 
 		AnimatedVisibility(
-			visible = mode is ElementListMode.Normal && elementList.isNotEmpty() || mode is ElementListMode.Edit
+			visible = mode is Normal && elementList.isNotEmpty() || mode is Edit
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
 
 				Box {
 					androidx.compose.animation.AnimatedVisibility(
-						visible = mode is ElementListMode.Normal,
+						visible = mode is Normal,
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
 						FilledTonalIconButton(
 							modifier = Modifier.size(48.dp),
 							onClick = {
-								onModeChange(ElementListMode.Edit)
+								onModeChange(Edit)
 							}
 						) {
 							Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
@@ -258,7 +284,7 @@ fun ElementListHeader(
 					}
 
 					androidx.compose.animation.AnimatedVisibility(
-						visible = mode is ElementListMode.Edit,
+						visible = mode is Edit,
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
@@ -267,7 +293,7 @@ fun ElementListHeader(
 							enabled = elementList.any { it.selected },
 							onClick = {
 								onRemoveClick(elementList)
-								onModeChange(ElementListMode.Normal)
+								onModeChange(Normal)
 							}
 						) {
 							Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
@@ -278,7 +304,7 @@ fun ElementListHeader(
 		}
 
 		AnimatedVisibility(
-			visible = mode is ElementListMode.Normal && elementList.isNotEmpty() || mode is Search
+			visible = mode is Normal && elementList.isNotEmpty() || mode is Search
 		) {
 			Row {
 				Spacer(modifier = Modifier.width(16.dp))
@@ -286,15 +312,15 @@ fun ElementListHeader(
 				FilledTonalIconButton(
 					modifier = Modifier.size(48.dp),
 					onClick = {
-						if (mode is ElementListMode.Normal) {
+						if (mode is Normal) {
 							onModeChange(Search)
 						} else if (mode is Search) {
-							onModeChange(ElementListMode.Normal)
+							onModeChange(Normal)
 						}
 					}
 				) {
 					AnimatedVisibility(
-						visible = mode is ElementListMode.Normal,
+						visible = mode is Normal,
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
@@ -428,7 +454,7 @@ fun ElementListContent(
 				modifier = Modifier.fillMaxWidth(),
 				elementListItem = item
 			) {
-				if (mode is ElementListMode.Edit) {
+				if (mode is Edit) {
 					list[index] = item.copy(selected = !item.selected)
 				} else {
 					onClick(item.element)

@@ -5,4 +5,5 @@ sealed interface ElementListMode {
 	data object Create : ElementListMode
 	data object Search : ElementListMode
 	data object Edit : ElementListMode
+	data object Function : ElementListMode
 }

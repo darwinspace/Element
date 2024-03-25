@@ -40,6 +40,12 @@ import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.theme.ElementTheme
 
+
+val SheetPeekHeight = 52.dp
+val SheetDragHandleWidth = 32.dp
+val SheetDragHandleHeight = 4.dp
+val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
+
 @Preview(device = "spec:width=405dp,height=900dp")
 @Composable
 fun MainScreenPreview() {
@@ -138,10 +144,6 @@ private fun MainScreen(
 	BoxWithConstraints {
 		val maxHeight = maxHeight
 		if (maxWidth < 720.dp) {
-			val sheetPeekHeight = 52.dp
-			val sheetDragHandleWidth = 32.dp
-			val sheetDragHandleHeight = 4.dp
-			val sheetDragHandleTopPadding = (sheetPeekHeight - sheetDragHandleHeight) / 2
 			BottomSheetScaffold(
 				sheetContent = {
 					ElementList(
@@ -160,17 +162,17 @@ private fun MainScreen(
 						onRemoveClick = onRemoveClick
 					)
 				},
-				sheetPeekHeight = sheetPeekHeight,
+				sheetPeekHeight = SheetPeekHeight,
 				sheetDragHandle = {
 					Surface(
-						modifier = Modifier.padding(top = sheetDragHandleTopPadding),
+						modifier = Modifier.padding(top = SheetDragHandleTopPadding),
 						color = MaterialTheme.colorScheme.onSurface,
 						shape = MaterialTheme.shapes.extraLarge
 					) {
 						Box(
 							modifier = Modifier.size(
-								width = sheetDragHandleWidth,
-								height = sheetDragHandleHeight
+								width = SheetDragHandleWidth,
+								height = SheetDragHandleHeight
 							)
 						)
 					}

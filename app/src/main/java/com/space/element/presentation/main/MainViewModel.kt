@@ -81,6 +81,7 @@ class MainViewModel @Inject constructor(
 			}
 
 			ElementListMode.Normal -> true
+			ElementListMode.Function,
 			ElementListMode.Edit -> false
 			ElementListMode.Search -> {
 				elementListQuery.isNotBlank() &&
