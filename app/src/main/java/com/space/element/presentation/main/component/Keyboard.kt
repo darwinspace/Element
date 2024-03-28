@@ -30,9 +30,9 @@ import com.space.element.presentation.theme.ElementTheme
 
 @Preview
 @Composable
-fun ElementKeyboardPreview() {
+fun KeyboardPreview() {
 	ElementTheme {
-		ElementKeyboard(
+		Keyboard(
 			onButtonClick = {
 				throw NotImplementedError()
 			}
@@ -42,9 +42,9 @@ fun ElementKeyboardPreview() {
 
 @Preview
 @Composable
-fun ElementKeyboardVariantPreview() {
+fun KeyboardVariantPreview() {
 	ElementTheme {
-		ElementKeyboardVariant(
+		KeyboardVariant(
 			onButtonClick = {
 				throw NotImplementedError()
 			}
@@ -53,14 +53,14 @@ fun ElementKeyboardVariantPreview() {
 }
 
 @Composable
-fun ElementKeyboard(
+fun Keyboard(
 	modifier: Modifier = Modifier,
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface(modifier = modifier) {
-		ElementKeyboardContent(
+		KeyboardContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
 			onButtonClick = onButtonClick
@@ -69,7 +69,7 @@ fun ElementKeyboard(
 }
 
 @Composable
-private fun ElementKeyboardContent(
+private fun KeyboardContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
 	onButtonClick: (KeyboardButton) -> Unit,
@@ -81,167 +81,167 @@ private fun ElementKeyboardContent(
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
@@ -249,26 +249,26 @@ private fun ElementKeyboardContent(
 				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 	}
 }
 
 @Composable
-fun ElementKeyboardVariant(
+fun KeyboardVariant(
 	modifier: Modifier = Modifier,
 	contentGap: Dp = 16.dp,
 	contentPadding: PaddingValues = PaddingValues(16.dp),
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
 	Surface(modifier = modifier) {
-		ElementKeyboardVariantContent(
+		KeyboardVariantContent(
 			keyboardContentPadding = contentPadding,
 			keyboardContentGap = contentGap,
 			onButtonClick = onButtonClick
@@ -277,7 +277,7 @@ fun ElementKeyboardVariant(
 }
 
 @Composable
-private fun ElementKeyboardVariantContent(
+private fun KeyboardVariantContent(
 	keyboardContentPadding: PaddingValues,
 	keyboardContentGap: Dp,
 	onButtonClick: (KeyboardButton) -> Unit,
@@ -289,155 +289,155 @@ private fun ElementKeyboardVariantContent(
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Division,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Four,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Five,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Six,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Open,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Close,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.One,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Two,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Three,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 
 		Row(
 			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
 		) {
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
@@ -445,27 +445,27 @@ private fun ElementKeyboardVariantContent(
 				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 
-			ElementKeyboardButton(
+			KeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
 				modifier = Modifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				ElementKeyboardButtonSymbol(symbol = it.symbol)
+				KeyboardButtonSymbol(symbol = it.symbol)
 			}
 		}
 	}
 }
 
 @Composable
-fun ElementKeyboardButton(
+fun KeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
@@ -493,12 +493,12 @@ fun ElementKeyboardButton(
 }
 
 @Composable
-fun ElementKeyboardButtonText(text: String) {
+fun KeyboardButtonText(text: String) {
 	Text(text = text, style = MaterialTheme.typography.headlineMedium)
 }
 
 @Composable
-fun ElementKeyboardButtonSymbol(symbol: Char) {
-	ElementKeyboardButtonText(text = symbol.toString())
+fun KeyboardButtonSymbol(symbol: Char) {
+	KeyboardButtonText(text = symbol.toString())
 }
 

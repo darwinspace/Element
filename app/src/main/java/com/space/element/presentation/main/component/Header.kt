@@ -12,6 +12,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,7 +58,37 @@ private val CursorWidth = 3.dp
 private val CursorHeight = 48.dp
 
 @Composable
-fun ElementExpression(
+fun Header(
+	modifier: Modifier = Modifier,
+	expression: () -> SnapshotStateList<ExpressionItem>,
+	expressionResult: () -> ExpressionResult,
+	expressionCursorPosition: () -> Int,
+	onExpressionCursorPositionChange: (Int) -> Unit
+) {
+	Surface(
+		modifier = modifier,
+		shape = MaterialTheme.shapes.extraLarge.copy(
+			topStart = CornerSize(0.dp),
+			topEnd = CornerSize(0.dp)
+		),
+		tonalElevation = 6.dp
+	) {
+		Column {
+			Expression(
+				expression = expression,
+				expressionCursorPosition = expressionCursorPosition,
+				onExpressionCursorPositionChange = onExpressionCursorPositionChange
+			)
+
+			ExpressionResult(
+				expressionResult = expressionResult
+			)
+		}
+	}
+}
+
+@Composable
+fun Expression(
 	expression: () -> SnapshotStateList<ExpressionItem>,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
@@ -264,7 +296,7 @@ private fun ExpressionCursor() {
 }
 
 @Composable
-fun ElementExpressionResult(expressionResult: () -> ExpressionResult) {
+fun ExpressionResult(expressionResult: () -> ExpressionResult) {
 	val state = expressionResult()
 	if (state is ExpressionResult.Value) {
 		ElementExpressionResultValue(state)
@@ -287,4 +319,3 @@ private fun ElementExpressionResultValue(expressionResult: ExpressionResult.Valu
 		)
 	}
 }
-

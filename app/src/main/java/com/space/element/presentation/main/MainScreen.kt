@@ -31,10 +31,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionItem
-import com.space.element.presentation.main.component.ElementHeader
-import com.space.element.presentation.main.component.ElementKeyboard
-import com.space.element.presentation.main.component.ElementKeyboardVariant
-import com.space.element.presentation.main.component.ElementList
+import com.space.element.presentation.main.component.Header
+import com.space.element.presentation.main.component.KeyboardVariant
+import com.space.element.presentation.main.component.Library
+import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.model.ElementListMode
 import com.space.element.presentation.main.model.ExpressionResult
 import com.space.element.presentation.main.model.KeyboardButton
@@ -146,7 +146,7 @@ private fun MainScreen(
 		if (maxWidth < 720.dp) {
 			BottomSheetScaffold(
 				sheetContent = {
-					ElementList(
+					Library(
 						elementList = elementList,
 						onElementListItemClick = onElementListItemClick,
 						elementListQuery = elementListQuery,
@@ -183,7 +183,7 @@ private fun MainScreen(
 						.fillMaxSize()
 						.padding(it)
 				) {
-					ElementHeader(
+					Header(
 						modifier = Modifier.weight(1f),
 						expression = expression,
 						expressionCursorPosition = expressionCursorPosition,
@@ -192,17 +192,17 @@ private fun MainScreen(
 					)
 
 					if (maxHeight > 500.dp) {
-						ElementKeyboard(
+						Keyboard(
 							onButtonClick = onKeyboardButtonClick
 						)
 					} else if (maxHeight > 400.dp) {
-						ElementKeyboardVariant(
+						KeyboardVariant(
 							contentGap = 12.dp,
 							contentPadding = PaddingValues(12.dp),
 							onButtonClick = onKeyboardButtonClick
 						)
 					} else {
-						ElementKeyboardVariant(
+						KeyboardVariant(
 							contentGap = 4.dp,
 							contentPadding = PaddingValues(4.dp),
 							onButtonClick = onKeyboardButtonClick
@@ -216,7 +216,7 @@ private fun MainScreen(
 					modifier = Modifier.weight(1f)
 				) {
 					Column {
-						ElementHeader(
+						Header(
 							modifier = Modifier.weight(1f),
 							expression = expression,
 							expressionCursorPosition = expressionCursorPosition,
@@ -225,19 +225,19 @@ private fun MainScreen(
 						)
 
 						if (maxHeight > 500.dp) {
-							ElementKeyboard(
+							Keyboard(
 								modifier = Modifier.background(Color.Blue),
 								onButtonClick = onKeyboardButtonClick
 							)
 						} else if (maxHeight > 400.dp) {
-							ElementKeyboardVariant(
+							KeyboardVariant(
 								modifier = Modifier.background(Color.Yellow),
 								contentGap = 12.dp,
 								contentPadding = PaddingValues(12.dp),
 								onButtonClick = onKeyboardButtonClick
 							)
 						} else {
-							ElementKeyboardVariant(
+							KeyboardVariant(
 								modifier = Modifier.background(Color.Magenta),
 								contentGap = 4.dp,
 								contentPadding = PaddingValues(4.dp),
@@ -247,7 +247,7 @@ private fun MainScreen(
 					}
 				}
 
-				ElementList(
+				Library(
 					modifier = Modifier
 						.weight(1f)
 						.fillMaxHeight(),

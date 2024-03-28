@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -68,7 +69,7 @@ import com.space.element.presentation.theme.ElementTheme
 
 @Preview
 @Composable
-fun ElementListPreview() {
+fun LibraryPreview() {
 	val elementList = remember {
 		List(10) {
 			Element(name = "Item $it", value = it.toString())
@@ -80,7 +81,7 @@ fun ElementListPreview() {
 	var elementValue by remember { mutableStateOf(String()) }
 
 	ElementTheme {
-		ElementList(
+		Library(
 			elementList = { elementList },
 			onElementListItemClick = { throw NotImplementedError() },
 			elementListQuery = { elementListQuery },
@@ -99,7 +100,7 @@ fun ElementListPreview() {
 }
 
 @Composable
-fun ElementList(
+fun Library(
 	modifier: Modifier = Modifier,
 	elementList: () -> List<Element>,
 	onElementListItemClick: (Element) -> Unit,
@@ -124,7 +125,7 @@ fun ElementList(
 
 	Surface(modifier = modifier) {
 		Column {
-			ElementListHeader(
+			LibraryHeader(
 				elementList = list,
 				mode = mode,
 				onModeChange = onElementListModeChange,
@@ -136,7 +137,7 @@ fun ElementList(
 			AnimatedVisibility(
 				visible = mode is Create
 			) {
-				ElementListHeaderElementForm(
+				LibraryCreateElementForm(
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,
@@ -168,18 +169,22 @@ fun ElementList(
 			AnimatedVisibility(
 				visible = mode !is Function && list.isNotEmpty()
 			) {
-				ElementListContent(
+				ElementList(
 					mode = mode,
 					list = list,
 					onClick = onElementListItemClick
 				)
+			}
+
+			AnimatedVisibility(visible = mode is Function) {
+				FunctionList()
 			}
 		}
 	}
 }
 
 @Composable
-fun ElementListHeader(
+fun LibraryHeader(
 	elementList: List<ElementListItem>,
 	mode: ElementListMode,
 	onModeChange: (ElementListMode) -> Unit,
@@ -253,26 +258,6 @@ fun ElementListHeader(
 				}
 			}
 		}
-
-		/*AnimatedVisibility(
-			modifier = Modifier.weight(1f),
-			visible = mode is Function
-		) {
-			Button(
-				modifier = Modifier
-					.fillMaxWidth()
-					.heightIn(48.dp),
-				enabled = true,
-				shape = MaterialTheme.shapes.small,
-				colors = ButtonDefaults.buttonColors(
-					containerColor = MaterialTheme.colorScheme.tertiary,
-					contentColor = MaterialTheme.colorScheme.onTertiary
-				),
-				onClick = { *//*TODO*//* }
-			) {
-				Text(text = "Create function")
-			}
-		}*/
 
 		AnimatedVisibility(visible = mode is Normal) {
 			Row {
@@ -384,7 +369,7 @@ fun ElementListHeader(
 }
 
 @Composable
-fun ElementListHeaderElementForm(
+fun LibraryCreateElementForm(
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
@@ -483,7 +468,7 @@ fun ElementListSearchTextField(
 }
 
 @Composable
-fun ElementListContent(
+fun ElementList(
 	mode: ElementListMode,
 	list: SnapshotStateList<ElementListItem>,
 	onClick: (Element) -> Unit
@@ -570,5 +555,64 @@ fun ElementListEmptyCard() {
 			style = MaterialTheme.typography.bodyMedium,
 			textAlign = TextAlign.Center
 		)
+	}
+}
+
+@Composable
+fun FunctionList() {
+	LazyColumn(
+		contentPadding = PaddingValues(24.dp),
+		verticalArrangement = Arrangement.spacedBy(24.dp)
+	) {
+		items(5) {
+			FunctionListItem()
+		}
+	}
+}
+
+@Composable
+fun FunctionListItem() {
+	Surface(
+		shape = MaterialTheme.shapes.medium,
+		onClick = { /*TODO*/ }
+	) {
+		Column {
+			Surface(
+				modifier = Modifier.fillMaxWidth(),
+				color = MaterialTheme.colorScheme.tertiary
+			) {
+				val text = remember {
+					buildAnnotatedString {
+						withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+							append("function")
+						}
+
+						withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+							append("(x)")
+						}
+					}
+				}
+				Text(
+					modifier = Modifier
+						.padding(16.dp)
+						.fillMaxWidth(),
+					text = text,
+					style = MaterialTheme.typography.titleSmall
+				)
+			}
+
+			Surface(
+				modifier = Modifier.fillMaxWidth(),
+				color = MaterialTheme.colorScheme.tertiaryContainer
+			) {
+				Text(
+					modifier = Modifier
+						.padding(16.dp)
+						.fillMaxWidth(),
+					text = "10x+24",
+					style = MaterialTheme.typography.bodyMedium
+				)
+			}
+		}
 	}
 }
