@@ -109,7 +109,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		isCreateElementButtonEnabled = { isCreateElementButtonEnabled },
 		onCreateElementClick = viewModel::onElementListCreateElementButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
-		onRemoveClick = viewModel::onRemoveClick
+		onRemoveClick = viewModel::onElementListRemoveButtonClick
 	)
 }
 

@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
 		when (mode) {
 			ElementListMode.Create -> {
 				elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
-						list.none { it.name == elementName.trim() }
+						list.none { it.name.trim() == elementName.trim() }
 			}
 
 			ElementListMode.Normal -> true
@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
 			ElementListMode.Edit -> false
 			ElementListMode.Search -> {
 				elementListQuery.isNotBlank() &&
-						list.none { it.name == elementListQuery.trim() }
+						list.none { it.name.trim() == elementListQuery.trim() }
 			}
 		}
 	}.stateIn(
@@ -244,7 +244,7 @@ class MainViewModel @Inject constructor(
 
 	private fun addElement(elementName: String, elementValue: String) {
 		viewModelScope.launch {
-			val element = Element(elementName, elementValue)
+			val element = Element(elementName.trim(), elementValue)
 			addElement(element)
 		}
 	}
@@ -279,9 +279,9 @@ class MainViewModel @Inject constructor(
 		onAddExpressionItem(item)
 	}
 
-	fun onRemoveClick(list: List<ElementListItem>) {
+	fun onElementListRemoveButtonClick(list: List<ElementListItem>) {
 		viewModelScope.launch {
-			list.filter { it.selected }.map { it.element }.forEach { removeElement(it) }
+			list.filter { it.selected }.forEach { removeElement(it.element) }
 		}
 	}
 }

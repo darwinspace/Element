@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -159,13 +160,13 @@ fun ElementList(
 			}
 
 			AnimatedVisibility(
-				visible = list.isEmpty()
+				visible = mode !is Function && list.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = list.isNotEmpty()
+				visible = mode !is Function && list.isNotEmpty()
 			) {
 				ElementListContent(
 					mode = mode,
@@ -212,21 +213,48 @@ fun ElementListHeader(
 
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			visible = mode is Normal || mode is Create || mode is Search
+			visible = mode is Normal || mode is Create || mode is Search || mode is Function
 		) {
-			Button(
-				modifier = Modifier
-					.fillMaxWidth()
-					.heightIn(48.dp),
-				enabled = isCreateElementButtonEnabled(),
-				shape = MaterialTheme.shapes.small,
-				onClick = onCreateElementClick
+			AnimatedVisibility(
+				visible = mode is Normal || mode is Create || mode is Search,
+				enter = fadeIn(),
+				exit = fadeOut()
 			) {
-				Text(text = stringResource(R.string.button_add_element))
+				Button(
+					modifier = Modifier
+						.fillMaxWidth()
+						.heightIn(48.dp),
+					enabled = isCreateElementButtonEnabled(),
+					shape = MaterialTheme.shapes.small,
+					onClick = onCreateElementClick
+				) {
+					Text(text = stringResource(R.string.button_add_element))
+				}
+			}
+
+			AnimatedVisibility(
+				visible = mode is Function,
+				enter = fadeIn(),
+				exit = fadeOut()
+			) {
+				Button(
+					modifier = Modifier
+						.fillMaxWidth()
+						.heightIn(48.dp),
+					enabled = true,
+					shape = MaterialTheme.shapes.small,
+					colors = ButtonDefaults.buttonColors(
+						containerColor = MaterialTheme.colorScheme.tertiary,
+						contentColor = MaterialTheme.colorScheme.onTertiary
+					),
+					onClick = {}
+				) {
+					Text(text = "Create function")
+				}
 			}
 		}
 
-		AnimatedVisibility(
+		/*AnimatedVisibility(
 			modifier = Modifier.weight(1f),
 			visible = mode is Function
 		) {
@@ -240,11 +268,11 @@ fun ElementListHeader(
 					containerColor = MaterialTheme.colorScheme.tertiary,
 					contentColor = MaterialTheme.colorScheme.onTertiary
 				),
-				onClick = onCreateElementClick
+				onClick = { *//*TODO*//* }
 			) {
 				Text(text = "Create function")
 			}
-		}
+		}*/
 
 		AnimatedVisibility(visible = mode is Normal) {
 			Row {
@@ -288,15 +316,30 @@ fun ElementListHeader(
 						enter = fadeIn(),
 						exit = fadeOut()
 					) {
+						val enabled = elementList.any { it.selected }
 						FilledIconButton(
 							modifier = Modifier.size(48.dp),
-							enabled = elementList.any { it.selected },
+							enabled = enabled,
 							onClick = {
 								onRemoveClick(elementList)
 								onModeChange(Normal)
 							}
 						) {
-							Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+							androidx.compose.animation.AnimatedVisibility(
+								visible = enabled,
+								enter = fadeIn(),
+								exit = fadeOut()
+							) {
+								Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+							}
+
+							androidx.compose.animation.AnimatedVisibility(
+								visible = !enabled,
+								enter = fadeIn(),
+								exit = fadeOut()
+							) {
+								Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+							}
 						}
 					}
 				}
