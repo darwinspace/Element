@@ -5,6 +5,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.space.element.domain.model.Operator
 
 sealed class KeyboardButton(val symbol: Char, val type: Type) {
 	enum class Type {
@@ -24,22 +25,22 @@ sealed class KeyboardButton(val symbol: Char, val type: Type) {
 	data object Clear : KeyboardButton(symbol = 'C', type = Type.Clear)
 	data object Dot : KeyboardButton(symbol = '.', type = Type.Dot)
 	data object Open :
-		KeyboardButton(symbol = ExpressionOperator.Open.symbol, type = Type.Parentheses)
+		KeyboardButton(symbol = Operator.Open.symbol, type = Type.Parentheses)
 
 	data object Close :
-		KeyboardButton(symbol = ExpressionOperator.Close.symbol, type = Type.Parentheses)
+		KeyboardButton(symbol = Operator.Close.symbol, type = Type.Parentheses)
 
 	data object Addition :
-		KeyboardButton(symbol = ExpressionOperator.Addition.symbol, type = Type.Operator)
+		KeyboardButton(symbol = Operator.Addition.symbol, type = Type.Operator)
 
 	data object Subtraction :
-		KeyboardButton(symbol = ExpressionOperator.Subtraction.symbol, type = Type.Operator)
+		KeyboardButton(symbol = Operator.Subtraction.symbol, type = Type.Operator)
 
 	data object Multiplication :
-		KeyboardButton(symbol = ExpressionOperator.Multiplication.symbol, type = Type.Operator)
+		KeyboardButton(symbol = Operator.Multiplication.symbol, type = Type.Operator)
 
 	data object Division :
-		KeyboardButton(symbol = ExpressionOperator.Division.symbol, type = Type.Operator)
+		KeyboardButton(symbol = Operator.Division.symbol, type = Type.Operator)
 
 	data object Delete : KeyboardButton(symbol = '?', type = Type.Delete)
 	data object Equal : KeyboardButton(symbol = '=', type = Type.Equal)

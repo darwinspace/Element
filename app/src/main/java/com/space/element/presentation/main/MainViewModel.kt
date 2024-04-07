@@ -5,18 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
-import com.space.element.domain.model.ExpressionItem
-import com.space.element.domain.model.ExpressionItem.ElementItem
-import com.space.element.domain.model.ExpressionItem.NumberItem
-import com.space.element.domain.model.ExpressionItem.OperatorItem
+import com.space.element.domain.model.ExpressionListItem
+import com.space.element.domain.model.ExpressionListItem.ElementItem
+import com.space.element.domain.model.ExpressionListItem.NumberItem
+import com.space.element.domain.model.ExpressionListItem.OperatorItem
+import com.space.element.domain.model.Function
+import com.space.element.domain.model.Operator
 import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
-import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ExpressionOperator
-import com.space.element.presentation.main.model.ExpressionResult
+import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
+import com.space.element.presentation.main.model.LibraryState
 import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,17 +36,17 @@ class MainViewModel @Inject constructor(
 	private val removeElement: RemoveElement,
 	private val evaluateExpression: EvaluateExpression
 ) : ViewModel() {
-	val expression = mutableStateListOf<ExpressionItem>()
+	val expression = mutableStateListOf<ExpressionListItem>()
 
-	private var _expressionResult =
-		MutableStateFlow<ExpressionResult>(ExpressionResult.Empty)
-	val expressionResult = _expressionResult.asStateFlow()
+	private var _expressionResultState =
+		MutableStateFlow<ExpressionResultState>(ExpressionResultState.Empty)
+	val expressionResultState = _expressionResultState.asStateFlow()
 
 	private var _expressionCursorPosition = MutableStateFlow(0)
 	val expressionCursorPosition = _expressionCursorPosition.asStateFlow()
 
-	private var _elementListMode = MutableStateFlow<ElementListMode>(ElementListMode.Normal)
-	val elementListMode = _elementListMode.asStateFlow()
+	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.Normal)
+	val elementListMode = _libraryState.asStateFlow()
 
 	private var _elementListQuery = MutableStateFlow(String())
 	val elementListQuery = _elementListQuery.asStateFlow()
@@ -54,7 +55,7 @@ class MainViewModel @Inject constructor(
 	val elementList = combine(
 		_elementList, elementListMode, elementListQuery
 	) { list, mode, query ->
-		if (mode is ElementListMode.Search) {
+		if (mode is LibraryState.Search) {
 			list.filter { it.name.contains(query, ignoreCase = true) }
 		} else {
 			list
@@ -75,15 +76,16 @@ class MainViewModel @Inject constructor(
 		elementList, elementListMode, elementName, elementValue, elementListQuery
 	) { list, mode, elementName, elementValue, elementListQuery ->
 		when (mode) {
-			ElementListMode.Create -> {
+			LibraryState.Create -> {
 				elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
 						list.none { it.name.trim() == elementName.trim() }
 			}
 
-			ElementListMode.Normal -> true
-			ElementListMode.Function,
-			ElementListMode.Edit -> false
-			ElementListMode.Search -> {
+			LibraryState.Normal -> true
+			LibraryState.Function,
+			LibraryState.Edit -> false
+
+			LibraryState.Search -> {
 				elementListQuery.isNotBlank() &&
 						list.none { it.name.trim() == elementListQuery.trim() }
 			}
@@ -96,7 +98,7 @@ class MainViewModel @Inject constructor(
 
 	private fun onExpressionChange() {
 		viewModelScope.launch(Dispatchers.IO) {
-			_expressionResult.value = evaluateExpression(expression)
+			_expressionResultState.value = evaluateExpression(expression)
 		}
 	}
 
@@ -104,8 +106,8 @@ class MainViewModel @Inject constructor(
 		_expressionCursorPosition.value = position
 	}
 
-	fun onElementListModeChange(mode: ElementListMode) {
-		_elementListMode.value = mode
+	fun onLibraryStateChange(mode: LibraryState) {
+		_libraryState.value = mode
 	}
 
 	fun onElementListQueryChange(value: String) {
@@ -120,14 +122,14 @@ class MainViewModel @Inject constructor(
 		_elementValue.value = value
 	}
 
-	private fun onAddExpressionItem(expressionItem: ExpressionItem) {
-		addExpressionItem(expressionItem)
+	private fun onAddExpressionItem(expressionListItem: ExpressionListItem) {
+		addExpressionItem(expressionListItem)
 		increaseCursor()
 		onExpressionChange()
 	}
 
-	private fun addExpressionItem(expressionItem: ExpressionItem) {
-		expression.add(expressionCursorPosition.value, expressionItem)
+	private fun addExpressionItem(expressionListItem: ExpressionListItem) {
+		expression.add(expressionCursorPosition.value, expressionListItem)
 	}
 
 	private fun removeExpressionItem() {
@@ -167,14 +169,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onKeyboardOperatorButtonClick(keyboardButton: KeyboardButton) {
-		val operator: ExpressionOperator = when (keyboardButton) {
-			KeyboardButton.Open -> ExpressionOperator.Open
-			KeyboardButton.Close -> ExpressionOperator.Close
-			KeyboardButton.Addition -> ExpressionOperator.Addition
-			KeyboardButton.Subtraction -> ExpressionOperator.Subtraction
-			KeyboardButton.Multiplication -> ExpressionOperator.Multiplication
-			KeyboardButton.Division -> ExpressionOperator.Division
-			KeyboardButton.Dot -> ExpressionOperator.Dot
+		val operator: Operator = when (keyboardButton) {
+			KeyboardButton.Open -> Operator.Open
+			KeyboardButton.Close -> Operator.Close
+			KeyboardButton.Addition -> Operator.Addition
+			KeyboardButton.Subtraction -> Operator.Subtraction
+			KeyboardButton.Multiplication -> Operator.Multiplication
+			KeyboardButton.Division -> Operator.Division
+			KeyboardButton.Dot -> Operator.Dot
 			else -> throw IllegalStateException()
 		}
 
@@ -194,14 +196,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onKeyboardEqualOperatorButtonClick() {
-		val (value) = expressionResult.value as? ExpressionResult.Value ?: return
+		val (value) = expressionResultState.value as? ExpressionResultState.Value ?: return
 
 		emptyExpression()
 		emptyResult()
 
 		value.format().reversed().forEach { character ->
-			if (ExpressionOperator.Dot.symbol == character) {
-				val item = OperatorItem(ExpressionOperator.Dot)
+			if (Operator.Dot.symbol == character) {
+				val item = OperatorItem(Operator.Dot)
 				addExpressionItem(item)
 			}
 
@@ -212,7 +214,7 @@ class MainViewModel @Inject constructor(
 		}
 
 		if (value < 0) {
-			val item = OperatorItem(ExpressionOperator.Subtraction)
+			val item = OperatorItem(Operator.Subtraction)
 			addExpressionItem(item)
 		}
 
@@ -239,7 +241,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun emptyResult() {
-		_expressionResult.value = ExpressionResult.Empty
+		_expressionResultState.value = ExpressionResultState.Empty
 	}
 
 	private fun addElement(elementName: String, elementValue: String) {
@@ -258,19 +260,19 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onElementListCreateElementButtonClick() {
-		if (elementListMode.value is ElementListMode.Create) {
+		if (elementListMode.value is LibraryState.Create) {
 			addElement(elementName.value, elementValue.value)
 			emptyElementName()
 			emptyElementValue()
-		} else if (elementListMode.value is ElementListMode.Search) {
+		} else if (elementListMode.value is LibraryState.Search) {
 			_elementName.value = elementListQuery.value
 			_elementListQuery.value = String()
 		}
 
-		_elementListMode.value = if (elementListMode.value is ElementListMode.Create) {
-			ElementListMode.Normal
+		_libraryState.value = if (elementListMode.value is LibraryState.Create) {
+			LibraryState.Normal
 		} else {
-			ElementListMode.Create
+			LibraryState.Create
 		}
 	}
 
@@ -283,5 +285,11 @@ class MainViewModel @Inject constructor(
 		viewModelScope.launch {
 			list.filter { it.selected }.forEach { removeElement(it.element) }
 		}
+	}
+
+	fun onFunctionListItemClick() {
+		val function = Function("function", "x*2")
+		val item = ExpressionListItem.FunctionItem(function)
+		onAddExpressionItem(item)
 	}
 }

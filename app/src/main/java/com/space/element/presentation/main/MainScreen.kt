@@ -30,14 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
-import com.space.element.domain.model.ExpressionItem
+import com.space.element.domain.model.ExpressionListItem
 import com.space.element.presentation.main.component.Header
+import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.component.KeyboardVariant
 import com.space.element.presentation.main.component.Library
-import com.space.element.presentation.main.component.Keyboard
-import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ExpressionResult
+import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
+import com.space.element.presentation.main.model.LibraryState
 import com.space.element.presentation.theme.ElementTheme
 
 
@@ -49,24 +49,24 @@ val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
 @Preview(device = "spec:width=405dp,height=900dp")
 @Composable
 fun MainScreenPreview() {
-	val expression = remember { mutableStateListOf<ExpressionItem>() }
+	val expression = remember { mutableStateListOf<ExpressionListItem>() }
 	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
-	val expressionResult = remember { ExpressionResult.Value(value = 0.0) }
+	val expressionResultState = remember { ExpressionResultState.Value(value = 0.0) }
 	val elementList = remember { mutableStateListOf<Element>() }
-	var elementListMode by remember { mutableStateOf<ElementListMode>(ElementListMode.Normal) }
+	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.Normal) }
 
 	ElementTheme {
 		MainScreen(
 			expression = { expression },
 			expressionCursorPosition = { expressionCursorPosition },
 			onExpressionCursorPositionChange = { expressionCursorPosition = it },
-			expressionResult = { expressionResult },
+			expressionResultState = { expressionResultState },
 			elementList = { elementList },
 			onElementListItemClick = { },
 			elementListQuery = { String() },
 			onElementListQueryChange = { },
-			elementListMode = { elementListMode },
-			onElementListModeChange = { elementListMode = it },
+			libraryState = { libraryState },
+			onLibraryStateChange = { libraryState = it },
 			elementName = { String() },
 			onElementNameChange = { },
 			elementValue = { String() },
@@ -74,7 +74,8 @@ fun MainScreenPreview() {
 			isCreateElementButtonEnabled = { true },
 			onCreateElementClick = { },
 			onKeyboardButtonClick = { },
-			onRemoveClick = { }
+			onRemoveClick = { },
+			onFunctionListItemClick = { }
 		)
 	}
 }
@@ -82,7 +83,7 @@ fun MainScreenPreview() {
 @Composable
 fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	val expression = viewModel.expression
-	val expressionResult by viewModel.expressionResult.collectAsState()
+	val expressionResult by viewModel.expressionResultState.collectAsState()
 	val expressionCursorPosition by viewModel.expressionCursorPosition.collectAsState()
 	val elementList by viewModel.elementList.collectAsState()
 	val elementListQuery by viewModel.elementListQuery.collectAsState()
@@ -95,13 +96,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		expression = { expression },
 		expressionCursorPosition = { expressionCursorPosition },
 		onExpressionCursorPositionChange = viewModel::onExpressionCursorPositionChange,
-		expressionResult = { expressionResult },
+		expressionResultState = { expressionResult },
 		elementList = { elementList },
 		onElementListItemClick = viewModel::onElementListItemClick,
 		elementListQuery = { elementListQuery },
 		onElementListQueryChange = viewModel::onElementListQueryChange,
-		elementListMode = { elementListMode },
-		onElementListModeChange = viewModel::onElementListModeChange,
+		libraryState = { elementListMode },
+		onLibraryStateChange = viewModel::onLibraryStateChange,
 		elementName = { elementName },
 		onElementNameChange = viewModel::onElementNameChange,
 		elementValue = { elementValue },
@@ -109,23 +110,24 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		isCreateElementButtonEnabled = { isCreateElementButtonEnabled },
 		onCreateElementClick = viewModel::onElementListCreateElementButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
-		onRemoveClick = viewModel::onElementListRemoveButtonClick
+		onRemoveClick = viewModel::onElementListRemoveButtonClick,
+		onFunctionListItemClick = viewModel::onFunctionListItemClick
 	)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
-	expression: () -> SnapshotStateList<ExpressionItem>,
+	expression: () -> SnapshotStateList<ExpressionListItem>,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit,
-	expressionResult: () -> ExpressionResult,
+	expressionResultState: () -> ExpressionResultState,
 	elementList: () -> List<Element>,
 	onElementListItemClick: (Element) -> Unit,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
-	elementListMode: () -> ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit,
+	libraryState: () -> LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
@@ -133,7 +135,8 @@ private fun MainScreen(
 	isCreateElementButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
-	onRemoveClick: (List<ElementListItem>) -> Unit
+	onRemoveClick: (List<ElementListItem>) -> Unit,
+	onFunctionListItemClick: () -> Unit
 ) {
 	/**
 	 *  TODO: Everything should be controlled here.
@@ -151,8 +154,8 @@ private fun MainScreen(
 						onElementListItemClick = onElementListItemClick,
 						elementListQuery = elementListQuery,
 						onElementListQueryChange = onElementListQueryChange,
-						elementListMode = elementListMode,
-						onElementListModeChange = onElementListModeChange,
+						libraryState = libraryState,
+						onLibraryStateChange = onLibraryStateChange,
 						elementName = elementName,
 						onElementNameChange = onElementNameChange,
 						elementValue = elementValue,
@@ -188,7 +191,7 @@ private fun MainScreen(
 						expression = expression,
 						expressionCursorPosition = expressionCursorPosition,
 						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-						expressionResult = expressionResult
+						expressionResultState = expressionResultState
 					)
 
 					if (maxHeight > 500.dp) {
@@ -221,7 +224,7 @@ private fun MainScreen(
 							expression = expression,
 							expressionCursorPosition = expressionCursorPosition,
 							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-							expressionResult = expressionResult
+							expressionResultState = expressionResultState
 						)
 
 						if (maxHeight > 500.dp) {
@@ -255,8 +258,8 @@ private fun MainScreen(
 					onElementListItemClick = onElementListItemClick,
 					elementListQuery = elementListQuery,
 					onElementListQueryChange = onElementListQueryChange,
-					elementListMode = elementListMode,
-					onElementListModeChange = onElementListModeChange,
+					libraryState = libraryState,
+					onLibraryStateChange = onLibraryStateChange,
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,

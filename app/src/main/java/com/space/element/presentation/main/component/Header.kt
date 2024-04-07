@@ -43,9 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
-import com.space.element.domain.model.ExpressionItem
-import com.space.element.presentation.main.model.ExpressionOperator
-import com.space.element.presentation.main.model.ExpressionResult
+import com.space.element.domain.model.ExpressionListItem
+import com.space.element.domain.model.Operator
+import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.util.format
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,8 +60,8 @@ private val CursorHeight = 48.dp
 @Composable
 fun Header(
 	modifier: Modifier = Modifier,
-	expression: () -> SnapshotStateList<ExpressionItem>,
-	expressionResult: () -> ExpressionResult,
+	expression: () -> SnapshotStateList<ExpressionListItem>,
+	expressionResultState: () -> ExpressionResultState,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
@@ -81,7 +81,7 @@ fun Header(
 			)
 
 			ExpressionResult(
-				expressionResult = expressionResult
+				expressionResultState = expressionResultState
 			)
 		}
 	}
@@ -89,7 +89,7 @@ fun Header(
 
 @Composable
 fun Expression(
-	expression: () -> SnapshotStateList<ExpressionItem>,
+	expression: () -> SnapshotStateList<ExpressionListItem>,
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
@@ -118,7 +118,7 @@ fun Expression(
 
 		itemsIndexed(expression()) { index, item ->
 			ExpressionItemRow(
-				expressionItem = item,
+				expressionListItem = item,
 				cursorVisible = expressionCursorPosition() == index + 1,
 				onSpaceClick = {
 					onExpressionCursorPositionChange(index + 1)
@@ -135,14 +135,14 @@ fun Expression(
 
 @Composable
 private fun ExpressionItemRow(
-	expressionItem: ExpressionItem,
+	expressionListItem: ExpressionListItem,
 	cursorVisible: Boolean,
 	onSpaceClick: () -> Unit
 ) {
 	Row(
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		ExpressionItem(expressionItem)
+		ExpressionItem(expressionListItem)
 
 		ExpressionItemSpace(
 			cursorVisible = cursorVisible,
@@ -175,14 +175,14 @@ private fun ExpressionItemSpace(
 }
 
 @Composable
-private fun ExpressionItem(expressionItem: ExpressionItem) {
-	when (expressionItem) {
-		is ExpressionItem.ElementItem -> {
-			var valueVisible by rememberSaveable(expressionItem) {
+private fun ExpressionItem(expressionListItem: ExpressionListItem) {
+	when (expressionListItem) {
+		is ExpressionListItem.ElementItem -> {
+			var valueVisible by rememberSaveable(expressionListItem) {
 				mutableStateOf(false)
 			}
 			ExpressionElementItem(
-				element = expressionItem.element,
+				element = expressionListItem.element,
 				valueVisible = valueVisible,
 				onClick = {
 					valueVisible = !valueVisible
@@ -190,16 +190,20 @@ private fun ExpressionItem(expressionItem: ExpressionItem) {
 			)
 		}
 
-		is ExpressionItem.OperatorItem -> {
+		is ExpressionListItem.OperatorItem -> {
 			ExpressionOperatorItem(
-				operator = expressionItem.operator
+				operator = expressionListItem.operator
 			)
 		}
 
-		is ExpressionItem.NumberItem -> {
+		is ExpressionListItem.NumberItem -> {
 			ExpressionNumberItem(
-				number = expressionItem.number
+				number = expressionListItem.number
 			)
+		}
+
+		is ExpressionListItem.FunctionItem -> {
+			Text("function")
 		}
 	}
 }
@@ -253,7 +257,7 @@ private fun ExpressionNumberItem(number: Char) {
 }
 
 @Composable
-private fun ExpressionOperatorItem(operator: ExpressionOperator) {
+private fun ExpressionOperatorItem(operator: Operator) {
 	ExpressionItemText(
 		text = operator.symbol.toString(),
 		color = operator.getColor()
@@ -296,15 +300,15 @@ private fun ExpressionCursor() {
 }
 
 @Composable
-fun ExpressionResult(expressionResult: () -> ExpressionResult) {
-	val state = expressionResult()
-	if (state is ExpressionResult.Value) {
+fun ExpressionResult(expressionResultState: () -> ExpressionResultState) {
+	val state = expressionResultState()
+	if (state is ExpressionResultState.Value) {
 		ElementExpressionResultValue(state)
 	}
 }
 
 @Composable
-private fun ElementExpressionResultValue(expressionResult: ExpressionResult.Value) {
+private fun ElementExpressionResultValue(expressionResultState: ExpressionResultState.Value) {
 	val scrollState = rememberScrollState()
 	Box(
 		modifier = Modifier
@@ -314,7 +318,7 @@ private fun ElementExpressionResultValue(expressionResult: ExpressionResult.Valu
 	) {
 		Text(
 			modifier = Modifier.padding(horizontal = 24.dp),
-			text = expressionResult.value.format(),
+			text = expressionResultState.value.format(),
 			style = MaterialTheme.typography.headlineLarge
 		)
 	}

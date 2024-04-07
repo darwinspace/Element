@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -58,14 +59,15 @@ import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
+import com.space.element.domain.model.Function
 import com.space.element.presentation.component.ElementTextField
-import com.space.element.presentation.main.model.ElementListMode
-import com.space.element.presentation.main.model.ElementListMode.Create
-import com.space.element.presentation.main.model.ElementListMode.Edit
-import com.space.element.presentation.main.model.ElementListMode.Function
-import com.space.element.presentation.main.model.ElementListMode.Normal
-import com.space.element.presentation.main.model.ElementListMode.Search
+import com.space.element.presentation.main.model.LibraryState
+import com.space.element.presentation.main.model.LibraryState.Create
+import com.space.element.presentation.main.model.LibraryState.Edit
+import com.space.element.presentation.main.model.LibraryState.Normal
+import com.space.element.presentation.main.model.LibraryState.Search
 import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.main.model.LibraryState.Function as FunctionState
 
 @Preview
 @Composable
@@ -75,7 +77,7 @@ fun LibraryPreview() {
 			Element(name = "Item $it", value = it.toString())
 		}
 	}
-	var elementListMode by remember { mutableStateOf<ElementListMode>(Normal) }
+	var libraryState by remember { mutableStateOf<LibraryState>(Normal) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
@@ -86,8 +88,8 @@ fun LibraryPreview() {
 			onElementListItemClick = { throw NotImplementedError() },
 			elementListQuery = { elementListQuery },
 			onElementListQueryChange = { elementListQuery = it },
-			elementListMode = { elementListMode },
-			onElementListModeChange = { elementListMode = it },
+			libraryState = { libraryState },
+			onLibraryStateChange = { libraryState = it },
 			elementName = { elementName },
 			onElementNameChange = { elementName = it },
 			elementValue = { elementValue },
@@ -106,8 +108,8 @@ fun Library(
 	onElementListItemClick: (Element) -> Unit,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
-	elementListMode: () -> ElementListMode,
-	onElementListModeChange: (ElementListMode) -> Unit,
+	libraryState: () -> LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
@@ -116,7 +118,7 @@ fun Library(
 	onRemoveClick: (List<ElementListItem>) -> Unit,
 	onCreateElementClick: () -> Unit
 ) {
-	val mode = elementListMode()
+	val mode = libraryState()
 	val data = elementList()
 	// TODO: Use remember with listSaver.
 	val list = remember(data, mode) {
@@ -128,7 +130,7 @@ fun Library(
 			LibraryHeader(
 				elementList = list,
 				mode = mode,
-				onModeChange = onElementListModeChange,
+				onLibraryStateChange = onLibraryStateChange,
 				isCreateElementButtonEnabled = isCreateElementButtonEnabled,
 				onRemoveClick = onRemoveClick,
 				onCreateElementClick = onCreateElementClick
@@ -161,13 +163,13 @@ fun Library(
 			}
 
 			AnimatedVisibility(
-				visible = mode !is Function && list.isEmpty()
+				visible = mode !is FunctionState && list.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = mode !is Function && list.isNotEmpty()
+				visible = mode !is FunctionState && list.isNotEmpty()
 			) {
 				ElementList(
 					mode = mode,
@@ -176,7 +178,7 @@ fun Library(
 				)
 			}
 
-			AnimatedVisibility(visible = mode is Function) {
+			AnimatedVisibility(visible = mode is FunctionState) {
 				FunctionList()
 			}
 		}
@@ -186,8 +188,8 @@ fun Library(
 @Composable
 fun LibraryHeader(
 	elementList: List<ElementListItem>,
-	mode: ElementListMode,
-	onModeChange: (ElementListMode) -> Unit,
+	mode: LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
 	onRemoveClick: (List<ElementListItem>) -> Unit,
 	onCreateElementClick: () -> Unit
@@ -200,13 +202,13 @@ fun LibraryHeader(
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		AnimatedVisibility(
-			visible = mode is Create || mode is Edit || mode is Function
+			visible = mode is Create || mode is Edit || mode is FunctionState
 		) {
 			Row {
 				FilledTonalIconButton(
 					modifier = Modifier.size(48.dp),
 					onClick = {
-						onModeChange(Normal)
+						onLibraryStateChange(Normal)
 					}
 				) {
 					Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
@@ -218,7 +220,7 @@ fun LibraryHeader(
 
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			visible = mode is Normal || mode is Create || mode is Search || mode is Function
+			visible = mode is Normal || mode is Create || mode is Search || mode is FunctionState
 		) {
 			AnimatedVisibility(
 				visible = mode is Normal || mode is Create || mode is Search,
@@ -238,7 +240,7 @@ fun LibraryHeader(
 			}
 
 			AnimatedVisibility(
-				visible = mode is Function,
+				visible = mode is FunctionState,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
@@ -266,7 +268,7 @@ fun LibraryHeader(
 				FilledTonalIconButton(
 					modifier = Modifier.size(48.dp),
 					onClick = {
-						onModeChange(Function)
+						onLibraryStateChange(FunctionState)
 					}
 				) {
 					Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
@@ -289,7 +291,7 @@ fun LibraryHeader(
 						FilledTonalIconButton(
 							modifier = Modifier.size(48.dp),
 							onClick = {
-								onModeChange(Edit)
+								onLibraryStateChange(Edit)
 							}
 						) {
 							Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
@@ -307,7 +309,7 @@ fun LibraryHeader(
 							enabled = enabled,
 							onClick = {
 								onRemoveClick(elementList)
-								onModeChange(Normal)
+								onLibraryStateChange(Normal)
 							}
 						) {
 							androidx.compose.animation.AnimatedVisibility(
@@ -341,9 +343,9 @@ fun LibraryHeader(
 					modifier = Modifier.size(48.dp),
 					onClick = {
 						if (mode is Normal) {
-							onModeChange(Search)
+							onLibraryStateChange(Search)
 						} else if (mode is Search) {
-							onModeChange(Normal)
+							onLibraryStateChange(Normal)
 						}
 					}
 				) {
@@ -469,7 +471,7 @@ fun ElementListSearchTextField(
 
 @Composable
 fun ElementList(
-	mode: ElementListMode,
+	mode: LibraryState,
 	list: SnapshotStateList<ElementListItem>,
 	onClick: (Element) -> Unit
 ) {
@@ -560,21 +562,27 @@ fun ElementListEmptyCard() {
 
 @Composable
 fun FunctionList() {
+	val functions = List(10) {
+		Function("multiplyBy$it", "x*$it")
+	}
 	LazyColumn(
 		contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
-		items(5) {
-			FunctionListItem()
+		items(functions) { function ->
+			FunctionListItem(function, { /*TODO*/ })
 		}
 	}
 }
 
 @Composable
-fun FunctionListItem() {
+fun FunctionListItem(
+	function: Function,
+	onClick: () -> Unit
+) {
 	Surface(
 		shape = MaterialTheme.shapes.medium,
-		onClick = { /*TODO*/ }
+		onClick = onClick
 	) {
 		Column {
 			Surface(
@@ -584,7 +592,7 @@ fun FunctionListItem() {
 				val text = remember {
 					buildAnnotatedString {
 						withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-							append("function")
+							append(function.name)
 						}
 
 						withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -592,6 +600,7 @@ fun FunctionListItem() {
 						}
 					}
 				}
+
 				Text(
 					modifier = Modifier
 						.padding(16.dp)
@@ -609,7 +618,7 @@ fun FunctionListItem() {
 					modifier = Modifier
 						.padding(16.dp)
 						.fillMaxWidth(),
-					text = "10x+24",
+					text = function.definition,
 					style = MaterialTheme.typography.bodyMedium
 				)
 			}
