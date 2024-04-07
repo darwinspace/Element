@@ -8,6 +8,7 @@ import com.space.element.domain.model.Operator
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ExpressionResultState
 import net.objecthunter.exp4j.ExpressionBuilder
+import net.objecthunter.exp4j.function.Function
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.math.sqrt
