@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionListItem
+import com.space.element.domain.model.Function
 import com.space.element.presentation.main.component.Header
 import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.component.KeyboardVariant
@@ -75,6 +76,7 @@ fun MainScreenPreview() {
 			onCreateElementClick = { },
 			onKeyboardButtonClick = { },
 			onRemoveClick = { },
+			functionList = { emptyList() },
 			onFunctionListItemClick = { }
 		)
 	}
@@ -85,12 +87,17 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	val expression = viewModel.expression
 	val expressionResult by viewModel.expressionResultState.collectAsState()
 	val expressionCursorPosition by viewModel.expressionCursorPosition.collectAsState()
+	val isCreateElementButtonEnabled by viewModel.isCreateElementButtonEnabled.collectAsState()
 	val elementList by viewModel.elementList.collectAsState()
 	val elementListQuery by viewModel.elementListQuery.collectAsState()
 	val elementListMode by viewModel.elementListMode.collectAsState()
 	val elementName by viewModel.elementName.collectAsState()
 	val elementValue by viewModel.elementValue.collectAsState()
-	val isCreateElementButtonEnabled by viewModel.isCreateElementButtonEnabled.collectAsState()
+	val functionList = remember {
+		List(10) {
+			Function("fn${it + 1}", "x*${it + 1}")
+		}
+	}
 
 	MainScreen(
 		expression = { expression },
@@ -111,6 +118,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		onCreateElementClick = viewModel::onElementListCreateElementButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick,
 		onRemoveClick = viewModel::onElementListRemoveButtonClick,
+		functionList = { functionList },
 		onFunctionListItemClick = viewModel::onFunctionListItemClick
 	)
 }
@@ -136,7 +144,8 @@ private fun MainScreen(
 	onCreateElementClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit,
 	onRemoveClick: (List<ElementListItem>) -> Unit,
-	onFunctionListItemClick: () -> Unit
+	functionList: () -> List<Function>,
+	onFunctionListItemClick: (Function) -> Unit
 ) {
 	/**
 	 *  TODO: Everything should be controlled here.
@@ -150,19 +159,21 @@ private fun MainScreen(
 			BottomSheetScaffold(
 				sheetContent = {
 					Library(
+						libraryState = libraryState,
+						onLibraryStateChange = onLibraryStateChange,
 						elementList = elementList,
 						onElementListItemClick = onElementListItemClick,
 						elementListQuery = elementListQuery,
 						onElementListQueryChange = onElementListQueryChange,
-						libraryState = libraryState,
-						onLibraryStateChange = onLibraryStateChange,
 						elementName = elementName,
 						onElementNameChange = onElementNameChange,
 						elementValue = elementValue,
 						onElementValueChange = onElementValueChange,
 						isCreateElementButtonEnabled = isCreateElementButtonEnabled,
 						onCreateElementClick = onCreateElementClick,
-						onRemoveClick = onRemoveClick
+						onRemoveClick = onRemoveClick,
+						functionList = functionList,
+						onFunctionListItemClick = onFunctionListItemClick
 					)
 				},
 				sheetPeekHeight = SheetPeekHeight,
@@ -251,6 +262,8 @@ private fun MainScreen(
 				}
 
 				Library(
+					libraryState = libraryState,
+					onLibraryStateChange = onLibraryStateChange,
 					modifier = Modifier
 						.weight(1f)
 						.fillMaxHeight(),
@@ -258,15 +271,15 @@ private fun MainScreen(
 					onElementListItemClick = onElementListItemClick,
 					elementListQuery = elementListQuery,
 					onElementListQueryChange = onElementListQueryChange,
-					libraryState = libraryState,
-					onLibraryStateChange = onLibraryStateChange,
 					elementName = elementName,
 					onElementNameChange = onElementNameChange,
 					elementValue = elementValue,
 					onElementValueChange = onElementValueChange,
 					isCreateElementButtonEnabled = isCreateElementButtonEnabled,
+					onRemoveClick = onRemoveClick,
 					onCreateElementClick = onCreateElementClick,
-					onRemoveClick = onRemoveClick
+					functionList = functionList,
+					onFunctionListItemClick = onFunctionListItemClick
 				)
 			}
 		}

@@ -1,6 +1,5 @@
 package com.space.element
 
-import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.ExpressionListItem.FunctionItem
 import com.space.element.domain.model.ExpressionListItem.NumberItem
 import com.space.element.domain.model.ExpressionListItem.OperatorItem
@@ -32,9 +31,9 @@ class ElementUnitTest {
 	}
 
 	@Test
-	fun Evaluate() {
+	fun `Evaluate Expression List with Function`() {
 		// function(8) -> 16
-		val list = buildList<ExpressionListItem> {
+		val list = buildList {
 			val function = com.space.element.domain.model.Function("function", "x*2")
 			this += FunctionItem(function)
 			this += OperatorItem(Operator.Open)

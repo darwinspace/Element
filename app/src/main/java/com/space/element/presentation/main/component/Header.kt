@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionListItem
+import com.space.element.domain.model.Function
 import com.space.element.domain.model.Operator
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.util.format
@@ -203,7 +204,9 @@ private fun ExpressionItem(expressionListItem: ExpressionListItem) {
 		}
 
 		is ExpressionListItem.FunctionItem -> {
-			Text("function")
+			ExpressionFunctionItem(
+				function = expressionListItem.function
+			)
 		}
 	}
 }
@@ -261,6 +264,13 @@ private fun ExpressionOperatorItem(operator: Operator) {
 	ExpressionItemText(
 		text = operator.symbol.toString(),
 		color = operator.getColor()
+	)
+}
+
+@Composable
+private fun ExpressionFunctionItem(function: Function) {
+	ExpressionItemText(
+		text = function.name
 	)
 }
 

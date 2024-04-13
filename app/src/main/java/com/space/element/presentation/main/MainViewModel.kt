@@ -287,8 +287,7 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun onFunctionListItemClick() {
-		val function = Function("function", "x*2")
+	fun onFunctionListItemClick(function: Function) {
 		val item = ExpressionListItem.FunctionItem(function)
 		onAddExpressionItem(item)
 	}

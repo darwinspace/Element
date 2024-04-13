@@ -84,51 +84,56 @@ fun LibraryPreview() {
 
 	ElementTheme {
 		Library(
+			libraryState = { libraryState },
+			onLibraryStateChange = { libraryState = it },
 			elementList = { elementList },
 			onElementListItemClick = { throw NotImplementedError() },
 			elementListQuery = { elementListQuery },
 			onElementListQueryChange = { elementListQuery = it },
-			libraryState = { libraryState },
-			onLibraryStateChange = { libraryState = it },
 			elementName = { elementName },
 			onElementNameChange = { elementName = it },
 			elementValue = { elementValue },
 			onElementValueChange = { elementValue = it },
 			isCreateElementButtonEnabled = { true },
 			onRemoveClick = { },
-			onCreateElementClick = { }
+			onCreateElementClick = { },
+			functionList = { emptyList() },
+			onFunctionListItemClick = { }
 		)
 	}
 }
 
 @Composable
 fun Library(
+	libraryState: () -> LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
 	modifier: Modifier = Modifier,
 	elementList: () -> List<Element>,
 	onElementListItemClick: (Element) -> Unit,
 	elementListQuery: () -> String,
 	onElementListQueryChange: (String) -> Unit,
-	libraryState: () -> LibraryState,
-	onLibraryStateChange: (LibraryState) -> Unit,
 	elementName: () -> String,
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
 	isCreateElementButtonEnabled: () -> Boolean,
 	onRemoveClick: (List<ElementListItem>) -> Unit,
-	onCreateElementClick: () -> Unit
+	onCreateElementClick: () -> Unit,
+	functionList: () -> List<Function>,
+	onFunctionListItemClick: (Function) -> Unit
 ) {
 	val mode = libraryState()
-	val data = elementList()
+	val elementData = elementList()
 	// TODO: Use remember with listSaver.
-	val list = remember(data, mode) {
-		data.map { ElementListItem(element = it, selected = false) }.toMutableStateList()
+	val elementDataList = remember(elementData, mode) {
+		elementData.map { ElementListItem(element = it, selected = false) }.toMutableStateList()
 	}
+	val functionDataList = functionList()
 
 	Surface(modifier = modifier) {
 		Column {
 			LibraryHeader(
-				elementList = list,
+				elementList = elementDataList,
 				mode = mode,
 				onLibraryStateChange = onLibraryStateChange,
 				isCreateElementButtonEnabled = isCreateElementButtonEnabled,
@@ -163,23 +168,26 @@ fun Library(
 			}
 
 			AnimatedVisibility(
-				visible = mode !is FunctionState && list.isEmpty()
+				visible = mode !is FunctionState && elementDataList.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = mode !is FunctionState && list.isNotEmpty()
+				visible = mode !is FunctionState && elementDataList.isNotEmpty()
 			) {
 				ElementList(
 					mode = mode,
-					list = list,
+					list = elementDataList,
 					onClick = onElementListItemClick
 				)
 			}
 
 			AnimatedVisibility(visible = mode is FunctionState) {
-				FunctionList()
+				FunctionList(
+					list = functionDataList,
+					onClick = onFunctionListItemClick
+				)
 			}
 		}
 	}
@@ -561,16 +569,16 @@ fun ElementListEmptyCard() {
 }
 
 @Composable
-fun FunctionList() {
-	val functions = List(10) {
-		Function("multiplyBy$it", "x*$it")
-	}
+fun FunctionList(list: List<Function>, onClick: (Function) -> Unit) {
 	LazyColumn(
 		contentPadding = PaddingValues(24.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
-		items(functions) { function ->
-			FunctionListItem(function, { /*TODO*/ })
+		items(list) { function ->
+			FunctionListItem(
+				function = function,
+				onClick = { onClick(function) }
+			)
 		}
 	}
 }
