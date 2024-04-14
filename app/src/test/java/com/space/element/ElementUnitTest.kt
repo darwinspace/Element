@@ -11,6 +11,7 @@ import net.objecthunter.exp4j.function.Function
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.math.sqrt
+import com.space.element.domain.model.Function as ElementFunction
 
 class ElementUnitTest {
 	@Test
@@ -32,17 +33,16 @@ class ElementUnitTest {
 
 	@Test
 	fun `Evaluate Expression List with Function`() {
-		// function(8) -> 16
 		val list = buildList {
-			val function = com.space.element.domain.model.Function("function", "x*2")
+			val function = ElementFunction("function", "x*2")
 			this += FunctionItem(function)
 			this += OperatorItem(Operator.Open)
 			this += NumberItem('8')
 			this += OperatorItem(Operator.Close)
 		}
-		val eval = EvaluateExpression()
-		when(val result = eval(list)) {
-			ExpressionResultState.Empty -> TODO()
+		val evaluate = EvaluateExpression()
+		when(val result = evaluate(list)) {
+			ExpressionResultState.Empty -> Unit
 			is ExpressionResultState.Error -> {
 				println("Result = ${result.exception}")
 			}

@@ -9,18 +9,19 @@ import net.objecthunter.exp4j.function.Function
 class EvaluateExpression {
 	operator fun invoke(data: List<ExpressionListItem>): ExpressionResultState {
 		return try {
-			val functions = data.filterIsInstance<ExpressionListItem.FunctionItem>().map { (expressionFunction) ->
-				object : Function(expressionFunction.name) {
-					override fun apply(vararg args: Double): Double {
-						val argument = args[0]
-						val expression = ExpressionBuilder(expressionFunction.definition)
-							.variable("x")
-							.build()
-							.setVariable("x", argument)
-						return expression.evaluate()
+			val functions = data.filterIsInstance<ExpressionListItem.FunctionItem>()
+				.map { (expressionFunction) ->
+					object : Function(expressionFunction.name) {
+						override fun apply(vararg args: Double): Double {
+							val argument = args[0]
+							val expression = ExpressionBuilder(expressionFunction.definition)
+								.variable("x")
+								.build()
+								.setVariable("x", argument)
+							return expression.evaluate()
+						}
 					}
 				}
-			}
 
 			val expressionData = data.fastJoinToString(String())
 			val expression = ExpressionBuilder(expressionData)

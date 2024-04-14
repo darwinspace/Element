@@ -39,15 +39,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Element
 import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.Function
 import com.space.element.domain.model.Operator
 import com.space.element.presentation.main.model.ExpressionResultState
-import com.space.element.util.format
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -109,7 +109,7 @@ fun Expression(
 		state = state
 	) {
 		item {
-			ExpressionItemSpace(
+			ExpressionListItemSpace(
 				cursorVisible = expressionCursorPosition() == 0,
 				onClick = {
 					onExpressionCursorPositionChange(0)
@@ -118,7 +118,7 @@ fun Expression(
 		}
 
 		itemsIndexed(expression()) { index, item ->
-			ExpressionItemRow(
+			ExpressionListItemRow(
 				expressionListItem = item,
 				cursorVisible = expressionCursorPosition() == index + 1,
 				onSpaceClick = {
@@ -135,7 +135,7 @@ fun Expression(
 }
 
 @Composable
-private fun ExpressionItemRow(
+private fun ExpressionListItemRow(
 	expressionListItem: ExpressionListItem,
 	cursorVisible: Boolean,
 	onSpaceClick: () -> Unit
@@ -143,9 +143,9 @@ private fun ExpressionItemRow(
 	Row(
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		ExpressionItem(expressionListItem)
+		ExpressionListItem(expressionListItem)
 
-		ExpressionItemSpace(
+		ExpressionListItemSpace(
 			cursorVisible = cursorVisible,
 			onClick = onSpaceClick
 		)
@@ -153,30 +153,7 @@ private fun ExpressionItemRow(
 }
 
 @Composable
-private fun ExpressionItemSpace(
-	cursorVisible: Boolean,
-	onClick: () -> Unit
-) {
-	Box(
-		modifier = Modifier
-			.clickable(
-				interactionSource = remember { MutableInteractionSource() },
-				indication = null,
-				onClick = onClick
-			)
-			.width(ContentSpace)
-			.height(ContentHeight),
-		contentAlignment = Alignment.Center,
-		content = {
-			if (cursorVisible) {
-				ExpressionCursor()
-			}
-		}
-	)
-}
-
-@Composable
-private fun ExpressionItem(expressionListItem: ExpressionListItem) {
+private fun ExpressionListItem(expressionListItem: ExpressionListItem) {
 	when (expressionListItem) {
 		is ExpressionListItem.ElementItem -> {
 			var valueVisible by rememberSaveable(expressionListItem) {
@@ -212,6 +189,29 @@ private fun ExpressionItem(expressionListItem: ExpressionListItem) {
 }
 
 @Composable
+private fun ExpressionListItemSpace(
+	cursorVisible: Boolean,
+	onClick: () -> Unit
+) {
+	Box(
+		modifier = Modifier
+			.clickable(
+				interactionSource = remember { MutableInteractionSource() },
+				indication = null,
+				onClick = onClick
+			)
+			.width(ContentSpace)
+			.height(ContentHeight),
+		contentAlignment = Alignment.Center,
+		content = {
+			if (cursorVisible) {
+				ExpressionCursor()
+			}
+		}
+	)
+}
+
+@Composable
 private fun ExpressionElementItem(
 	element: Element,
 	valueVisible: Boolean,
@@ -219,7 +219,7 @@ private fun ExpressionElementItem(
 ) {
 	Surface(
 		shape = MaterialTheme.shapes.large,
-		color = MaterialTheme.colorScheme.secondaryContainer,
+		color = MaterialTheme.colorScheme.primaryContainer,
 		onClick = onClick
 	) {
 		Row(modifier = Modifier.padding(12.dp, 8.dp)) {
@@ -246,46 +246,44 @@ fun ExpressionElementItemValue(elementValue: String) {
 		Spacer(modifier = Modifier.width(12.dp))
 
 		Text(
-			text = "= ${elementValue.toDouble().format()}",
-			style = MaterialTheme.typography.titleLarge
+			text = "= $elementValue",
+			style = MaterialTheme.typography.titleLarge,
+			fontWeight = FontWeight.Normal
 		)
 	}
 }
 
 @Composable
 private fun ExpressionNumberItem(number: Char) {
-	ExpressionItemText(
-		text = number.toString()
+	Text(
+		text = number.toString(),
+		style = MaterialTheme.typography.displaySmall,
 	)
 }
 
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
-	ExpressionItemText(
+	Text(
 		text = operator.symbol.toString(),
-		color = operator.getColor()
+		color = operator.getColor(),
+		style = MaterialTheme.typography.displaySmall,
+		fontWeight = FontWeight.Bold
 	)
 }
 
 @Composable
 private fun ExpressionFunctionItem(function: Function) {
-	ExpressionItemText(
-		text = function.name
-	)
-}
-
-@Composable
-private fun ExpressionItemText(
-	modifier: Modifier = Modifier,
-	text: String,
-	color: Color = Color.Unspecified
-) {
-	Text(
-		modifier = modifier,
-		text = text,
-		style = MaterialTheme.typography.displaySmall,
-		color = color
-	)
+	Surface(
+		shape = MaterialTheme.shapes.large,
+		color = MaterialTheme.colorScheme.tertiaryContainer
+	) {
+		Text(
+			modifier = Modifier.padding(12.dp, 8.dp),
+			text = function.name,
+			style = MaterialTheme.typography.headlineSmall,
+			fontStyle = FontStyle.Italic
+		)
+	}
 }
 
 @Composable
@@ -328,7 +326,7 @@ private fun ElementExpressionResultValue(expressionResultState: ExpressionResult
 	) {
 		Text(
 			modifier = Modifier.padding(horizontal = 24.dp),
-			text = expressionResultState.value.format(),
+			text = expressionResultState.value.toString(),
 			style = MaterialTheme.typography.headlineLarge
 		)
 	}

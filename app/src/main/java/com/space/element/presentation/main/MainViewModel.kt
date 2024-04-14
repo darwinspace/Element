@@ -7,6 +7,7 @@ import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.ExpressionListItem.ElementItem
+import com.space.element.domain.model.ExpressionListItem.FunctionItem
 import com.space.element.domain.model.ExpressionListItem.NumberItem
 import com.space.element.domain.model.ExpressionListItem.OperatorItem
 import com.space.element.domain.model.Function
@@ -18,7 +19,6 @@ import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,24 +36,24 @@ class MainViewModel @Inject constructor(
 	private val removeElement: RemoveElement,
 	private val evaluateExpression: EvaluateExpression
 ) : ViewModel() {
-	val expression = mutableStateListOf<ExpressionListItem>()
+	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.Normal)
+	val libraryState = _libraryState.asStateFlow()
 
-	private var _expressionResultState =
-		MutableStateFlow<ExpressionResultState>(ExpressionResultState.Empty)
-	val expressionResultState = _expressionResultState.asStateFlow()
+	val expression = mutableStateListOf<ExpressionListItem>()
 
 	private var _expressionCursorPosition = MutableStateFlow(0)
 	val expressionCursorPosition = _expressionCursorPosition.asStateFlow()
 
-	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.Normal)
-	val elementListMode = _libraryState.asStateFlow()
+	private var _expressionResultState =
+		MutableStateFlow<ExpressionResultState>(ExpressionResultState.Empty)
+	val expressionResultState = _expressionResultState.asStateFlow()
 
 	private var _elementListQuery = MutableStateFlow(String())
 	val elementListQuery = _elementListQuery.asStateFlow()
 
 	private val _elementList = getElementList()
 	val elementList = combine(
-		_elementList, elementListMode, elementListQuery
+		_elementList, libraryState, elementListQuery
 	) { list, mode, query ->
 		if (mode is LibraryState.Search) {
 			list.filter { it.name.contains(query, ignoreCase = true) }
@@ -72,8 +72,8 @@ class MainViewModel @Inject constructor(
 	private var _elementValue = MutableStateFlow(String())
 	val elementValue = _elementValue.asStateFlow()
 
-	val isCreateElementButtonEnabled = combine(
-		elementList, elementListMode, elementName, elementValue, elementListQuery
+	val elementListCreateButtonEnabled = combine(
+		elementList, libraryState, elementName, elementValue, elementListQuery
 	) { list, mode, elementName, elementValue, elementListQuery ->
 		when (mode) {
 			LibraryState.Create -> {
@@ -95,6 +95,8 @@ class MainViewModel @Inject constructor(
 		started = SharingStarted.WhileSubscribed(),
 		initialValue = true
 	)
+
+	val functionList = MutableStateFlow(listOf(Function("function", "x*10")))
 
 	private fun onExpressionChange() {
 		viewModelScope.launch(Dispatchers.IO) {
@@ -123,7 +125,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	private fun onAddExpressionItem(expressionListItem: ExpressionListItem) {
+		if(expressionListItem is FunctionItem) {
+			addExpressionItem(OperatorItem(Operator.Close))
+			addExpressionItem(OperatorItem(Operator.Open))
+		}
 		addExpressionItem(expressionListItem)
+		if(expressionListItem is FunctionItem) {
+			increaseCursor()
+		}
 		increaseCursor()
 		onExpressionChange()
 	}
@@ -201,8 +210,8 @@ class MainViewModel @Inject constructor(
 		emptyExpression()
 		emptyResult()
 
-		value.format().reversed().forEach { character ->
-			if (Operator.Dot.symbol == character) {
+		value.toString().reversed().forEach { character ->
+			if (character == Operator.Dot.symbol) {
 				val item = OperatorItem(Operator.Dot)
 				addExpressionItem(item)
 			}
@@ -260,16 +269,16 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onElementListCreateElementButtonClick() {
-		if (elementListMode.value is LibraryState.Create) {
+		if (libraryState.value is LibraryState.Create) {
 			addElement(elementName.value, elementValue.value)
 			emptyElementName()
 			emptyElementValue()
-		} else if (elementListMode.value is LibraryState.Search) {
+		} else if (libraryState.value is LibraryState.Search) {
 			_elementName.value = elementListQuery.value
 			_elementListQuery.value = String()
 		}
 
-		_libraryState.value = if (elementListMode.value is LibraryState.Create) {
+		_libraryState.value = if (libraryState.value is LibraryState.Create) {
 			LibraryState.Normal
 		} else {
 			LibraryState.Create
@@ -288,7 +297,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onFunctionListItemClick(function: Function) {
-		val item = ExpressionListItem.FunctionItem(function)
+		val item = FunctionItem(function)
 		onAddExpressionItem(item)
 	}
 }
