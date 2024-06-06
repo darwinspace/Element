@@ -1,4 +1,4 @@
-package com.space.element.data.source
+package com.space.element.domain.data
 
 import com.space.element.domain.model.Element
 import kotlinx.coroutines.flow.Flow
@@ -8,3 +8,4 @@ interface ElementDatabase {
 	suspend fun add(element: Element)
 	suspend fun remove(element: Element)
 }
+

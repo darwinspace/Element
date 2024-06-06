@@ -16,6 +16,7 @@ import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElement
 import com.space.element.domain.use_case.expression.EvaluateExpression
+import com.space.element.domain.use_case.function_list.GetFunctionList
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
@@ -34,7 +35,8 @@ class MainViewModel @Inject constructor(
 	getElementList: GetElementList,
 	private val addElement: AddElement,
 	private val removeElement: RemoveElement,
-	private val evaluateExpression: EvaluateExpression
+	private val evaluateExpression: EvaluateExpression,
+	getFunctionList: GetFunctionList
 ) : ViewModel() {
 	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.Normal)
 	val libraryState = _libraryState.asStateFlow()
@@ -96,7 +98,12 @@ class MainViewModel @Inject constructor(
 		initialValue = true
 	)
 
-	val functionList = MutableStateFlow(listOf(Function("function", "x*10")))
+	private val _functionList = getFunctionList()
+	val functionList = _functionList.stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(),
+		initialValue = emptyList()
+	)
 
 	private fun onExpressionChange() {
 		viewModelScope.launch(Dispatchers.IO) {
