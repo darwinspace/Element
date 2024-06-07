@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
@@ -57,8 +56,8 @@ import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.LibraryState
 import com.space.element.presentation.main.model.LibraryState.CreateElement
 import com.space.element.presentation.main.model.LibraryState.CreateFunction
-import com.space.element.presentation.main.model.LibraryState.EditElement
 import com.space.element.presentation.main.model.LibraryState.ElementList
+import com.space.element.presentation.main.model.LibraryState.RemoveElement
 import com.space.element.presentation.main.model.LibraryState.SearchElement
 import com.space.element.presentation.theme.ElementTheme
 import com.space.element.util.rememberElementList
@@ -185,7 +184,7 @@ fun Library(
 			}
 
 			val elementRelated =
-				(state is ElementList || state is CreateElement || state is SearchElement || state is EditElement)
+				(state is ElementList || state is CreateElement || state is SearchElement || state is RemoveElement)
 
 			AnimatedVisibility(
 				visible = elementRelated && elementDataList.isEmpty()
@@ -303,7 +302,7 @@ fun LibraryHeader(
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		AnimatedVisibility(
-			visible = libraryState is CreateElement || libraryState is EditElement
+			visible = libraryState is CreateElement || libraryState is RemoveElement
 					|| libraryState is FunctionState || libraryState is CreateFunction
 		) {
 			CloseButton(
@@ -356,14 +355,14 @@ fun LibraryHeader(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is ElementList && elementList.isNotEmpty() || libraryState is EditElement
+			visible = libraryState is ElementList && elementList.isNotEmpty() || libraryState is RemoveElement
 		) {
-			EditElementButton(
+			RemoveButton(
 				modifier = Modifier.padding(start = 16.dp),
 				libraryState = libraryState,
 				onLibraryStateChange = onLibraryStateChange,
-				elementList = elementList,
-				onRemoveElementClick = onRemoveElementClick
+				removeEnabled = elementList.any { it.selected },
+				onRemoveElementClick = { onRemoveElementClick(elementList) }
 			)
 		}
 
@@ -382,6 +381,19 @@ fun LibraryHeader(
 				}
 			)
 		}
+	}
+}
+
+@Composable
+private fun CloseButton(
+	modifier: Modifier = Modifier,
+	onClick: () -> Unit
+) {
+	FilledTonalIconButton(
+		modifier = modifier.size(48.dp),
+		onClick = onClick
+	) {
+		Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 	}
 }
 
@@ -424,12 +436,12 @@ private fun CreateElementButton(
 }
 
 @Composable
-private fun EditElementButton(
+private fun RemoveButton(
 	modifier: Modifier = Modifier,
 	libraryState: LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
-	elementList: List<ElementListItem>,
-	onRemoveElementClick: (List<ElementListItem>) -> Unit
+	removeEnabled: Boolean,
+	onRemoveElementClick: () -> Unit
 ) {
 	Box(modifier = modifier) {
 		AnimatedVisibility(
@@ -437,25 +449,45 @@ private fun EditElementButton(
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
-			EditButton(
+			FilledTonalIconButton(
+				modifier = Modifier.size(48.dp),
 				onClick = {
-					onLibraryStateChange(EditElement)
+					onLibraryStateChange(RemoveElement)
 				}
-			)
+			) {
+				Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+			}
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is EditElement,
+			visible = libraryState is RemoveElement,
 			enter = fadeIn(),
-			exit = fadeOut()
+			exit = fadeOut(),
 		) {
-			val enabled = elementList.any { it.selected }
-			DeleteElementButton(
-				enabled,
-				onRemoveElementClick,
-				elementList,
-				onLibraryStateChange
-			)
+			FilledIconButton(
+				modifier = modifier.size(48.dp),
+				enabled = removeEnabled,
+				onClick = {
+					onRemoveElementClick()
+					onLibraryStateChange(ElementList)
+				}
+			) {
+				AnimatedVisibility(
+					visible = removeEnabled,
+					enter = fadeIn(),
+					exit = fadeOut()
+				) {
+					Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+				}
+
+				AnimatedVisibility(
+					visible = !removeEnabled,
+					enter = fadeIn(),
+					exit = fadeOut()
+				) {
+					Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+				}
+			}
 		}
 	}
 }
@@ -489,68 +521,12 @@ private fun RowScope.SearchButton(
 }
 
 @Composable
-private fun DeleteElementButton(
-	enabled: Boolean,
-	onRemoveElementClick: (List<ElementListItem>) -> Unit,
-	elementList: List<ElementListItem>,
-	onLibraryStateChange: (LibraryState) -> Unit
-) {
-	FilledIconButton(
-		modifier = Modifier.size(48.dp),
-		enabled = enabled,
-		onClick = {
-			onRemoveElementClick(elementList)
-			onLibraryStateChange(ElementList)
-		}
-	) {
-		AnimatedVisibility(
-			visible = enabled,
-			enter = fadeIn(),
-			exit = fadeOut()
-		) {
-			Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
-		}
-
-		AnimatedVisibility(
-			visible = !enabled,
-			enter = fadeIn(),
-			exit = fadeOut()
-		) {
-			Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-		}
-	}
-}
-
-@Composable
-private fun EditButton(onClick: () -> Unit) {
-	FilledTonalIconButton(
-		modifier = Modifier.size(48.dp),
-		onClick = onClick
-	) {
-		Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
-	}
-}
-
-@Composable
 private fun FunctionButton(modifier: Modifier, onClick: () -> Unit) {
 	FilledTonalIconButton(
 		modifier = modifier.size(48.dp),
 		onClick = onClick
 	) {
 		Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
-	}
-}
-
-@Composable
-private fun CloseButton(
-	modifier: Modifier = Modifier,
-	onClick: () -> Unit
-) {
-	FilledTonalIconButton(
-		modifier = modifier.size(48.dp),
-		onClick = onClick
-	) {
-		Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 	}
 }
 
@@ -668,7 +644,7 @@ fun ElementList(
 				modifier = Modifier.fillMaxWidth(),
 				elementListItem = item
 			) {
-				if (libraryState is EditElement) {
+				if (libraryState is RemoveElement) {
 					list[index] = item.copy(selected = !item.selected)
 				} else {
 					onClick(item.element)
