@@ -9,12 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -56,15 +55,16 @@ import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.Function
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.presentation.main.model.LibraryState.Create
-import com.space.element.presentation.main.model.LibraryState.Edit
-import com.space.element.presentation.main.model.LibraryState.Normal
-import com.space.element.presentation.main.model.LibraryState.Search
+import com.space.element.presentation.main.model.LibraryState.CreateElement
+import com.space.element.presentation.main.model.LibraryState.CreateFunction
+import com.space.element.presentation.main.model.LibraryState.EditElement
+import com.space.element.presentation.main.model.LibraryState.ElementList
+import com.space.element.presentation.main.model.LibraryState.SearchElement
 import com.space.element.presentation.theme.ElementTheme
 import com.space.element.util.rememberElementList
-import com.space.element.util.rememberEmptyElementListText
+import com.space.element.util.rememberEmptyListText
 import com.space.element.util.rememberFunctionName
-import com.space.element.presentation.main.model.LibraryState.Function as FunctionState
+import com.space.element.presentation.main.model.LibraryState.FunctionList as FunctionState
 
 @Preview
 @Composable
@@ -74,7 +74,7 @@ fun LibraryPreview() {
 			Element(name = "Item $it", value = it.toString())
 		}
 	}
-	var libraryState by remember { mutableStateOf<LibraryState>(Normal) }
+	var libraryState by remember { mutableStateOf<LibraryState>(ElementList) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
@@ -95,7 +95,13 @@ fun LibraryPreview() {
 			onRemoveElementClick = { },
 			onCreateElementClick = { },
 			functionList = { emptyList() },
-			onFunctionListItemClick = { }
+			onFunctionListItemClick = { },
+			functionName = { elementName },
+			onFunctionNameChange = { elementName = it },
+			functionDefinition = { elementValue },
+			onFunctionDefinitionChange = { elementValue = it },
+			functionListCreateButtonEnabled = { true },
+			onCreateFunctionClick = { }
 		)
 	}
 }
@@ -113,11 +119,17 @@ fun Library(
 	onElementNameChange: (String) -> Unit,
 	elementValue: () -> String,
 	onElementValueChange: (String) -> Unit,
+	elementListCreateButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit,
 	onRemoveElementClick: (List<ElementListItem>) -> Unit,
-	elementListCreateButtonEnabled: () -> Boolean,
 	functionList: () -> List<Function>,
-	onFunctionListItemClick: (Function) -> Unit
+	onFunctionListItemClick: (Function) -> Unit,
+	functionName: () -> String,
+	onFunctionNameChange: (String) -> Unit,
+	functionDefinition: () -> String,
+	onFunctionDefinitionChange: (String) -> Unit,
+	functionListCreateButtonEnabled: () -> Boolean,
+	onCreateFunctionClick: () -> Unit
 ) {
 	val state = libraryState()
 	val elementData = elementList()
@@ -130,13 +142,15 @@ fun Library(
 				libraryState = state,
 				onLibraryStateChange = onLibraryStateChange,
 				elementList = elementDataList,
-				onRemoveElementClick = onRemoveElementClick,
+				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
 				onCreateElementClick = onCreateElementClick,
-				elementListCreateButtonEnabled = elementListCreateButtonEnabled
+				onRemoveElementClick = onRemoveElementClick,
+				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+				onCreateFunctionClick = onCreateFunctionClick
 			)
 
 			AnimatedVisibility(
-				visible = state is Create
+				visible = state is CreateElement
 			) {
 				LibraryCreateElementForm(
 					elementName = elementName,
@@ -152,8 +166,17 @@ fun Library(
 				)
 			}
 
+			AnimatedVisibility(visible = state is CreateFunction) {
+				LibraryCreateFunctionForm(
+					functionName = functionName,
+					onFunctionNameChange = onFunctionNameChange,
+					functionDefinition = functionDefinition,
+					onFunctionDefinitionChange = onFunctionDefinitionChange
+				)
+			}
+
 			AnimatedVisibility(
-				visible = state is Search
+				visible = state is SearchElement
 			) {
 				ElementListSearchTextField(
 					value = elementListQuery,
@@ -161,14 +184,17 @@ fun Library(
 				)
 			}
 
+			val elementRelated =
+				(state is ElementList || state is CreateElement || state is SearchElement || state is EditElement)
+
 			AnimatedVisibility(
-				visible = state !is FunctionState && elementDataList.isEmpty()
+				visible = elementRelated && elementDataList.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = state !is FunctionState && elementDataList.isNotEmpty()
+				visible = elementRelated && elementDataList.isNotEmpty()
 			) {
 				ElementList(
 					libraryState = state,
@@ -177,7 +203,13 @@ fun Library(
 				)
 			}
 
-			AnimatedVisibility(visible = state is FunctionState) {
+			val functionRelated = state is FunctionState || state is CreateFunction
+
+			AnimatedVisibility(visible = functionRelated && functionDataList.isEmpty()) {
+				FunctionListEmptyCard()
+			}
+
+			AnimatedVisibility(visible = functionRelated && functionDataList.isNotEmpty()) {
 				FunctionList(
 					list = functionDataList,
 					onClick = onFunctionListItemClick
@@ -188,13 +220,80 @@ fun Library(
 }
 
 @Composable
+fun LibraryCreateFunctionForm(
+	functionName: () -> String,
+	onFunctionNameChange: (String) -> Unit,
+	functionDefinition: () -> String,
+	onFunctionDefinitionChange: (String) -> Unit
+) {
+	Column(
+		modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
+		verticalArrangement = Arrangement.spacedBy(24.dp)
+	) {
+		FunctionNameTextField(
+			functionName = functionName,
+			onFunctionNameChange = onFunctionNameChange
+		)
+
+		FunctionDefinitionTextField(
+			functionDefinition = functionDefinition,
+			onFunctionDefinitionChange = onFunctionDefinitionChange
+		)
+	}
+}
+
+@Composable
+fun FunctionDefinitionTextField(
+	functionDefinition: () -> String,
+	onFunctionDefinitionChange: (String) -> Unit
+) {
+	ElementTextField(
+		modifier = Modifier.fillMaxWidth(),
+		value = functionDefinition(),
+		onValueChange = onFunctionDefinitionChange,
+		placeholder = {
+			Text(
+				text = "Function definition",
+				style = MaterialTheme.typography.bodyMedium
+			)
+		},
+		keyboardActions = KeyboardActions {},
+		keyboardOptions = KeyboardOptions(
+			keyboardType = KeyboardType.Text,
+			imeAction = ImeAction.Done
+		)
+	)
+}
+
+@Composable
+fun FunctionNameTextField(functionName: () -> String, onFunctionNameChange: (String) -> Unit) {
+	ElementTextField(
+		modifier = Modifier.fillMaxWidth(),
+		value = functionName(),
+		onValueChange = onFunctionNameChange,
+		placeholder = {
+			Text(
+				text = "Function name",
+				style = MaterialTheme.typography.bodyMedium
+			)
+		},
+		keyboardOptions = KeyboardOptions(
+			capitalization = KeyboardCapitalization.Sentences,
+			imeAction = ImeAction.Next
+		)
+	)
+}
+
+@Composable
 fun LibraryHeader(
 	libraryState: LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	elementList: List<ElementListItem>,
-	onRemoveElementClick: (List<ElementListItem>) -> Unit,
+	elementListCreateButtonEnabled: () -> Boolean,
 	onCreateElementClick: () -> Unit,
-	elementListCreateButtonEnabled: () -> Boolean
+	onRemoveElementClick: (List<ElementListItem>) -> Unit,
+	functionListCreateButtonEnabled: () -> Boolean,
+	onCreateFunctionClick: () -> Unit
 ) {
 	Row(
 		modifier = Modifier
@@ -204,171 +303,254 @@ fun LibraryHeader(
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		AnimatedVisibility(
-			visible = libraryState is Create || libraryState is Edit || libraryState is FunctionState
+			visible = libraryState is CreateElement || libraryState is EditElement
+					|| libraryState is FunctionState || libraryState is CreateFunction
 		) {
-			Row {
-				FilledTonalIconButton(
-					modifier = Modifier.size(48.dp),
-					onClick = {
-						onLibraryStateChange(Normal)
+			CloseButton(
+				modifier = Modifier.padding(end = 16.dp),
+				onClick = {
+					if (libraryState is CreateFunction) {
+						onLibraryStateChange(FunctionState)
+					} else {
+						onLibraryStateChange(ElementList)
 					}
-				) {
-					Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 				}
-
-				Spacer(modifier = Modifier.width(16.dp))
-			}
+			)
 		}
 
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			visible = libraryState is Normal || libraryState is Create || libraryState is Search || libraryState is FunctionState
+			visible = libraryState is ElementList || libraryState is CreateElement || libraryState is SearchElement
+					|| libraryState is FunctionState || libraryState is CreateFunction
 		) {
 			AnimatedVisibility(
-				visible = libraryState is Normal || libraryState is Create || libraryState is Search,
+				visible = libraryState is ElementList || libraryState is CreateElement || libraryState is SearchElement,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
-				Button(
-					modifier = Modifier
-						.fillMaxWidth()
-						.heightIn(48.dp),
-					enabled = elementListCreateButtonEnabled(),
-					shape = MaterialTheme.shapes.small,
+				CreateElementButton(
+					enabled = elementListCreateButtonEnabled,
 					onClick = onCreateElementClick
-				) {
-					Text(text = stringResource(R.string.button_add_element))
-				}
+				)
 			}
 
 			AnimatedVisibility(
-				visible = libraryState is FunctionState,
+				visible = libraryState is FunctionState || libraryState is CreateFunction,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
-				Button(
-					modifier = Modifier
-						.fillMaxWidth()
-						.heightIn(48.dp),
-					enabled = true,
-					shape = MaterialTheme.shapes.small,
-					colors = ButtonDefaults.buttonColors(
-						containerColor = MaterialTheme.colorScheme.tertiary,
-						contentColor = MaterialTheme.colorScheme.onTertiary
-					),
-					onClick = {}
-				) {
-					Text(text = "Create function")
-				}
+				CreateFunctionButton(
+					enabled = functionListCreateButtonEnabled,
+					onClick = onCreateFunctionClick
+				)
 			}
 		}
 
-		AnimatedVisibility(visible = libraryState is Normal) {
-			Row {
-				Spacer(modifier = Modifier.width(16.dp))
-
-				FilledTonalIconButton(
-					modifier = Modifier.size(48.dp),
-					onClick = {
-						onLibraryStateChange(FunctionState)
-					}
-				) {
-					Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
+		AnimatedVisibility(visible = libraryState is ElementList) {
+			FunctionButton(
+				modifier = Modifier.padding(start = 16.dp),
+				onClick = {
+					onLibraryStateChange(FunctionState)
 				}
-			}
+			)
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is Normal && elementList.isNotEmpty() || libraryState is Edit
+			visible = libraryState is ElementList && elementList.isNotEmpty() || libraryState is EditElement
 		) {
-			Row {
-				Spacer(modifier = Modifier.width(16.dp))
-
-				Box {
-					androidx.compose.animation.AnimatedVisibility(
-						visible = libraryState is Normal,
-						enter = fadeIn(),
-						exit = fadeOut()
-					) {
-						FilledTonalIconButton(
-							modifier = Modifier.size(48.dp),
-							onClick = {
-								onLibraryStateChange(Edit)
-							}
-						) {
-							Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
-						}
-					}
-
-					androidx.compose.animation.AnimatedVisibility(
-						visible = libraryState is Edit,
-						enter = fadeIn(),
-						exit = fadeOut()
-					) {
-						val enabled = elementList.any { it.selected }
-						FilledIconButton(
-							modifier = Modifier.size(48.dp),
-							enabled = enabled,
-							onClick = {
-								onRemoveElementClick(elementList)
-								onLibraryStateChange(Normal)
-							}
-						) {
-							androidx.compose.animation.AnimatedVisibility(
-								visible = enabled,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
-							}
-
-							androidx.compose.animation.AnimatedVisibility(
-								visible = !enabled,
-								enter = fadeIn(),
-								exit = fadeOut()
-							) {
-								Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-							}
-						}
-					}
-				}
-			}
+			EditElementButton(
+				modifier = Modifier.padding(start = 16.dp),
+				libraryState = libraryState,
+				onLibraryStateChange = onLibraryStateChange,
+				elementList = elementList,
+				onRemoveElementClick = onRemoveElementClick
+			)
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is Normal && elementList.isNotEmpty() || libraryState is Search
+			visible = libraryState is ElementList && elementList.isNotEmpty() || libraryState is SearchElement
 		) {
-			Row {
-				Spacer(modifier = Modifier.width(16.dp))
-
-				FilledTonalIconButton(
-					modifier = Modifier.size(48.dp),
-					onClick = {
-						if (libraryState is Normal) {
-							onLibraryStateChange(Search)
-						} else if (libraryState is Search) {
-							onLibraryStateChange(Normal)
-						}
-					}
-				) {
-					AnimatedVisibility(
-						visible = libraryState is Normal,
-						enter = fadeIn(),
-						exit = fadeOut()
-					) {
-						Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
-					}
-
-					AnimatedVisibility(
-						visible = libraryState is Search,
-						enter = fadeIn(),
-						exit = fadeOut()
-					) {
-						Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+			SearchButton(
+				modifier = Modifier.padding(start = 16.dp),
+				libraryState = libraryState,
+				onClick = {
+					if (libraryState is ElementList) {
+						onLibraryStateChange(SearchElement)
+					} else if (libraryState is SearchElement) {
+						onLibraryStateChange(ElementList)
 					}
 				}
-			}
+			)
 		}
+	}
+}
+
+@Composable
+private fun CreateFunctionButton(
+	enabled: () -> Boolean,
+	onClick: () -> Unit
+) {
+	Button(
+		modifier = Modifier
+			.fillMaxWidth()
+			.heightIn(48.dp),
+		enabled = enabled(),
+		shape = MaterialTheme.shapes.small,
+		colors = ButtonDefaults.buttonColors(
+			containerColor = MaterialTheme.colorScheme.tertiary,
+			contentColor = MaterialTheme.colorScheme.onTertiary
+		),
+		onClick = onClick
+	) {
+		Text(text = "Create function")
+	}
+}
+
+@Composable
+private fun CreateElementButton(
+	enabled: () -> Boolean,
+	onClick: () -> Unit
+) {
+	Button(
+		modifier = Modifier
+			.fillMaxWidth()
+			.heightIn(48.dp),
+		enabled = enabled(),
+		shape = MaterialTheme.shapes.small,
+		onClick = onClick
+	) {
+		Text(text = stringResource(R.string.button_add_element))
+	}
+}
+
+@Composable
+private fun EditElementButton(
+	modifier: Modifier = Modifier,
+	libraryState: LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
+	elementList: List<ElementListItem>,
+	onRemoveElementClick: (List<ElementListItem>) -> Unit
+) {
+	Box(modifier = modifier) {
+		AnimatedVisibility(
+			visible = libraryState is ElementList,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			EditButton(
+				onClick = {
+					onLibraryStateChange(EditElement)
+				}
+			)
+		}
+
+		AnimatedVisibility(
+			visible = libraryState is EditElement,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			val enabled = elementList.any { it.selected }
+			DeleteElementButton(
+				enabled,
+				onRemoveElementClick,
+				elementList,
+				onLibraryStateChange
+			)
+		}
+	}
+}
+
+@Composable
+private fun RowScope.SearchButton(
+	modifier: Modifier,
+	libraryState: LibraryState,
+	onClick: () -> Unit,
+) {
+	FilledTonalIconButton(
+		modifier = modifier.size(48.dp),
+		onClick = onClick
+	) {
+		AnimatedVisibility(
+			visible = libraryState is ElementList,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
+		}
+
+		AnimatedVisibility(
+			visible = libraryState is SearchElement,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+		}
+	}
+}
+
+@Composable
+private fun DeleteElementButton(
+	enabled: Boolean,
+	onRemoveElementClick: (List<ElementListItem>) -> Unit,
+	elementList: List<ElementListItem>,
+	onLibraryStateChange: (LibraryState) -> Unit
+) {
+	FilledIconButton(
+		modifier = Modifier.size(48.dp),
+		enabled = enabled,
+		onClick = {
+			onRemoveElementClick(elementList)
+			onLibraryStateChange(ElementList)
+		}
+	) {
+		AnimatedVisibility(
+			visible = enabled,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+		}
+
+		AnimatedVisibility(
+			visible = !enabled,
+			enter = fadeIn(),
+			exit = fadeOut()
+		) {
+			Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+		}
+	}
+}
+
+@Composable
+private fun EditButton(onClick: () -> Unit) {
+	FilledTonalIconButton(
+		modifier = Modifier.size(48.dp),
+		onClick = onClick
+	) {
+		Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+	}
+}
+
+@Composable
+private fun FunctionButton(modifier: Modifier, onClick: () -> Unit) {
+	FilledTonalIconButton(
+		modifier = modifier.size(48.dp),
+		onClick = onClick
+	) {
+		Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
+	}
+}
+
+@Composable
+private fun CloseButton(
+	modifier: Modifier = Modifier,
+	onClick: () -> Unit
+) {
+	FilledTonalIconButton(
+		modifier = modifier.size(48.dp),
+		onClick = onClick
+	) {
+		Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
 	}
 }
 
@@ -451,7 +633,9 @@ fun ElementListSearchTextField(
 	onValueChange: (String) -> Unit
 ) {
 	ElementTextField(
-		modifier = Modifier.fillMaxWidth().padding(start = 24.dp, top = 24.dp, end = 24.dp),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(start = 24.dp, top = 24.dp, end = 24.dp),
 		value = value(),
 		onValueChange = onValueChange,
 		placeholder = {
@@ -484,7 +668,7 @@ fun ElementList(
 				modifier = Modifier.fillMaxWidth(),
 				elementListItem = item
 			) {
-				if (libraryState is Edit) {
+				if (libraryState is EditElement) {
 					list[index] = item.copy(selected = !item.selected)
 				} else {
 					onClick(item.element)
@@ -545,7 +729,7 @@ fun ElementListEmptyCard() {
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(32.dp),
-			text = rememberEmptyElementListText(
+			text = rememberEmptyListText(
 				stringResource(R.string.empty_element_list_content_action),
 				stringResource(R.string.button_add_element),
 				stringResource(R.string.empty_element_list_content_reason)
@@ -607,5 +791,27 @@ fun FunctionListItem(
 				)
 			}
 		}
+	}
+}
+
+@Composable
+fun FunctionListEmptyCard() {
+	Surface(
+		modifier = Modifier.padding(24.dp),
+		shape = MaterialTheme.shapes.medium,
+		color = MaterialTheme.colorScheme.errorContainer
+	) {
+		Text(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(32.dp),
+			text = rememberEmptyListText(
+				"Tap",
+				"Create function",
+				"to add a function."
+			),
+			style = MaterialTheme.typography.bodyMedium,
+			textAlign = TextAlign.Center
+		)
 	}
 }

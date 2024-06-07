@@ -12,4 +12,8 @@ class FunctionRepositoryImplementation @Inject constructor(
 	override fun getList(): Flow<List<Function>> {
 		return database.getList()
 	}
+
+	override suspend fun add(function: Function) {
+		database.add(function)
+	}
 }

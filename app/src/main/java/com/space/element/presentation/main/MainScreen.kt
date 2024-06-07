@@ -76,10 +76,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	val expressionResultState by viewModel.expressionResultState.collectAsState()
 	val elementList by viewModel.elementList.collectAsState()
 	val elementListQuery by viewModel.elementListQuery.collectAsState()
+	val elementListCreateButtonEnabled by viewModel.elementListCreateButtonEnabled.collectAsState()
 	val elementName by viewModel.elementName.collectAsState()
 	val elementValue by viewModel.elementValue.collectAsState()
-	val elementListCreateButtonEnabled by viewModel.elementListCreateButtonEnabled.collectAsState()
 	val functionList by viewModel.functionList.collectAsState()
+	val functionListCreateButtonEnabled by viewModel.functionListCreateButtonEnabled.collectAsState()
+	val functionName by viewModel.functionName.collectAsState()
+	val functionDefinition by viewModel.functionDefinition.collectAsState()
 
 	MainScreen(
 		libraryState = { libraryState },
@@ -101,6 +104,12 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		onRemoveElementClick = viewModel::onElementListRemoveButtonClick,
 		functionList = { functionList },
 		onFunctionListItemClick = viewModel::onFunctionListItemClick,
+		functionName = { functionName },
+		onFunctionNameChange = viewModel::onFunctionNameChange,
+		functionDefinition = { functionDefinition },
+		onFunctionDefinitionChange = viewModel::onFunctionDefinitionChange,
+		functionListCreateButtonEnabled = { functionListCreateButtonEnabled },
+		onCreateFunctionClick = viewModel::onFunctionListCreateFunctionButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)
 }
@@ -127,6 +136,12 @@ private fun MainScreen(
 	onRemoveElementClick: (List<ElementListItem>) -> Unit,
 	functionList: () -> List<Function>,
 	onFunctionListItemClick: (Function) -> Unit,
+	functionName: () -> String,
+	onFunctionNameChange: (String) -> Unit,
+	functionDefinition: () -> String,
+	onFunctionDefinitionChange: (String) -> Unit,
+	functionListCreateButtonEnabled: () -> Boolean,
+	onCreateFunctionClick: () -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	/**
@@ -152,7 +167,13 @@ private fun MainScreen(
 				onRemoveElementClick = onRemoveElementClick,
 				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
 				functionList = functionList,
-				onFunctionListItemClick = onFunctionListItemClick
+				onFunctionListItemClick = onFunctionListItemClick,
+				functionName = functionName,
+				onFunctionNameChange = onFunctionNameChange,
+				functionDefinition = functionDefinition,
+				onFunctionDefinitionChange = onFunctionDefinitionChange,
+				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+				onCreateFunctionClick = onCreateFunctionClick
 			)
 		},
 		sheetPeekHeight = SheetPeekHeight,

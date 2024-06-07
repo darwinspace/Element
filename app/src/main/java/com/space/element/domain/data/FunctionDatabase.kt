@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface FunctionDatabase {
 	fun getList(): Flow<List<Function>>
+	suspend fun add(function: Function)
 }

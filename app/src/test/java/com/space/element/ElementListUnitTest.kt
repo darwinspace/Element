@@ -13,7 +13,7 @@ import org.junit.Test
 import kotlin.math.sqrt
 import com.space.element.domain.model.Function as ElementFunction
 
-class ElementUnitTest {
+class ElementListUnitTest {
 	@Test
 	fun `Evaluate expression`() {
 		val function = object : Function("squareRoot") {

@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 
 @Composable
-fun rememberEmptyElementListText(
+fun rememberEmptyListText(
 	action: String,
 	button: String,
 	reason: String

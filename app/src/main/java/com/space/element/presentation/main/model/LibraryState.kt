@@ -1,9 +1,10 @@
 package com.space.element.presentation.main.model
 
 sealed interface LibraryState {
-	data object Normal : LibraryState
-	data object Create : LibraryState
-	data object Search : LibraryState
-	data object Edit : LibraryState
-	data object Function : LibraryState
+	data object ElementList : LibraryState
+	data object CreateElement : LibraryState
+	data object SearchElement : LibraryState
+	data object EditElement : LibraryState
+	data object FunctionList : LibraryState
+	data object CreateFunction : LibraryState
 }
