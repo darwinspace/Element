@@ -11,10 +11,12 @@ import com.space.element.domain.model.ExpressionListItem.FunctionItem
 import com.space.element.domain.model.ExpressionListItem.NumberItem
 import com.space.element.domain.model.ExpressionListItem.OperatorItem
 import com.space.element.domain.model.Function
+import com.space.element.domain.model.FunctionListItem
 import com.space.element.domain.model.Operator
 import com.space.element.domain.use_case.element_list.AddElement
 import com.space.element.domain.use_case.element_list.GetElementList
 import com.space.element.domain.use_case.element_list.RemoveElement
+import com.space.element.domain.use_case.element_list.RemoveFunction
 import com.space.element.domain.use_case.expression.EvaluateExpression
 import com.space.element.domain.use_case.function_list.AddFunction
 import com.space.element.domain.use_case.function_list.GetFunctionList
@@ -38,7 +40,8 @@ class MainViewModel @Inject constructor(
 	private val removeElement: RemoveElement,
 	private val evaluateExpression: EvaluateExpression,
 	getFunctionList: GetFunctionList,
-	private val addFunction: AddFunction
+	private val addFunction: AddFunction,
+	private val removeFunction: RemoveFunction,
 ) : ViewModel() {
 	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.ElementList)
 	val libraryState = _libraryState.asStateFlow()
@@ -357,6 +360,12 @@ class MainViewModel @Inject constructor(
 	fun onFunctionListItemClick(function: Function) {
 		val item = FunctionItem(function)
 		onAddExpressionItem(item)
+	}
+
+	fun onFunctionListRemoveButtonClick(list: List<FunctionListItem>) {
+		viewModelScope.launch {
+			list.filter { it.selected }.forEach { removeFunction(it.function) }
+		}
 	}
 
 	fun onFunctionListCreateFunctionButtonClick() {

@@ -21,6 +21,7 @@ import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.Function
+import com.space.element.domain.model.FunctionListItem
 import com.space.element.presentation.main.component.Header
 import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.component.Library
@@ -110,6 +111,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 		onFunctionDefinitionChange = viewModel::onFunctionDefinitionChange,
 		functionListCreateButtonEnabled = { functionListCreateButtonEnabled },
 		onCreateFunctionClick = viewModel::onFunctionListCreateFunctionButtonClick,
+		onRemoveFunctionClick = viewModel::onFunctionListRemoveButtonClick,
 		onKeyboardButtonClick = viewModel::onKeyboardButtonClick
 	)
 }
@@ -142,6 +144,7 @@ private fun MainScreen(
 	onFunctionDefinitionChange: (String) -> Unit,
 	functionListCreateButtonEnabled: () -> Boolean,
 	onCreateFunctionClick: () -> Unit,
+	onRemoveFunctionClick: (List<FunctionListItem>) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	/**
@@ -173,7 +176,8 @@ private fun MainScreen(
 				functionDefinition = functionDefinition,
 				onFunctionDefinitionChange = onFunctionDefinitionChange,
 				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-				onCreateFunctionClick = onCreateFunctionClick
+				onCreateFunctionClick = onCreateFunctionClick,
+				onRemoveFunctionClick = onRemoveFunctionClick
 			)
 		},
 		sheetPeekHeight = SheetPeekHeight,

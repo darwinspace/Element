@@ -16,4 +16,8 @@ class FunctionRepositoryImplementation @Inject constructor(
 	override suspend fun add(function: Function) {
 		database.add(function)
 	}
+
+	override suspend fun remove(function: Function) {
+		database.remove(function)
+	}
 }

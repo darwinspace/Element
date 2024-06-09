@@ -7,4 +7,5 @@ sealed interface LibraryState {
 	data object RemoveElement : LibraryState
 	data object FunctionList : LibraryState
 	data object CreateFunction : LibraryState
+	data object RemoveFunction : LibraryState
 }

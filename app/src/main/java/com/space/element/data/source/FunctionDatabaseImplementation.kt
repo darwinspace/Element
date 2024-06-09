@@ -27,4 +27,11 @@ class FunctionDatabaseImplementation @Inject constructor(
 			preferences[key] = function.definition
 		}
 	}
+
+	override suspend fun remove(function: Function) {
+		dataStore.edit { preferences ->
+			val key = stringPreferencesKey(function.name)
+			preferences.remove(key)
+		}
+	}
 }
