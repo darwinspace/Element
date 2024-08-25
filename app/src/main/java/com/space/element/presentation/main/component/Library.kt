@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.R
 import com.space.element.domain.model.Element
@@ -229,6 +230,26 @@ fun Library(
 				)
 			}
 		}
+	}
+}
+
+@Composable
+fun LibraryDragHandle(
+	modifier: Modifier = Modifier,
+	width: Dp,
+	height: Dp
+) {
+	Surface(
+		modifier = modifier,
+		color = MaterialTheme.colorScheme.onSurface,
+		shape = MaterialTheme.shapes.extraLarge
+	) {
+		Box(
+			modifier = Modifier.size(
+				width = width,
+				height = height
+			)
+		)
 	}
 }
 

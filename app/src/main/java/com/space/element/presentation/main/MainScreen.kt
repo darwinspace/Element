@@ -1,14 +1,10 @@
 package com.space.element.presentation.main
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +21,7 @@ import com.space.element.domain.model.FunctionListItem
 import com.space.element.presentation.main.component.Header
 import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.component.Library
+import com.space.element.presentation.main.component.LibraryDragHandle
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
@@ -182,18 +179,11 @@ private fun MainScreen(
 		},
 		sheetPeekHeight = SheetPeekHeight,
 		sheetDragHandle = {
-			Surface(
+			LibraryDragHandle(
 				modifier = Modifier.padding(top = SheetDragHandleTopPadding),
-				color = MaterialTheme.colorScheme.onSurface,
-				shape = MaterialTheme.shapes.extraLarge
-			) {
-				Box(
-					modifier = Modifier.size(
-						width = SheetDragHandleWidth,
-						height = SheetDragHandleHeight
-					)
-				)
-			}
+				width = SheetDragHandleWidth,
+				height = SheetDragHandleHeight
+			)
 		}
 	) {
 		Column(
