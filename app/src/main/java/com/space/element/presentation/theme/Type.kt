@@ -21,38 +21,38 @@ val fontFamily = FontFamily(
 val Typography = Typography(
 	displaySmall = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 40.sp
 	),
 	headlineLarge = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 32.sp
 	),
 	headlineMedium = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 28.sp,
 		letterSpacing = 2.sp
 	),
 	headlineSmall = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 24.sp
 	),
 	titleLarge = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 24.sp
 	),
 	titleMedium = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 20.sp
 	),
 	titleSmall = TextStyle(
 		fontFamily = fontFamily,
-		fontWeight = FontWeight.Medium,
+		fontWeight = FontWeight.Normal,
 		fontSize = 16.sp
 	),
 	bodyLarge = TextStyle(

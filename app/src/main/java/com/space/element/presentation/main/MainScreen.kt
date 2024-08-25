@@ -5,9 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +31,7 @@ import com.space.element.presentation.main.component.LibraryDragHandle
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
+import com.space.element.presentation.theme.ElementTheme
 
 val SheetPeekHeight = 52.dp
 val SheetDragHandleWidth = 32.dp
@@ -34,36 +41,43 @@ val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
 @Preview(device = "spec:width=405dp,height=900dp")
 @Composable
 fun MainScreenPreview() {
-//	val expression = remember { mutableStateListOf<ExpressionListItem>() }
-//	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
-//	val expressionResultState = remember { ExpressionResultState.Value(value = 0.0) }
-//	val elementList = remember { mutableStateListOf<Element>() }
-//	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.Normal) }
-//
-//	ElementTheme {
-//		MainScreen(
-//			expression = { expression },
-//			expressionCursorPosition = { expressionCursorPosition },
-//			onExpressionCursorPositionChange = { expressionCursorPosition = it },
-//			expressionResultState = { expressionResultState },
-//			elementList = { elementList },
-//			onElementListItemClick = { },
-//			elementListQuery = { String() },
-//			onElementListQueryChange = { },
-//			libraryState = { libraryState },
-//			onLibraryStateChange = { libraryState = it },
-//			elementName = { String() },
-//			onElementNameChange = { },
-//			elementValue = { String() },
-//			onElementValueChange = { },
-//			elementListCreateButtonEnabled = { true },
-//			onCreateElementClick = { },
-//			onKeyboardButtonClick = { },
-//			onRemoveElementClick = { },
-//			functionList = { emptyList() },
-//			onFunctionListItemClick = { }
-//		)
-//	}
+	val expression = remember { mutableStateListOf<ExpressionListItem>() }
+	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
+	val expressionResultState = remember { ExpressionResultState.Value(value = 0.0) }
+	val elementList = remember { mutableStateListOf<Element>() }
+	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementList) }
+
+	ElementTheme {
+		MainScreen(
+			libraryState = { libraryState },
+			onLibraryStateChange = { libraryState = it },
+			expression = { expression },
+			expressionCursorPosition = { expressionCursorPosition },
+			onExpressionCursorPositionChange = { expressionCursorPosition = it },
+			expressionResultState = { expressionResultState },
+			elementList = { elementList },
+			onElementListItemClick = { },
+			elementListQuery = { String() },
+			onElementListQueryChange = { },
+			elementName = { String() },
+			onElementNameChange = { },
+			elementValue = { String() },
+			onElementValueChange = { },
+			elementListCreateButtonEnabled = { true },
+			onCreateElementClick = { },
+			onRemoveElementClick = { },
+			functionList = { emptyList() },
+			onFunctionListItemClick = { },
+			functionName = { String() },
+			onFunctionNameChange = { },
+			functionDefinition = { String() },
+			onFunctionDefinitionChange = { },
+			functionListCreateButtonEnabled = { true },
+			onCreateFunctionClick = { },
+			onRemoveFunctionClick = { },
+			onKeyboardButtonClick = { }
+		)
+	}
 }
 
 @Composable
@@ -177,6 +191,9 @@ private fun MainScreen(
 				onRemoveFunctionClick = onRemoveFunctionClick
 			)
 		},
+		sheetContainerColor = MaterialTheme.colorScheme.surface,
+		sheetTonalElevation = 0.dp,
+		sheetShadowElevation = 0.dp,
 		sheetPeekHeight = SheetPeekHeight,
 		sheetDragHandle = {
 			LibraryDragHandle(

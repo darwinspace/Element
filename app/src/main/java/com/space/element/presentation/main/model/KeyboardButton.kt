@@ -1,10 +1,8 @@
 package com.space.element.presentation.main.model
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.space.element.domain.model.Operator
 
 sealed class KeyboardButton(val symbol: Char, val type: Type) {
@@ -47,14 +45,12 @@ sealed class KeyboardButton(val symbol: Char, val type: Type) {
 
 	@Composable
 	fun getSurfaceColor(): Color {
-		val elevation = 1.dp
 		return when (type) {
 			Type.Dot,
 			Type.Delete,
-			Type.Number -> MaterialTheme.colorScheme.surfaceColorAtElevation(elevation)
-
+			Type.Number,
 			Type.Operator,
-			Type.Parentheses -> MaterialTheme.colorScheme.secondaryContainer
+			Type.Parentheses -> MaterialTheme.colorScheme.surface
 
 			Type.Clear -> MaterialTheme.colorScheme.tertiaryContainer
 			Type.Equal -> MaterialTheme.colorScheme.primary

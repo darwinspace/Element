@@ -1,5 +1,6 @@
 package com.space.element.presentation.main.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -483,6 +484,10 @@ fun KeyboardButton(
 			containerColor = containerColor,
 			contentColor = contentColor
 		),
+		border = BorderStroke(
+			width = 2.dp,
+			color = contentColor.copy(alpha = 0.1f)
+		),
 		onClick = {
 			onClick(keyboardButton)
 			hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -494,7 +499,7 @@ fun KeyboardButton(
 
 @Composable
 fun KeyboardButtonText(text: String) {
-	Text(text = text, style = MaterialTheme.typography.headlineMedium)
+	Text(text = text, style = MaterialTheme.typography.titleLarge)
 }
 
 @Composable

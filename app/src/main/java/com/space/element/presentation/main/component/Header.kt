@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -68,11 +69,15 @@ fun Header(
 ) {
 	Surface(
 		modifier = modifier,
-		shape = MaterialTheme.shapes.extraLarge.copy(
-			topStart = CornerSize(0.dp),
-			topEnd = CornerSize(0.dp)
-		),
-		tonalElevation = 6.dp
+		shape = MaterialTheme.shapes.extraLarge
+			.copy(
+				topStart = CornerSize(0.dp),
+				topEnd = CornerSize(0.dp)
+			),
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		)
 	) {
 		Column {
 			Expression(
