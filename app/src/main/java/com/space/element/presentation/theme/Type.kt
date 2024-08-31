@@ -11,10 +11,8 @@ import com.space.element.R
 
 val fontFamily = FontFamily(
 	Font(R.font.ibm_plex_mono),
-	Font(R.font.ibm_plex_mono_medium, weight = FontWeight.Medium),
 	Font(R.font.ibm_plex_mono_bold, weight = FontWeight.Bold),
 	Font(R.font.ibm_plex_mono_italic, style = FontStyle.Italic),
-	Font(R.font.ibm_plex_mono_medium_italic, weight = FontWeight.Medium, style = FontStyle.Italic),
 	Font(R.font.ibm_plex_mono_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic)
 )
 

@@ -53,7 +53,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-private val ContentSpace = 4.dp
+private val ContentSpace = 3.dp
 private val ContentHeight = 96.dp
 
 private val CursorWidth = 3.dp
@@ -161,15 +161,8 @@ private fun ExpressionListItemRow(
 private fun ExpressionListItem(expressionListItem: ExpressionListItem) {
 	when (expressionListItem) {
 		is ExpressionListItem.ElementItem -> {
-			var valueVisible by rememberSaveable(expressionListItem) {
-				mutableStateOf(false)
-			}
 			ExpressionElementItem(
-				element = expressionListItem.element,
-				valueVisible = valueVisible,
-				onClick = {
-					valueVisible = !valueVisible
-				}
+				element = expressionListItem.element
 			)
 		}
 
@@ -218,16 +211,20 @@ private fun ExpressionListItemSpace(
 
 @Composable
 private fun ExpressionElementItem(
-	element: Element,
-	valueVisible: Boolean,
-	onClick: () -> Unit
+	element: Element
 ) {
+	var valueVisible by rememberSaveable(element) { mutableStateOf(false) }
 	Surface(
 		shape = MaterialTheme.shapes.large,
-		color = MaterialTheme.colorScheme.primaryContainer,
-		onClick = onClick
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		),
+		onClick = { valueVisible = !valueVisible }
 	) {
-		Row(modifier = Modifier.padding(12.dp, 8.dp)) {
+		Row(
+			modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+		) {
 			ExpressionElementItemName(element.name)
 
 			AnimatedVisibility(visible = valueVisible) {
@@ -241,7 +238,7 @@ private fun ExpressionElementItem(
 private fun ExpressionElementItemName(elementName: String) {
 	Text(
 		text = elementName,
-		style = MaterialTheme.typography.headlineSmall
+		style = MaterialTheme.typography.titleMedium
 	)
 }
 
@@ -250,11 +247,19 @@ fun ExpressionElementItemValue(elementValue: String) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
 		Spacer(modifier = Modifier.width(12.dp))
 
-		Text(
-			text = "= $elementValue",
-			style = MaterialTheme.typography.titleLarge,
-			fontWeight = FontWeight.Normal
-		)
+		Surface(
+			shape = MaterialTheme.shapes.extraSmall,
+			border = BorderStroke(
+				width = 2.dp,
+				color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+			)
+		) {
+			Text(
+				text = elementValue,
+				style = MaterialTheme.typography.bodySmall,
+				fontWeight = FontWeight.Normal
+			)
+		}
 	}
 }
 
@@ -262,16 +267,18 @@ fun ExpressionElementItemValue(elementValue: String) {
 private fun ExpressionNumberItem(number: Char) {
 	Text(
 		text = number.toString(),
-		style = MaterialTheme.typography.displaySmall,
+		style = MaterialTheme.typography.headlineSmall,
 	)
 }
 
 @Composable
 private fun ExpressionOperatorItem(operator: Operator) {
+	val horizontalPadding = if (operator == Operator.Dot) 0.dp else 6.dp
 	Text(
+		modifier = Modifier.padding(horizontal = horizontalPadding),
 		text = operator.symbol.toString(),
 		color = operator.getColor(),
-		style = MaterialTheme.typography.displaySmall,
+		style = MaterialTheme.typography.headlineSmall,
 		fontWeight = FontWeight.Bold
 	)
 }

@@ -1,5 +1,6 @@
 package com.space.element.presentation.main.component
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -28,11 +29,10 @@ import androidx.compose.material.icons.outlined.Functions
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,7 +73,7 @@ import com.space.element.util.rememberFunctionList
 import com.space.element.util.rememberFunctionName
 import com.space.element.presentation.main.model.LibraryState.FunctionList as FunctionState
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 fun LibraryPreview() {
 	val elementList = remember {
@@ -431,8 +431,12 @@ private fun CloseButton(
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit
 ) {
-	FilledTonalIconButton(
+	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		),
 		onClick = onClick
 	) {
 		Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
@@ -471,6 +475,10 @@ private fun CreateElementButton(
 			.heightIn(48.dp),
 		enabled = enabled(),
 		shape = MaterialTheme.shapes.small,
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		),
 		onClick = onClick
 	) {
 		Text(text = stringResource(R.string.button_add_element))
@@ -493,8 +501,12 @@ private fun RemoveButton(
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
-			FilledTonalIconButton(
+			OutlinedIconButton(
 				modifier = Modifier.size(48.dp),
+				border = BorderStroke(
+					width = 2.dp,
+					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+				),
 				onClick = {
 					if (libraryState is ElementList) {
 						onLibraryStateChange(RemoveElement)
@@ -514,11 +526,15 @@ private fun RemoveButton(
 			enter = fadeIn(),
 			exit = fadeOut(),
 		) {
-			FilledIconButton(
+			OutlinedIconButton(
 				modifier = modifier.size(48.dp),
 				enabled = elementRemoveEnabled || functionRemoveEnabled,
 				colors = IconButtonDefaults.filledIconButtonColors(
 					containerColor = MaterialTheme.colorScheme.errorContainer
+				),
+				border = BorderStroke(
+					width = 2.dp,
+					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 				),
 				onClick = {
 					if (libraryState is RemoveElement) {
@@ -558,8 +574,12 @@ private fun RowScope.SearchButton(
 	libraryState: LibraryState,
 	onClick: () -> Unit,
 ) {
-	FilledTonalIconButton(
+	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		),
 		onClick = onClick
 	) {
 		AnimatedVisibility(
@@ -582,8 +602,12 @@ private fun RowScope.SearchButton(
 
 @Composable
 private fun FunctionButton(modifier: Modifier, onClick: () -> Unit) {
-	FilledTonalIconButton(
+	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		),
 		onClick = onClick
 	) {
 		Icon(imageVector = Icons.Outlined.Functions, contentDescription = null)
@@ -721,21 +745,20 @@ fun ElementListItem(
 	onClick: () -> Unit
 ) {
 	val borderWidth by animateDpAsState(
-		targetValue = if (elementListItem.selected) 4.dp else 0.dp,
+		targetValue = if (elementListItem.selected) 4.dp else 2.dp,
 		label = "ElementListItemSurfaceBorderWidth"
 	)
 	val borderColor by animateColorAsState(
 		targetValue = if (elementListItem.selected) {
 			MaterialTheme.colorScheme.primary
 		} else {
-			Color.Transparent
+			MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 		},
 		label = "ElementListItemSurfaceBorderColor"
 	)
 	Surface(
 		modifier = modifier,
 		shape = MaterialTheme.shapes.medium,
-		color = MaterialTheme.colorScheme.primaryContainer,
 		border = BorderStroke(
 			width = borderWidth,
 			color = borderColor

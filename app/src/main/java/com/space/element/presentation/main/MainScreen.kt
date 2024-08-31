@@ -1,8 +1,12 @@
 package com.space.element.presentation.main
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,14 +43,14 @@ val SheetDragHandleWidth = 32.dp
 val SheetDragHandleHeight = 4.dp
 val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
 
-@Preview(device = "spec:width=405dp,height=900dp")
+@Preview
 @Composable
 fun MainScreenPreview() {
+	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementList) }
 	val expression = remember { mutableStateListOf<ExpressionListItem>() }
 	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
 	val expressionResultState = remember { ExpressionResultState.Value(value = 0.0) }
 	val elementList = remember { mutableStateListOf<Element>() }
-	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementList) }
 
 	ElementTheme {
 		MainScreen(
@@ -127,7 +132,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
 	libraryState: () -> LibraryState,
@@ -164,7 +168,28 @@ private fun MainScreen(
 	 *  - TextStyles
 	 *  - Sizes
 	 * */
-	BottomSheetScaffold(
+	MainScreenScaffold(
+		header = {
+			Header(
+				modifier = Modifier.weight(1f),
+				expression = expression,
+				expressionCursorPosition = expressionCursorPosition,
+				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+				expressionResultState = expressionResultState
+			)
+		},
+		keyboard = {
+			Keyboard(
+				onButtonClick = onKeyboardButtonClick
+			)
+		},
+		sheetDragHandle = {
+			LibraryDragHandle(
+				modifier = Modifier.padding(top = SheetDragHandleTopPadding),
+				width = SheetDragHandleWidth,
+				height = SheetDragHandleHeight,
+			)
+		},
 		sheetContent = {
 			Library(
 				libraryState = libraryState,
@@ -188,37 +213,51 @@ private fun MainScreen(
 				onFunctionDefinitionChange = onFunctionDefinitionChange,
 				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
 				onCreateFunctionClick = onCreateFunctionClick,
-				onRemoveFunctionClick = onRemoveFunctionClick
-			)
-		},
-		sheetContainerColor = MaterialTheme.colorScheme.surface,
-		sheetTonalElevation = 0.dp,
-		sheetShadowElevation = 0.dp,
-		sheetPeekHeight = SheetPeekHeight,
-		sheetDragHandle = {
-			LibraryDragHandle(
-				modifier = Modifier.padding(top = SheetDragHandleTopPadding),
-				width = SheetDragHandleWidth,
-				height = SheetDragHandleHeight
+				onRemoveFunctionClick = onRemoveFunctionClick,
 			)
 		}
+	)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreenScaffold(
+	header: @Composable (ColumnScope.() -> Unit),
+	keyboard: @Composable () -> Unit,
+	sheetDragHandle: @Composable (() -> Unit),
+	sheetContent: @Composable ColumnScope.() -> Unit,
+) {
+	BottomSheetScaffold(
+		sheetContent = {
+			Column(
+				modifier = Modifier.border(
+					width = 2.dp,
+					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+					shape = MaterialTheme.shapes.extraLarge.copy(
+						bottomStart = CornerSize(0.dp),
+						bottomEnd = CornerSize(0.dp),
+					),
+				),
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(0.dp),
+			) {
+				sheetDragHandle()
+				sheetContent()
+			}
+		},
+		sheetContainerColor = MaterialTheme.colorScheme.surface,
+		sheetDragHandle = null,
+		sheetTonalElevation = 0.dp,
+		sheetShadowElevation = 0.dp,
+		sheetPeekHeight = SheetPeekHeight
 	) {
 		Column(
 			modifier = Modifier
 				.fillMaxSize()
 				.padding(it)
 		) {
-			Header(
-				modifier = Modifier.weight(1f),
-				expression = expression,
-				expressionCursorPosition = expressionCursorPosition,
-				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-				expressionResultState = expressionResultState
-			)
-
-			Keyboard(
-				onButtonClick = onKeyboardButtonClick
-			)
+			header()
+			keyboard()
 		}
 	}
 }
