@@ -12,14 +12,9 @@ import com.space.element.presentation.main.model.LibraryState
 
 /** TODO: Use remember with listSaver. */
 @Composable
-fun rememberElementList(
-	list: List<Element>,
-	state: LibraryState
-): SnapshotStateList<ElementListItem> {
-	return remember(list, state) {
-		list.map {
-			ElementListItem(element = it, selected = false)
-		}.toMutableStateList()
+fun rememberElementList(list: List<Element>): SnapshotStateList<ElementListItem> {
+	return remember(list) {
+		list.map { ElementListItem(element = it, selected = false) }.toMutableStateList()
 	}
 }
 

@@ -58,15 +58,21 @@ class MainViewModel @Inject constructor(
 	private var _elementListQuery = MutableStateFlow(String())
 	val elementListQuery = _elementListQuery.asStateFlow()
 
+	private fun filterElementList(
+		list: List<Element>,
+		state: LibraryState,
+		query: String
+	) = if (state is LibraryState.ElementState.Search) {
+		list.filter { it.name.contains(query, ignoreCase = true) }
+	} else {
+		list
+	}
+
 	private val _elementList = getElementList()
 	val elementList = combine(
 		_elementList, libraryState, elementListQuery
-	) { list, mode, query ->
-		if (mode is LibraryState.ElementState.Search) {
-			list.filter { it.name.contains(query, ignoreCase = true) }
-		} else {
-			list
-		}
+	) { list, state, query ->
+		filterElementList(list, state, query)
 	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
@@ -79,23 +85,31 @@ class MainViewModel @Inject constructor(
 	private var _elementValue = MutableStateFlow(String())
 	val elementValue = _elementValue.asStateFlow()
 
+	fun isElementListCreateButtonEnabled(
+		list: List<Element>,
+		state: LibraryState,
+		elementName: String,
+		elementValue: String,
+		elementListQuery: String
+	) = when (state) {
+		LibraryState.ElementState.Create -> {
+			elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
+					list.none { it.name.trim() == elementName.trim() }
+		}
+
+		LibraryState.ElementState.List -> true
+		LibraryState.ElementState.Search -> {
+			elementListQuery.isNotBlank() &&
+					list.none { it.name.trim() == elementListQuery.trim() }
+		}
+
+		else -> false
+	}
+
 	val elementListCreateButtonEnabled = combine(
 		elementList, libraryState, elementName, elementValue, elementListQuery
 	) { list, state, elementName, elementValue, elementListQuery ->
-		when (state) {
-			LibraryState.ElementState.Create -> {
-				elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
-						list.none { it.name.trim() == elementName.trim() }
-			}
-
-			LibraryState.ElementState.List -> true
-			LibraryState.ElementState.Search -> {
-				elementListQuery.isNotBlank() &&
-						list.none { it.name.trim() == elementListQuery.trim() }
-			}
-
-			else -> false
-		}
+		isElementListCreateButtonEnabled(list, state, elementName, elementValue, elementListQuery)
 	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
@@ -115,13 +129,13 @@ class MainViewModel @Inject constructor(
 	private var _functionDefinition = MutableStateFlow(String())
 	val functionDefinition = _functionDefinition.asStateFlow()
 
-	val functionListCreateButtonEnabled = combine(
-		functionList,
-		libraryState,
-		functionName,
-		functionDefinition
-	) { list, state, name, definition ->
-		when (state) {
+	private fun isFunctionListCreateButtonEnabled(
+		list: List<Function>,
+		state: LibraryState,
+		name: String,
+		definition: String
+	): Boolean {
+		return when (state) {
 			LibraryState.FunctionState.Create -> {
 				name.isNotBlank() && definition.isNotBlank() &&
 						list.none { it.name.trim() == name.trim() }
@@ -130,6 +144,15 @@ class MainViewModel @Inject constructor(
 			LibraryState.FunctionState.List -> true
 			else -> false
 		}
+	}
+
+	val functionListCreateButtonEnabled = combine(
+		functionList,
+		libraryState,
+		functionName,
+		functionDefinition
+	) { list, state, name, definition ->
+		isFunctionListCreateButtonEnabled(list, state, name, definition)
 	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),

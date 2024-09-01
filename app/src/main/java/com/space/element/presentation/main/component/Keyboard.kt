@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
+import com.space.element.presentation.main.model.KeyboardButton.Type
 import com.space.element.presentation.theme.ElementTheme
 
 @Preview
@@ -470,7 +471,7 @@ fun KeyboardButton(
 	keyboardButton: KeyboardButton,
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
-	containerColor: Color = keyboardButton.getSurfaceColor(),
+	containerColor: Color = keyboardButton.getKeyboardButtonSurfaceColor(),
 	contentColor: Color = contentColorFor(containerColor),
 	onClick: (KeyboardButton) -> Unit,
 	content: @Composable RowScope.(KeyboardButton) -> Unit
@@ -498,12 +499,23 @@ fun KeyboardButton(
 }
 
 @Composable
-fun KeyboardButtonText(text: String) {
-	Text(text = text, style = MaterialTheme.typography.titleLarge)
+fun KeyboardButtonSymbol(symbol: Char) {
+	Text(
+		text = symbol.toString(),
+		style = MaterialTheme.typography.titleLarge
+	)
 }
 
 @Composable
-fun KeyboardButtonSymbol(symbol: Char) {
-	KeyboardButtonText(text = symbol.toString())
-}
+fun KeyboardButton.getKeyboardButtonSurfaceColor(): Color {
+	return when (type) {
+		Type.Dot,
+		Type.Delete,
+		Type.Number,
+		Type.Operator,
+		Type.Parentheses -> MaterialTheme.colorScheme.surface
 
+		Type.Clear -> MaterialTheme.colorScheme.tertiaryContainer
+		Type.Equal -> MaterialTheme.colorScheme.primary
+	}
+}

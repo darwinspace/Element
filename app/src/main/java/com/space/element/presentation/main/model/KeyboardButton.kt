@@ -42,18 +42,4 @@ sealed class KeyboardButton(val symbol: Char, val type: Type) {
 
 	data object Delete : KeyboardButton(symbol = '?', type = Type.Delete)
 	data object Equal : KeyboardButton(symbol = '=', type = Type.Equal)
-
-	@Composable
-	fun getSurfaceColor(): Color {
-		return when (type) {
-			Type.Dot,
-			Type.Delete,
-			Type.Number,
-			Type.Operator,
-			Type.Parentheses -> MaterialTheme.colorScheme.surface
-
-			Type.Clear -> MaterialTheme.colorScheme.tertiaryContainer
-			Type.Equal -> MaterialTheme.colorScheme.primary
-		}
-	}
 }

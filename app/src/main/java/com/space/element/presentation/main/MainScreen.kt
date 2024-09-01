@@ -1,9 +1,7 @@
 package com.space.element.presentation.main
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
@@ -38,14 +36,14 @@ import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
 import com.space.element.presentation.theme.ElementTheme
 
-val SheetPeekHeight = 52.dp
-val SheetDragHandleWidth = 32.dp
-val SheetDragHandleHeight = 4.dp
-val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
+private val SheetPeekHeight = 52.dp
+private val SheetDragHandleWidth = 32.dp
+private val SheetDragHandleHeight = 4.dp
+private val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
 
 @Preview
 @Composable
-fun MainScreenPreview() {
+private fun MainScreenPreview() {
 	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementState.List) }
 	val expression = remember { mutableStateListOf<ExpressionListItem>() }
 	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
@@ -132,6 +130,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
 	libraryState: () -> LibraryState,
@@ -168,30 +167,10 @@ private fun MainScreen(
 	 *  - TextStyles
 	 *  - Sizes
 	 * */
-	MainScreenScaffold(
-		header = {
-			Header(
-				modifier = Modifier.weight(1f),
-				expression = expression,
-				expressionCursorPosition = expressionCursorPosition,
-				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-				expressionResultState = expressionResultState
-			)
-		},
-		keyboard = {
-			Keyboard(
-				onButtonClick = onKeyboardButtonClick
-			)
-		},
-		sheetDragHandle = {
-			LibraryDragHandle(
-				modifier = Modifier.padding(top = SheetDragHandleTopPadding),
-				width = SheetDragHandleWidth,
-				height = SheetDragHandleHeight,
-			)
-		},
+
+	BottomSheetScaffold(
 		sheetContent = {
-			Library(
+			MainScreenBottomSheet(
 				libraryState = libraryState,
 				onLibraryStateChange = onLibraryStateChange,
 				elementList = elementList,
@@ -213,37 +192,8 @@ private fun MainScreen(
 				onFunctionDefinitionChange = onFunctionDefinitionChange,
 				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
 				onCreateFunctionClick = onCreateFunctionClick,
-				onRemoveFunctionClick = onRemoveFunctionClick,
+				onRemoveFunctionClick = onRemoveFunctionClick
 			)
-		}
-	)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreenScaffold(
-	header: @Composable (ColumnScope.() -> Unit),
-	keyboard: @Composable () -> Unit,
-	sheetDragHandle: @Composable (() -> Unit),
-	sheetContent: @Composable ColumnScope.() -> Unit,
-) {
-	BottomSheetScaffold(
-		sheetContent = {
-			Column(
-				modifier = Modifier.border(
-					width = 2.dp,
-					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-					shape = MaterialTheme.shapes.extraLarge.copy(
-						bottomStart = CornerSize(0.dp),
-						bottomEnd = CornerSize(0.dp),
-					),
-				),
-				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(0.dp),
-			) {
-				sheetDragHandle()
-				sheetContent()
-			}
 		},
 		sheetContainerColor = MaterialTheme.colorScheme.surface,
 		sheetDragHandle = null,
@@ -256,9 +206,85 @@ fun MainScreenScaffold(
 				.fillMaxSize()
 				.padding(it)
 		) {
-			header()
-			keyboard()
+			Header(
+				modifier = Modifier.weight(1f),
+				expression = expression,
+				expressionCursorPosition = expressionCursorPosition,
+				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+				expressionResultState = expressionResultState
+			)
+			Keyboard(
+				onButtonClick = onKeyboardButtonClick
+			)
 		}
 	}
 }
 
+@Composable
+private fun MainScreenBottomSheet(
+	libraryState: () -> LibraryState,
+	onLibraryStateChange: (LibraryState) -> Unit,
+	elementList: () -> List<Element>,
+	onElementListItemClick: (Element) -> Unit,
+	elementListQuery: () -> String,
+	onElementListQueryChange: (String) -> Unit,
+	elementName: () -> String,
+	onElementNameChange: (String) -> Unit,
+	elementValue: () -> String,
+	onElementValueChange: (String) -> Unit,
+	onCreateElementClick: () -> Unit,
+	onRemoveElementClick: (List<ElementListItem>) -> Unit,
+	elementListCreateButtonEnabled: () -> Boolean,
+	functionList: () -> List<Function>,
+	onFunctionListItemClick: (Function) -> Unit,
+	functionName: () -> String,
+	onFunctionNameChange: (String) -> Unit,
+	functionDefinition: () -> String,
+	onFunctionDefinitionChange: (String) -> Unit,
+	functionListCreateButtonEnabled: () -> Boolean,
+	onCreateFunctionClick: () -> Unit,
+	onRemoveFunctionClick: (List<FunctionListItem>) -> Unit
+) {
+	Column(
+		modifier = Modifier.border(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+			shape = MaterialTheme.shapes.extraLarge.copy(
+				bottomStart = CornerSize(0.dp),
+				bottomEnd = CornerSize(0.dp),
+			),
+		),
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		LibraryDragHandle(
+			modifier = Modifier.padding(top = SheetDragHandleTopPadding),
+			width = SheetDragHandleWidth,
+			height = SheetDragHandleHeight,
+		)
+
+		Library(
+			libraryState = libraryState,
+			onLibraryStateChange = onLibraryStateChange,
+			elementList = elementList,
+			onElementListItemClick = onElementListItemClick,
+			elementListQuery = elementListQuery,
+			onElementListQueryChange = onElementListQueryChange,
+			elementName = elementName,
+			onElementNameChange = onElementNameChange,
+			elementValue = elementValue,
+			onElementValueChange = onElementValueChange,
+			onCreateElementClick = onCreateElementClick,
+			onRemoveElementClick = onRemoveElementClick,
+			elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+			functionList = functionList,
+			onFunctionListItemClick = onFunctionListItemClick,
+			functionName = functionName,
+			onFunctionNameChange = onFunctionNameChange,
+			functionDefinition = functionDefinition,
+			onFunctionDefinitionChange = onFunctionDefinitionChange,
+			functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+			onCreateFunctionClick = onCreateFunctionClick,
+			onRemoveFunctionClick = onRemoveFunctionClick,
+		)
+	}
+}
