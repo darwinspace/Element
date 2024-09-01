@@ -46,7 +46,7 @@ val SheetDragHandleTopPadding = (SheetPeekHeight - SheetDragHandleHeight) / 2
 @Preview
 @Composable
 fun MainScreenPreview() {
-	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementList) }
+	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementState.List) }
 	val expression = remember { mutableStateListOf<ExpressionListItem>() }
 	var expressionCursorPosition by remember { mutableIntStateOf(expression.size) }
 	val expressionResultState = remember { ExpressionResultState.Value(value = 0.0) }

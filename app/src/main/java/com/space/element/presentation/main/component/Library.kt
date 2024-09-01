@@ -59,19 +59,11 @@ import com.space.element.domain.model.Function
 import com.space.element.domain.model.FunctionListItem
 import com.space.element.presentation.component.ElementTextField
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.presentation.main.model.LibraryState.CreateElement
-import com.space.element.presentation.main.model.LibraryState.CreateFunction
-import com.space.element.presentation.main.model.LibraryState.ElementList
-import com.space.element.presentation.main.model.LibraryState.FunctionList
-import com.space.element.presentation.main.model.LibraryState.RemoveElement
-import com.space.element.presentation.main.model.LibraryState.RemoveFunction
-import com.space.element.presentation.main.model.LibraryState.SearchElement
 import com.space.element.presentation.theme.ElementTheme
 import com.space.element.util.rememberElementList
 import com.space.element.util.rememberEmptyListText
 import com.space.element.util.rememberFunctionList
 import com.space.element.util.rememberFunctionName
-import com.space.element.presentation.main.model.LibraryState.FunctionList as FunctionState
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
@@ -81,7 +73,7 @@ fun LibraryPreview() {
 			Element(name = "Item $it", value = it.toString())
 		}
 	}
-	var libraryState by remember { mutableStateOf<LibraryState>(ElementList) }
+	var libraryState by remember { mutableStateOf<LibraryState>(LibraryState.ElementState.List) }
 	var elementListQuery by remember { mutableStateOf(String()) }
 	var elementName by remember { mutableStateOf(String()) }
 	var elementValue by remember { mutableStateOf(String()) }
@@ -162,7 +154,7 @@ fun Library(
 			)
 
 			AnimatedVisibility(
-				visible = state is CreateElement
+				visible = state is LibraryState.ElementState.Create
 			) {
 				LibraryCreateElementForm(
 					elementName = elementName,
@@ -178,7 +170,7 @@ fun Library(
 				)
 			}
 
-			AnimatedVisibility(visible = state is CreateFunction) {
+			AnimatedVisibility(visible = state is LibraryState.FunctionState.Create) {
 				LibraryCreateFunctionForm(
 					functionName = functionName,
 					onFunctionNameChange = onFunctionNameChange,
@@ -188,7 +180,7 @@ fun Library(
 			}
 
 			AnimatedVisibility(
-				visible = state is SearchElement
+				visible = state is LibraryState.ElementState.Search
 			) {
 				ElementListSearchTextField(
 					value = elementListQuery,
@@ -196,17 +188,14 @@ fun Library(
 				)
 			}
 
-			val elementRelated =
-				(state is ElementList || state is CreateElement || state is SearchElement || state is RemoveElement)
-
 			AnimatedVisibility(
-				visible = elementRelated && elementDataList.isEmpty()
+				visible = state is LibraryState.ElementState && elementDataList.isEmpty()
 			) {
 				ElementListEmptyCard()
 			}
 
 			AnimatedVisibility(
-				visible = elementRelated && elementDataList.isNotEmpty()
+				visible = state is LibraryState.ElementState && elementDataList.isNotEmpty()
 			) {
 				ElementList(
 					libraryState = state,
@@ -215,14 +204,11 @@ fun Library(
 				)
 			}
 
-			val functionRelated =
-				state is FunctionState || state is CreateFunction || state is RemoveFunction
-
-			AnimatedVisibility(visible = functionRelated && functionData.isEmpty()) {
+			AnimatedVisibility(visible = state is LibraryState.FunctionState && functionData.isEmpty()) {
 				FunctionListEmptyCard()
 			}
 
-			AnimatedVisibility(visible = functionRelated && functionData.isNotEmpty()) {
+			AnimatedVisibility(visible = state is LibraryState.FunctionState && functionData.isNotEmpty()) {
 				FunctionList(
 					libraryState = state,
 					list = functionDataList,
@@ -340,17 +326,19 @@ fun LibraryHeader(
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
 		AnimatedVisibility(
-			visible = libraryState is CreateElement || libraryState is RemoveElement
-					|| libraryState is FunctionState
-					|| libraryState is CreateFunction || libraryState is RemoveFunction
+			visible = libraryState is LibraryState.ElementState.Create
+					|| libraryState is LibraryState.ElementState.Edit
+					|| libraryState is LibraryState.FunctionState
 		) {
 			CloseButton(
 				modifier = Modifier.padding(end = 16.dp),
 				onClick = {
-					if (libraryState is CreateFunction || libraryState is RemoveFunction) {
-						onLibraryStateChange(FunctionState)
+					if (libraryState is LibraryState.FunctionState.Create
+						|| libraryState is LibraryState.FunctionState.Edit
+					) {
+						onLibraryStateChange(LibraryState.FunctionState.List)
 					} else {
-						onLibraryStateChange(ElementList)
+						onLibraryStateChange(LibraryState.ElementState.List)
 					}
 				}
 			)
@@ -358,11 +346,12 @@ fun LibraryHeader(
 
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
-			visible = libraryState is ElementList || libraryState is CreateElement || libraryState is SearchElement
-					|| libraryState is FunctionState || libraryState is CreateFunction
+			visible = libraryState is LibraryState.ElementState.List
+					|| libraryState is LibraryState.ElementState.Create || libraryState is LibraryState.ElementState.Search
+					|| libraryState is LibraryState.FunctionState.List || libraryState is LibraryState.FunctionState.Create
 		) {
 			AnimatedVisibility(
-				visible = libraryState is ElementList || libraryState is CreateElement || libraryState is SearchElement,
+				visible = libraryState is LibraryState.ElementState.List || libraryState is LibraryState.ElementState.Create || libraryState is LibraryState.ElementState.Search,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
@@ -373,7 +362,7 @@ fun LibraryHeader(
 			}
 
 			AnimatedVisibility(
-				visible = libraryState is FunctionState || libraryState is CreateFunction,
+				visible = libraryState is LibraryState.FunctionState.List || libraryState is LibraryState.FunctionState.Create,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
@@ -384,18 +373,18 @@ fun LibraryHeader(
 			}
 		}
 
-		AnimatedVisibility(visible = libraryState is ElementList) {
+		AnimatedVisibility(visible = libraryState is LibraryState.ElementState.List) {
 			FunctionButton(
 				modifier = Modifier.padding(start = 16.dp),
 				onClick = {
-					onLibraryStateChange(FunctionState)
+					onLibraryStateChange(LibraryState.FunctionState.List)
 				}
 			)
 		}
 
 		AnimatedVisibility(
-			visible = (libraryState is ElementList && elementList.isNotEmpty() || libraryState is RemoveElement)
-					|| (libraryState is FunctionList && functionList.isNotEmpty() || libraryState is RemoveFunction)
+			visible = (libraryState is LibraryState.ElementState.List && elementList.isNotEmpty() || libraryState is LibraryState.ElementState.Edit)
+					|| (libraryState is LibraryState.FunctionState.List && functionList.isNotEmpty() || libraryState is LibraryState.FunctionState.Edit)
 		) {
 			RemoveButton(
 				modifier = Modifier.padding(start = 16.dp),
@@ -409,16 +398,16 @@ fun LibraryHeader(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is ElementList && elementList.isNotEmpty() || libraryState is SearchElement
+			visible = libraryState is LibraryState.ElementState.List && elementList.isNotEmpty() || libraryState is LibraryState.ElementState.Search
 		) {
 			SearchButton(
 				modifier = Modifier.padding(start = 16.dp),
 				libraryState = libraryState,
 				onClick = {
-					if (libraryState is ElementList) {
-						onLibraryStateChange(SearchElement)
-					} else if (libraryState is SearchElement) {
-						onLibraryStateChange(ElementList)
+					if (libraryState is LibraryState.ElementState.List) {
+						onLibraryStateChange(LibraryState.ElementState.Search)
+					} else if (libraryState is LibraryState.ElementState.Search) {
+						onLibraryStateChange(LibraryState.ElementState.List)
 					}
 				}
 			)
@@ -497,7 +486,7 @@ private fun RemoveButton(
 ) {
 	Box(modifier = modifier) {
 		AnimatedVisibility(
-			visible = libraryState is ElementList || libraryState is FunctionList,
+			visible = libraryState is LibraryState.ElementState.List || libraryState is LibraryState.FunctionState.List,
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
@@ -508,12 +497,12 @@ private fun RemoveButton(
 					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 				),
 				onClick = {
-					if (libraryState is ElementList) {
-						onLibraryStateChange(RemoveElement)
+					if (libraryState is LibraryState.ElementState.List) {
+						onLibraryStateChange(LibraryState.ElementState.Edit)
 					}
 
-					if (libraryState is FunctionList) {
-						onLibraryStateChange(RemoveFunction)
+					if (libraryState is LibraryState.FunctionState.List) {
+						onLibraryStateChange(LibraryState.FunctionState.Edit)
 					}
 				}
 			) {
@@ -522,7 +511,7 @@ private fun RemoveButton(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is RemoveElement || libraryState is RemoveFunction,
+			visible = libraryState is LibraryState.ElementState.Edit || libraryState is LibraryState.FunctionState.Edit,
 			enter = fadeIn(),
 			exit = fadeOut(),
 		) {
@@ -537,14 +526,14 @@ private fun RemoveButton(
 					color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 				),
 				onClick = {
-					if (libraryState is RemoveElement) {
+					if (libraryState is LibraryState.ElementState.Edit) {
 						onRemoveElementClick()
-						onLibraryStateChange(ElementList)
+						onLibraryStateChange(LibraryState.ElementState.List)
 					}
 
-					if (libraryState is RemoveFunction) {
+					if (libraryState is LibraryState.FunctionState.Edit) {
 						onRemoveFunctionClick()
-						onLibraryStateChange(FunctionList)
+						onLibraryStateChange(LibraryState.FunctionState.List)
 					}
 				}
 			) {
@@ -583,7 +572,7 @@ private fun RowScope.SearchButton(
 		onClick = onClick
 	) {
 		AnimatedVisibility(
-			visible = libraryState is ElementList,
+			visible = libraryState is LibraryState.ElementState.List,
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
@@ -591,7 +580,7 @@ private fun RowScope.SearchButton(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is SearchElement,
+			visible = libraryState is LibraryState.ElementState.Search,
 			enter = fadeIn(),
 			exit = fadeOut()
 		) {
@@ -728,7 +717,7 @@ fun ElementList(
 				modifier = Modifier.fillMaxWidth(),
 				elementListItem = item
 			) {
-				if (libraryState is RemoveElement) {
+				if (libraryState is LibraryState.ElementState.Edit) {
 					list[index] = item.copy(selected = !item.selected)
 				} else {
 					onClick(item.element)
@@ -821,7 +810,7 @@ fun FunctionList(
 			FunctionListItem(
 				functionListItem = item,
 				onClick = {
-					if (libraryState is RemoveFunction) {
+					if (libraryState is LibraryState.FunctionState.Edit) {
 						list[index] = item.copy(selected = !item.selected)
 					} else {
 						onClick(item.function)

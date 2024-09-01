@@ -43,7 +43,7 @@ class MainViewModel @Inject constructor(
 	private val addFunction: AddFunction,
 	private val removeFunction: RemoveFunction,
 ) : ViewModel() {
-	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.ElementList)
+	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.ElementState.List)
 	val libraryState = _libraryState.asStateFlow()
 
 	val expression = mutableStateListOf<ExpressionListItem>()
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
 	val elementList = combine(
 		_elementList, libraryState, elementListQuery
 	) { list, mode, query ->
-		if (mode is LibraryState.SearchElement) {
+		if (mode is LibraryState.ElementState.Search) {
 			list.filter { it.name.contains(query, ignoreCase = true) }
 		} else {
 			list
@@ -83,13 +83,13 @@ class MainViewModel @Inject constructor(
 		elementList, libraryState, elementName, elementValue, elementListQuery
 	) { list, state, elementName, elementValue, elementListQuery ->
 		when (state) {
-			LibraryState.CreateElement -> {
+			LibraryState.ElementState.Create -> {
 				elementName.isNotBlank() && elementValue.toDoubleOrNull() != null &&
 						list.none { it.name.trim() == elementName.trim() }
 			}
 
-			LibraryState.ElementList -> true
-			LibraryState.SearchElement -> {
+			LibraryState.ElementState.List -> true
+			LibraryState.ElementState.Search -> {
 				elementListQuery.isNotBlank() &&
 						list.none { it.name.trim() == elementListQuery.trim() }
 			}
@@ -122,12 +122,12 @@ class MainViewModel @Inject constructor(
 		functionDefinition
 	) { list, state, name, definition ->
 		when (state) {
-			LibraryState.CreateFunction -> {
+			LibraryState.FunctionState.Create -> {
 				name.isNotBlank() && definition.isNotBlank() &&
 						list.none { it.name.trim() == name.trim() }
 			}
 
-			LibraryState.FunctionList -> true
+			LibraryState.FunctionState.List -> true
 			else -> false
 		}
 	}.stateIn(
@@ -330,19 +330,19 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onElementListCreateElementButtonClick() {
-		if (libraryState.value is LibraryState.CreateElement) {
+		if (libraryState.value is LibraryState.ElementState.Create) {
 			addElement(elementName.value, elementValue.value)
 			emptyElementName()
 			emptyElementValue()
-		} else if (libraryState.value is LibraryState.SearchElement) {
+		} else if (libraryState.value is LibraryState.ElementState.Search) {
 			_elementName.value = elementListQuery.value
 			_elementListQuery.value = String()
 		}
 
-		_libraryState.value = if (libraryState.value is LibraryState.CreateElement) {
-			LibraryState.ElementList
+		_libraryState.value = if (libraryState.value is LibraryState.ElementState.Create) {
+			LibraryState.ElementState.List
 		} else {
-			LibraryState.CreateElement
+			LibraryState.ElementState.Create
 		}
 	}
 
@@ -369,16 +369,16 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun onFunctionListCreateFunctionButtonClick() {
-		if (libraryState.value is LibraryState.CreateFunction) {
+		if (libraryState.value is LibraryState.FunctionState.Create) {
 			addFunction(functionName.value, functionDefinition.value)
 			emptyFunctionName()
 			emptyFunctionDefinition()
 		}
 
-		if (libraryState.value is LibraryState.CreateFunction) {
-			_libraryState.value = LibraryState.FunctionList
+		if (libraryState.value is LibraryState.FunctionState.Create) {
+			_libraryState.value = LibraryState.FunctionState.List
 		} else {
-			_libraryState.value = LibraryState.CreateFunction
+			_libraryState.value = LibraryState.FunctionState.Create
 		}
 	}
 }
