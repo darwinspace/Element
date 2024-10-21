@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -165,72 +167,81 @@ private fun MainScreen(
 	onRemoveFunctionClick: (List<FunctionListItem>) -> Unit,
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
-	/**
-	 *  TODO: Everything should be controlled here.
-	 *  - Paddings
-	 *  - TextStyles
-	 *  - Sizes
-	 * */
+	/* TODO: Should be controlled here (PaddingValues, TextStyles, Sizes). */
 
-	Box(
-		modifier = Modifier.background(MaterialTheme.colorScheme.surface).safeDrawingPadding()
+	MainScreenBottomSheetScaffold(
+		sheetContent = {
+			MainScreenBottomSheetContent(
+				libraryState = libraryState,
+				onLibraryStateChange = onLibraryStateChange,
+				elementList = elementList,
+				onElementListItemClick = onElementListItemClick,
+				elementListQuery = elementListQuery,
+				onElementListQueryChange = onElementListQueryChange,
+				elementName = elementName,
+				onElementNameChange = onElementNameChange,
+				elementValue = elementValue,
+				onElementValueChange = onElementValueChange,
+				onCreateElementClick = onCreateElementClick,
+				onRemoveElementClick = onRemoveElementClick,
+				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+				functionList = functionList,
+				onFunctionListItemClick = onFunctionListItemClick,
+				functionName = functionName,
+				onFunctionNameChange = onFunctionNameChange,
+				functionDefinition = functionDefinition,
+				onFunctionDefinitionChange = onFunctionDefinitionChange,
+				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+				onCreateFunctionClick = onCreateFunctionClick,
+				onRemoveFunctionClick = onRemoveFunctionClick
+			)
+		}
 	) {
-		BottomSheetScaffold(
-			sheetContent = {
-				MainScreenBottomSheet(
-					libraryState = libraryState,
-					onLibraryStateChange = onLibraryStateChange,
-					elementList = elementList,
-					onElementListItemClick = onElementListItemClick,
-					elementListQuery = elementListQuery,
-					onElementListQueryChange = onElementListQueryChange,
-					elementName = elementName,
-					onElementNameChange = onElementNameChange,
-					elementValue = elementValue,
-					onElementValueChange = onElementValueChange,
-					onCreateElementClick = onCreateElementClick,
-					onRemoveElementClick = onRemoveElementClick,
-					elementListCreateButtonEnabled = elementListCreateButtonEnabled,
-					functionList = functionList,
-					onFunctionListItemClick = onFunctionListItemClick,
-					functionName = functionName,
-					onFunctionNameChange = onFunctionNameChange,
-					functionDefinition = functionDefinition,
-					onFunctionDefinitionChange = onFunctionDefinitionChange,
-					functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-					onCreateFunctionClick = onCreateFunctionClick,
-					onRemoveFunctionClick = onRemoveFunctionClick
-				)
-			},
-			sheetContainerColor = MaterialTheme.colorScheme.surface,
-			sheetDragHandle = null,
-			sheetTonalElevation = 0.dp,
-			sheetShadowElevation = 0.dp,
-			sheetPeekHeight = SheetPeekHeight
+		Column(
+			modifier = Modifier
+				.fillMaxSize()
+				.padding(it)
+				.consumeWindowInsets(it)
 		) {
-			Column(
-				modifier = Modifier
-					.fillMaxSize()
-					.padding(it)
-					.consumeWindowInsets(it)
-			) {
-				Header(
-					modifier = Modifier.weight(1f),
-					expression = expression,
-					expressionCursorPosition = expressionCursorPosition,
-					onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-					expressionResultState = expressionResultState
-				)
-				Keyboard(
-					onButtonClick = onKeyboardButtonClick
-				)
-			}
+			Header(
+				modifier = Modifier.weight(1f),
+				expression = expression,
+				expressionCursorPosition = expressionCursorPosition,
+				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+				expressionResultState = expressionResultState
+			)
+			Keyboard(
+				onButtonClick = onKeyboardButtonClick
+			)
 		}
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreenBottomSheet(
+fun MainScreenBottomSheetScaffold(
+	sheetContent: @Composable ColumnScope.() -> Unit,
+	content: @Composable (PaddingValues) -> Unit
+) {
+	Box(
+		modifier = Modifier
+			.background(MaterialTheme.colorScheme.surface)
+			.safeDrawingPadding()
+	) {
+		BottomSheetScaffold(
+			sheetContent = sheetContent,
+			sheetContainerColor = MaterialTheme.colorScheme.surface,
+			sheetDragHandle = null,
+			sheetTonalElevation = 0.dp,
+			sheetShadowElevation = 0.dp,
+			sheetPeekHeight = SheetPeekHeight,
+			content = content
+		)
+	}
+}
+
+@Composable
+private fun MainScreenBottomSheetContent(
 	libraryState: () -> LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	elementList: () -> List<Element>,
