@@ -1,9 +1,13 @@
 package com.space.element.presentation.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -168,54 +172,59 @@ private fun MainScreen(
 	 *  - Sizes
 	 * */
 
-	BottomSheetScaffold(
-		sheetContent = {
-			MainScreenBottomSheet(
-				libraryState = libraryState,
-				onLibraryStateChange = onLibraryStateChange,
-				elementList = elementList,
-				onElementListItemClick = onElementListItemClick,
-				elementListQuery = elementListQuery,
-				onElementListQueryChange = onElementListQueryChange,
-				elementName = elementName,
-				onElementNameChange = onElementNameChange,
-				elementValue = elementValue,
-				onElementValueChange = onElementValueChange,
-				onCreateElementClick = onCreateElementClick,
-				onRemoveElementClick = onRemoveElementClick,
-				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
-				functionList = functionList,
-				onFunctionListItemClick = onFunctionListItemClick,
-				functionName = functionName,
-				onFunctionNameChange = onFunctionNameChange,
-				functionDefinition = functionDefinition,
-				onFunctionDefinitionChange = onFunctionDefinitionChange,
-				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-				onCreateFunctionClick = onCreateFunctionClick,
-				onRemoveFunctionClick = onRemoveFunctionClick
-			)
-		},
-		sheetContainerColor = MaterialTheme.colorScheme.surface,
-		sheetDragHandle = null,
-		sheetTonalElevation = 0.dp,
-		sheetShadowElevation = 0.dp,
-		sheetPeekHeight = SheetPeekHeight
+	Box(
+		modifier = Modifier.background(MaterialTheme.colorScheme.surface).safeDrawingPadding()
 	) {
-		Column(
-			modifier = Modifier
-				.fillMaxSize()
-				.padding(it)
+		BottomSheetScaffold(
+			sheetContent = {
+				MainScreenBottomSheet(
+					libraryState = libraryState,
+					onLibraryStateChange = onLibraryStateChange,
+					elementList = elementList,
+					onElementListItemClick = onElementListItemClick,
+					elementListQuery = elementListQuery,
+					onElementListQueryChange = onElementListQueryChange,
+					elementName = elementName,
+					onElementNameChange = onElementNameChange,
+					elementValue = elementValue,
+					onElementValueChange = onElementValueChange,
+					onCreateElementClick = onCreateElementClick,
+					onRemoveElementClick = onRemoveElementClick,
+					elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+					functionList = functionList,
+					onFunctionListItemClick = onFunctionListItemClick,
+					functionName = functionName,
+					onFunctionNameChange = onFunctionNameChange,
+					functionDefinition = functionDefinition,
+					onFunctionDefinitionChange = onFunctionDefinitionChange,
+					functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+					onCreateFunctionClick = onCreateFunctionClick,
+					onRemoveFunctionClick = onRemoveFunctionClick
+				)
+			},
+			sheetContainerColor = MaterialTheme.colorScheme.surface,
+			sheetDragHandle = null,
+			sheetTonalElevation = 0.dp,
+			sheetShadowElevation = 0.dp,
+			sheetPeekHeight = SheetPeekHeight
 		) {
-			Header(
-				modifier = Modifier.weight(1f),
-				expression = expression,
-				expressionCursorPosition = expressionCursorPosition,
-				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-				expressionResultState = expressionResultState
-			)
-			Keyboard(
-				onButtonClick = onKeyboardButtonClick
-			)
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(it)
+					.consumeWindowInsets(it)
+			) {
+				Header(
+					modifier = Modifier.weight(1f),
+					expression = expression,
+					expressionCursorPosition = expressionCursorPosition,
+					onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+					expressionResultState = expressionResultState
+				)
+				Keyboard(
+					onButtonClick = onKeyboardButtonClick
+				)
+			}
 		}
 	}
 }
