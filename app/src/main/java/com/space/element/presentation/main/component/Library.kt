@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -108,6 +109,7 @@ private fun LibraryPreview() {
 	}
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Library(
 	modifier: Modifier = Modifier,
@@ -141,83 +143,83 @@ fun Library(
 	val functionDataList = rememberFunctionList(functionData, state)
 
 	Surface(modifier = modifier) {
-		Column {
-			LibraryHeader(
-				libraryState = state,
-				onLibraryStateChange = onLibraryStateChange,
-				elementList = elementDataList,
-				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
-				onCreateElementClick = onCreateElementClick,
-				onRemoveElementClick = onRemoveElementClick,
-				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-				functionList = functionDataList,
-				onCreateFunctionClick = onCreateFunctionClick,
-				onRemoveFunctionClick = onRemoveFunctionClick
-			)
-
-			AnimatedVisibility(
-				visible = state is LibraryState.ElementState.Create
-			) {
-				LibraryCreateElementForm(
-					elementName = elementName,
-					onElementNameChange = onElementNameChange,
-					elementValue = elementValue,
-					onElementValueChange = onElementValueChange,
-					onDone = {
-						val enabled = elementListCreateButtonEnabled()
-						if (enabled) {
-							onCreateElementClick()
-						}
-					}
-				)
-			}
-
-			AnimatedVisibility(visible = state is LibraryState.FunctionState.Create) {
-				LibraryCreateFunctionForm(
-					functionName = functionName,
-					onFunctionNameChange = onFunctionNameChange,
-					functionDefinition = functionDefinition,
-					onFunctionDefinitionChange = onFunctionDefinitionChange
-				)
-			}
-
-			AnimatedVisibility(
-				visible = state is LibraryState.ElementState.Search
-			) {
-				ElementListSearchTextField(
-					value = elementListQuery,
-					onValueChange = onElementListQueryChange
-				)
-			}
-
-			AnimatedVisibility(
-				visible = state is LibraryState.ElementState && elementDataList.isEmpty()
-			) {
-				ElementListEmptyCard()
-			}
-
-			AnimatedVisibility(
-				visible = state is LibraryState.ElementState && elementDataList.isNotEmpty()
-			) {
-				ElementList(
+		LazyColumn(contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 12.dp)) {
+			stickyHeader {
+				LibraryHeader(
 					libraryState = state,
 					onLibraryStateChange = onLibraryStateChange,
-					list = elementDataList,
-					onClick = onElementListItemClick
+					elementList = elementDataList,
+					elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+					onCreateElementClick = onCreateElementClick,
+					onRemoveElementClick = onRemoveElementClick,
+					functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+					functionList = functionDataList,
+					onCreateFunctionClick = onCreateFunctionClick,
+					onRemoveFunctionClick = onRemoveFunctionClick
 				)
 			}
 
-			AnimatedVisibility(visible = state is LibraryState.FunctionState && functionData.isEmpty()) {
-				FunctionListEmptyCard()
+			item {
+				AnimatedVisibility(visible = state is LibraryState.ElementState.Create) {
+					LibraryCreateElementForm(
+						elementName = elementName,
+						onElementNameChange = onElementNameChange,
+						elementValue = elementValue,
+						onElementValueChange = onElementValueChange,
+						onDone = {
+							val enabled = elementListCreateButtonEnabled()
+							if (enabled) {
+								onCreateElementClick()
+							}
+						}
+					)
+				}
 			}
 
-			AnimatedVisibility(visible = state is LibraryState.FunctionState && functionData.isNotEmpty()) {
-				FunctionList(
-					libraryState = state,
-					list = functionDataList,
-					onClick = onFunctionListItemClick
-				)
+			item {
+				AnimatedVisibility(visible = state is LibraryState.FunctionState.Create) {
+					LibraryCreateFunctionForm(
+						functionName = functionName,
+						onFunctionNameChange = onFunctionNameChange,
+						functionDefinition = functionDefinition,
+						onFunctionDefinitionChange = onFunctionDefinitionChange
+					)
+				}
 			}
+
+			item {
+				AnimatedVisibility(visible = state is LibraryState.ElementState.Search) {
+					ElementListSearchTextField(
+						value = elementListQuery,
+						onValueChange = onElementListQueryChange
+					)
+				}
+			}
+
+			item {
+				AnimatedVisibility(visible = state is LibraryState.ElementState && elementDataList.isEmpty()) {
+					ElementListEmptyCard()
+				}
+			}
+
+			elementList(
+				libraryState = state,
+				onLibraryStateChange = onLibraryStateChange,
+				list = elementDataList,
+				onClick = onElementListItemClick
+			)
+
+			item {
+				AnimatedVisibility(visible = state is LibraryState.FunctionState && functionData.isEmpty()) {
+					FunctionListEmptyCard()
+				}
+			}
+
+			functionList(
+				libraryState = state,
+				list = functionDataList,
+				onClick = onFunctionListItemClick
+			)
 		}
 	}
 }
@@ -281,7 +283,7 @@ private fun LibraryHeader(
 	Row(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(start = 24.dp, end = 24.dp, top = 24.dp),
+			.padding(top = 24.dp, bottom = 12.dp),
 		verticalAlignment = Alignment.CenterVertically,
 		horizontalArrangement = Arrangement.SpaceBetween
 	) {
@@ -313,11 +315,15 @@ private fun LibraryHeader(
 		AnimatedVisibility(
 			modifier = Modifier.weight(1f),
 			visible = libraryState is LibraryState.ElementState.List
-					|| libraryState is LibraryState.ElementState.Create || libraryState is LibraryState.ElementState.Search
-					|| libraryState is LibraryState.FunctionState.List || libraryState is LibraryState.FunctionState.Create
+					|| libraryState is LibraryState.ElementState.Create
+					|| libraryState is LibraryState.ElementState.Search
+					|| libraryState is LibraryState.FunctionState.List
+					|| libraryState is LibraryState.FunctionState.Create
 		) {
 			AnimatedVisibility(
-				visible = libraryState is LibraryState.ElementState.List || libraryState is LibraryState.ElementState.Create || libraryState is LibraryState.ElementState.Search,
+				visible = libraryState is LibraryState.ElementState.List
+						|| libraryState is LibraryState.ElementState.Create
+						|| libraryState is LibraryState.ElementState.Search,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
@@ -328,7 +334,8 @@ private fun LibraryHeader(
 			}
 
 			AnimatedVisibility(
-				visible = libraryState is LibraryState.FunctionState.List || libraryState is LibraryState.FunctionState.Create,
+				visible = libraryState is LibraryState.FunctionState.List
+						|| libraryState is LibraryState.FunctionState.Create,
 				enter = fadeIn(),
 				exit = fadeOut()
 			) {
@@ -349,7 +356,8 @@ private fun LibraryHeader(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is LibraryState.ElementState.Edit || libraryState is LibraryState.FunctionState.Edit
+			visible = libraryState is LibraryState.ElementState.Edit
+					|| libraryState is LibraryState.FunctionState.Edit
 		) {
 			Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 				EditButton(
@@ -373,7 +381,8 @@ private fun LibraryHeader(
 		}
 
 		AnimatedVisibility(
-			visible = libraryState is LibraryState.ElementState.List && elementList.isNotEmpty() || libraryState is LibraryState.ElementState.Search
+			visible = libraryState is LibraryState.ElementState.List && elementList.isNotEmpty()
+					|| libraryState is LibraryState.ElementState.Search
 		) {
 			SearchButton(
 				modifier = Modifier.padding(start = 16.dp),
@@ -444,6 +453,9 @@ private fun CloseButton(
 ) {
 	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		colors = IconButtonDefaults.filledIconButtonColors(
+			containerColor = MaterialTheme.colorScheme.surface
+		),
 		border = BorderStroke(
 			width = 2.dp,
 			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
@@ -562,6 +574,9 @@ private fun RowScope.SearchButton(
 ) {
 	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		colors = IconButtonDefaults.filledIconButtonColors(
+			containerColor = MaterialTheme.colorScheme.surface
+		),
 		border = BorderStroke(
 			width = 2.dp,
 			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
@@ -590,6 +605,9 @@ private fun RowScope.SearchButton(
 private fun FunctionButton(modifier: Modifier, onClick: () -> Unit) {
 	OutlinedIconButton(
 		modifier = modifier.size(48.dp),
+		colors = IconButtonDefaults.filledIconButtonColors(
+			containerColor = MaterialTheme.colorScheme.surface
+		),
 		border = BorderStroke(
 			width = 2.dp,
 			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
@@ -609,7 +627,7 @@ private fun LibraryCreateElementForm(
 	onDone: () -> Unit
 ) {
 	Column(
-		modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp),
+		modifier = Modifier.padding(vertical = 12.dp),
 		verticalArrangement = Arrangement.spacedBy(24.dp)
 	) {
 		ElementNameTextField(
@@ -699,36 +717,30 @@ private fun ElementListSearchTextField(
 	)
 }
 
-@Composable
-private fun ElementList(
+private fun LazyListScope.elementList(
 	libraryState: LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	list: SnapshotStateList<ElementListItem>,
 	onClick: (Element) -> Unit
 ) {
-	LazyColumn(
-		contentPadding = PaddingValues(24.dp),
-		verticalArrangement = Arrangement.spacedBy(24.dp)
-	) {
-		itemsIndexed(list, { _, item -> item.element.name }) { index, item ->
-			ElementListItem(
-				modifier = Modifier.fillMaxWidth(),
-				elementListItem = item,
-				onLongClick = {
-					if (libraryState is LibraryState.ElementState.List) {
-						onLibraryStateChange(LibraryState.ElementState.Edit)
-						list[index] = item.copy(selected = !item.selected)
-					}
-				},
-				onClick = {
-					if (libraryState is LibraryState.ElementState.Edit) {
-						list[index] = item.copy(selected = !item.selected)
-					} else {
-						onClick(item.element)
-					}
+	itemsIndexed(list, { _, item -> item.element.name }) { index, item ->
+		ElementListItem(
+			modifier = Modifier.fillMaxWidth(),
+			elementListItem = item,
+			onLongClick = {
+				if (libraryState is LibraryState.ElementState.List) {
+					onLibraryStateChange(LibraryState.ElementState.Edit)
+					list[index] = item.copy(selected = !item.selected)
 				}
-			)
-		}
+			},
+			onClick = {
+				if (libraryState is LibraryState.ElementState.Edit) {
+					list[index] = item.copy(selected = !item.selected)
+				} else {
+					onClick(item.element)
+				}
+			}
+		)
 	}
 }
 
@@ -754,6 +766,7 @@ private fun ElementListItem(
 	)
 	Surface(
 		modifier = modifier
+			.padding(vertical = 12.dp)
 			.clip(shape = MaterialTheme.shapes.medium)
 			.combinedClickable(
 				onLongClick = onLongClick,
@@ -788,7 +801,7 @@ private fun ElementListItem(
 @Composable
 private fun ElementListEmptyCard() {
 	Surface(
-		modifier = Modifier.padding(24.dp),
+		modifier = Modifier.padding(vertical = 12.dp),
 		shape = MaterialTheme.shapes.medium,
 		color = MaterialTheme.colorScheme.errorContainer
 	) {
@@ -845,7 +858,7 @@ private fun FunctionDefinitionTextField(
 				style = MaterialTheme.typography.bodyMedium
 			)
 		},
-		keyboardActions = KeyboardActions {},
+		keyboardActions = KeyboardActions { /*TODO: Implement onDone*/ },
 		keyboardOptions = KeyboardOptions(
 			keyboardType = KeyboardType.Text,
 			imeAction = ImeAction.Done
@@ -853,28 +866,22 @@ private fun FunctionDefinitionTextField(
 	)
 }
 
-@Composable
-private fun FunctionList(
+private fun LazyListScope.functionList(
 	libraryState: LibraryState,
 	list: SnapshotStateList<FunctionListItem>,
 	onClick: (Function) -> Unit
 ) {
-	LazyColumn(
-		contentPadding = PaddingValues(24.dp),
-		verticalArrangement = Arrangement.spacedBy(24.dp)
-	) {
-		itemsIndexed(list) { index, item ->
-			FunctionListItem(
-				functionListItem = item,
-				onClick = {
-					if (libraryState is LibraryState.FunctionState.Edit) {
-						list[index] = item.copy(selected = !item.selected)
-					} else {
-						onClick(item.function)
-					}
+	itemsIndexed(list) { index, item ->
+		FunctionListItem(
+			functionListItem = item,
+			onClick = {
+				if (libraryState is LibraryState.FunctionState.Edit) {
+					list[index] = item.copy(selected = !item.selected)
+				} else {
+					onClick(item.function)
 				}
-			)
-		}
+			}
+		)
 	}
 }
 
@@ -936,7 +943,7 @@ private fun FunctionListItem(
 @Composable
 private fun FunctionListEmptyCard() {
 	Surface(
-		modifier = Modifier.padding(24.dp),
+		modifier = Modifier.padding(vertical = 12.dp),
 		shape = MaterialTheme.shapes.medium,
 		color = MaterialTheme.colorScheme.errorContainer
 	) {
