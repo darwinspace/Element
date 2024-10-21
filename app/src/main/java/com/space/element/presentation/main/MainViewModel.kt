@@ -1,6 +1,7 @@
 package com.space.element.presentation.main
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.space.element.domain.model.Element
@@ -41,7 +42,7 @@ class MainViewModel @Inject constructor(
 	private val evaluateExpression: EvaluateExpression,
 	getFunctionList: GetFunctionList,
 	private val addFunction: AddFunction,
-	private val removeFunction: RemoveFunction,
+	private val removeFunction: RemoveFunction
 ) : ViewModel() {
 	private var _libraryState = MutableStateFlow<LibraryState>(LibraryState.ElementState.List)
 	val libraryState = _libraryState.asStateFlow()
@@ -58,21 +59,20 @@ class MainViewModel @Inject constructor(
 	private var _elementListQuery = MutableStateFlow(String())
 	val elementListQuery = _elementListQuery.asStateFlow()
 
-	private fun filterElementList(
-		list: List<Element>,
+	private fun List<Element>.filter(
 		state: LibraryState,
 		query: String
 	) = if (state is LibraryState.ElementState.Search) {
-		list.filter { it.name.contains(query, ignoreCase = true) }
+		filter { it.name.contains(query, ignoreCase = true) }
 	} else {
-		list
+		this
 	}
 
 	private val _elementList = getElementList()
 	val elementList = combine(
 		_elementList, libraryState, elementListQuery
 	) { list, state, query ->
-		filterElementList(list, state, query)
+		list.filter(state, query).toMutableStateList()
 	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),
@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
 	private var _elementValue = MutableStateFlow(String())
 	val elementValue = _elementValue.asStateFlow()
 
-	fun isElementListCreateButtonEnabled(
+	private fun isElementListCreateButtonEnabled(
 		list: List<Element>,
 		state: LibraryState,
 		elementName: String,

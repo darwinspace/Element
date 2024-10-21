@@ -95,18 +95,6 @@ fun ElementTheme(
 		}
 	}
 
-//	val view = LocalView.current
-//	if (!view.isInEditMode) {
-//		SideEffect {
-//			val elevation = if (darkTheme) 1.dp else 12.dp
-//			val color = colorScheme.surfaceColorAtElevation(elevation)
-//			val window = (view.context as Activity).window
-//			window.statusBarColor = color.toArgb()
-//			val windowInsetsController = WindowCompat.getInsetsController(window, view)
-//			windowInsetsController.isAppearanceLightStatusBars = !darkTheme
-//		}
-//	}
-
 	MaterialTheme(
 		colorScheme = colorScheme,
 		typography = Typography,
