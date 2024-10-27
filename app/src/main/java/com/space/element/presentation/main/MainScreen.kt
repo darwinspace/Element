@@ -136,7 +136,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 	)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreen(
 	libraryState: () -> LibraryState,
