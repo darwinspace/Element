@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_add_element">Create Element</string>
-    <string name="exception_arithmetic">Arithmetic error</string>
-    <string name="exception_expression">Invalid Expression</string>
-    <string name="search">Search</string>
-    <string name="element_name">Name</string>
-    <string name="element_value">Value</string>
-    <string name="empty_element_search_list">Could not found any element.</string>
-    <string name="empty_element_list_content_action">Tap</string>
-    <string name="empty_element_list_content_reason">to add an element.</string>
+    <string name="element_list_create_element">Create Element</string>
+    <string name="element_list_search">Search</string>
+    <string name="element_list_create_element_name">Name</string>
+    <string name="element_list_create_element_value">Value</string>
+    <string name="element_list_search_empty">Could not found any element.</string>
+    <string name="element_list_empty_action">Tap</string>
+    <string name="element_list_empty_reason">to add an element.</string>
 </resources>

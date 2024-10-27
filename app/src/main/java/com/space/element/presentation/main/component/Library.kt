@@ -407,7 +407,7 @@ private fun CreateElementButton(
 		),
 		onClick = onClick
 	) {
-		Text(text = stringResource(R.string.button_add_element))
+		Text(text = stringResource(R.string.element_list_create_element))
 	}
 }
 
@@ -636,7 +636,7 @@ private fun ElementNameTextField(
 		onValueChange = onElementNameChange,
 		placeholder = {
 			Text(
-				text = stringResource(R.string.element_name),
+				text = stringResource(R.string.element_list_create_element_name),
 				style = MaterialTheme.typography.bodyMedium
 			)
 		},
@@ -659,7 +659,7 @@ private fun ElementValueTextField(
 		onValueChange = onElementValueChange,
 		placeholder = {
 			Text(
-				text = stringResource(R.string.element_value),
+				text = stringResource(R.string.element_list_create_element_value),
 				style = MaterialTheme.typography.bodyMedium
 			)
 		},
@@ -686,7 +686,7 @@ private fun ElementListSearchTextField(
 		onValueChange = onValueChange,
 		placeholder = {
 			Text(
-				text = stringResource(R.string.search),
+				text = stringResource(R.string.element_list_search),
 				style = MaterialTheme.typography.bodyMedium
 			)
 		},
@@ -797,9 +797,9 @@ private fun ElementListEmptyCard() {
 				.fillMaxWidth()
 				.padding(32.dp),
 			text = rememberEmptyListText(
-				stringResource(R.string.empty_element_list_content_action),
-				stringResource(R.string.button_add_element),
-				stringResource(R.string.empty_element_list_content_reason)
+				stringResource(R.string.element_list_empty_action),
+				stringResource(R.string.element_list_create_element),
+				stringResource(R.string.element_list_empty_reason)
 			),
 			style = MaterialTheme.typography.bodyMedium,
 			textAlign = TextAlign.Center
