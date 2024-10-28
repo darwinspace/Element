@@ -1,7 +1,6 @@
 package com.space.element.presentation.main
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.space.element.domain.model.Element
@@ -72,7 +71,7 @@ class MainViewModel @Inject constructor(
 	val elementList = combine(
 		_elementList, libraryState, elementListQuery
 	) { list, state, query ->
-		list.filter(state, query).toMutableStateList()
+		list.filter(state, query)
 	}.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(),

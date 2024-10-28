@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,8 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,12 +33,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +48,6 @@ import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.Function
 import com.space.element.domain.model.Operator
 import com.space.element.presentation.main.model.ExpressionResultState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 private val ContentSpace = 3.dp
 private val ContentHeight = 96.dp
@@ -99,9 +95,6 @@ fun Expression(
 	expressionCursorPosition: () -> Int,
 	onExpressionCursorPositionChange: (Int) -> Unit
 ) {
-	val state = rememberLazyListState()
-	val scope = rememberCoroutineScope()
-
 	LazyRow(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -110,8 +103,7 @@ fun Expression(
 			start = 24.dp - ContentSpace, end = 24.dp
 		),
 		horizontalArrangement = Arrangement.Start,
-		verticalAlignment = Alignment.CenterVertically,
-		state = state
+		verticalAlignment = Alignment.CenterVertically
 	) {
 		item {
 			ExpressionListItemSpace(
@@ -130,11 +122,6 @@ fun Expression(
 					onExpressionCursorPositionChange(index + 1)
 				}
 			)
-		}
-
-		scope.launch {
-			delay(200.milliseconds)
-			state.animateScrollToItem(expressionCursorPosition())
 		}
 	}
 }
@@ -244,22 +231,21 @@ private fun ExpressionElementItemName(elementName: String) {
 
 @Composable
 fun ExpressionElementItemValue(elementValue: String) {
-	Row(verticalAlignment = Alignment.CenterVertically) {
-		Spacer(modifier = Modifier.width(12.dp))
+	Row(
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		Box(
+			modifier = Modifier
+				.padding(horizontal = 8.dp)
+				.clip(CircleShape)
+				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+				.size(8.dp)
+		)
 
-		Surface(
-			shape = MaterialTheme.shapes.extraSmall,
-			border = BorderStroke(
-				width = 2.dp,
-				color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-			)
-		) {
-			Text(
-				text = elementValue,
-				style = MaterialTheme.typography.bodySmall,
-				fontWeight = FontWeight.Normal
-			)
-		}
+		Text(
+			text = elementValue,
+			style = MaterialTheme.typography.titleMedium
+		)
 	}
 }
 
