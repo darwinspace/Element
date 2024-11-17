@@ -1,4 +1,4 @@
-package com.space.element.presentation.theme
+package com.space.element.presentation.`interface`.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

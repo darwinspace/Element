@@ -1,4 +1,4 @@
-package com.space.element.presentation.component
+package com.space.element.presentation.`interface`.component
 
 import android.content.res.Configuration
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults.Container
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.`interface`.theme.ElementTheme
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Preview
@@ -84,12 +85,12 @@ fun ElementTextField(
 				colors = colors,
 				contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 				container = {
-					OutlinedTextFieldDefaults.ContainerBox(
+					Container(
 						enabled = enabled,
 						isError = false,
 						interactionSource = interactionSource,
 						colors = colors,
-						shape = shape
+						shape = shape,
 					)
 				}
 			)

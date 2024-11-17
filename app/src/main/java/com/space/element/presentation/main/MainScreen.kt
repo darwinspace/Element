@@ -40,7 +40,7 @@ import com.space.element.presentation.main.component.LibraryDragHandle
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.`interface`.theme.ElementTheme
 
 private val SheetPeekHeight = 52.dp
 private val SheetDragHandleWidth = 32.dp

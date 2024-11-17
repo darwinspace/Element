@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButton.Type
-import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.`interface`.theme.ElementTheme
 
 @Preview
 @Composable

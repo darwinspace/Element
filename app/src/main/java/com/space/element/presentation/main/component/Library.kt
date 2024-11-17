@@ -70,9 +70,9 @@ import com.space.element.domain.model.Element
 import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.Function
 import com.space.element.domain.model.FunctionListItem
-import com.space.element.presentation.component.ElementTextField
+import com.space.element.presentation.`interface`.component.ElementTextField
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.`interface`.theme.ElementTheme
 import com.space.element.util.rememberElementList
 import com.space.element.util.rememberEmptyListText
 import com.space.element.util.rememberFunctionList

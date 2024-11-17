@@ -1,4 +1,4 @@
-package com.space.element.presentation.theme
+package com.space.element.presentation.`interface`.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

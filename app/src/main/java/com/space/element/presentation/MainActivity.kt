@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.space.element.presentation.main.MainScreen
-import com.space.element.presentation.theme.ElementTheme
+import com.space.element.presentation.`interface`.theme.ElementTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
