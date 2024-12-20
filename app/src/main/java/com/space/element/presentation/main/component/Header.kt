@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -75,7 +76,9 @@ fun Header(
 			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 		)
 	) {
-		Column {
+		Column(
+			modifier = Modifier.statusBarsPadding()
+		) {
 			Expression(
 				expression = expression,
 				expressionCursorPosition = expressionCursorPosition,
@@ -239,7 +242,7 @@ fun ExpressionElementItemValue(elementValue: String) {
 				.padding(horizontal = 8.dp)
 				.clip(CircleShape)
 				.background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-				.size(8.dp)
+				.size(6.dp)
 		)
 
 		Text(

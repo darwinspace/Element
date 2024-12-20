@@ -1,19 +1,24 @@
 package com.space.element.presentation.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,6 +38,7 @@ import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.ExpressionListItem
 import com.space.element.domain.model.Function
 import com.space.element.domain.model.FunctionListItem
+import com.space.element.presentation.`interface`.theme.ElementTheme
 import com.space.element.presentation.main.component.Header
 import com.space.element.presentation.main.component.Keyboard
 import com.space.element.presentation.main.component.Library
@@ -40,7 +46,6 @@ import com.space.element.presentation.main.component.LibraryDragHandle
 import com.space.element.presentation.main.model.ExpressionResultState
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.LibraryState
-import com.space.element.presentation.`interface`.theme.ElementTheme
 
 private val SheetPeekHeight = 52.dp
 private val SheetDragHandleWidth = 32.dp
@@ -168,50 +173,62 @@ private fun MainScreen(
 ) {
 	/* TODO: Should be controlled here (PaddingValues, TextStyles, Sizes). */
 
-	MainScreenBottomSheetScaffold(
-		sheetContent = {
-			MainScreenBottomSheetContent(
-				libraryState = libraryState,
-				onLibraryStateChange = onLibraryStateChange,
-				elementList = elementList,
-				onElementListItemClick = onElementListItemClick,
-				elementListQuery = elementListQuery,
-				onElementListQueryChange = onElementListQueryChange,
-				elementName = elementName,
-				onElementNameChange = onElementNameChange,
-				elementValue = elementValue,
-				onElementValueChange = onElementValueChange,
-				onCreateElementClick = onCreateElementClick,
-				onRemoveElementClick = onRemoveElementClick,
-				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
-				functionList = functionList,
-				onFunctionListItemClick = onFunctionListItemClick,
-				functionName = functionName,
-				onFunctionNameChange = onFunctionNameChange,
-				functionDefinition = functionDefinition,
-				onFunctionDefinitionChange = onFunctionDefinitionChange,
-				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-				onCreateFunctionClick = onCreateFunctionClick,
-				onRemoveFunctionClick = onRemoveFunctionClick
-			)
-		}
-	) {
-		Column(
-			modifier = Modifier
-				.fillMaxSize()
-				.padding(it)
-				.consumeWindowInsets(it)
-		) {
-			Header(
-				modifier = Modifier.weight(1f),
-				expression = expression,
-				expressionCursorPosition = expressionCursorPosition,
-				onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-				expressionResultState = expressionResultState
-			)
-			Keyboard(
-				onButtonClick = onKeyboardButtonClick
-			)
+	BoxWithConstraints {
+		val maxHeight = maxHeight
+		if (maxWidth < 600.dp) {
+			MainScreenBottomSheetScaffold(
+				sheetContent = {
+					val height = maxHeight - WindowInsets.statusBars.asPaddingValues()
+						.calculateTopPadding()
+					MainScreenBottomSheetContent(
+						modifier = Modifier.heightIn(max = height),
+						libraryState = libraryState,
+						onLibraryStateChange = onLibraryStateChange,
+						elementList = elementList,
+						onElementListItemClick = onElementListItemClick,
+						elementListQuery = elementListQuery,
+						onElementListQueryChange = onElementListQueryChange,
+						elementName = elementName,
+						onElementNameChange = onElementNameChange,
+						elementValue = elementValue,
+						onElementValueChange = onElementValueChange,
+						onCreateElementClick = onCreateElementClick,
+						onRemoveElementClick = onRemoveElementClick,
+						elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+						functionList = functionList,
+						onFunctionListItemClick = onFunctionListItemClick,
+						functionName = functionName,
+						onFunctionNameChange = onFunctionNameChange,
+						functionDefinition = functionDefinition,
+						onFunctionDefinitionChange = onFunctionDefinitionChange,
+						functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+						onCreateFunctionClick = onCreateFunctionClick,
+						onRemoveFunctionClick = onRemoveFunctionClick
+					)
+				}
+			) {
+				Column(
+					modifier = Modifier
+						.fillMaxSize()
+						.padding(it)
+				) {
+					Header(
+						modifier = Modifier.weight(1f),
+						expression = expression,
+						expressionCursorPosition = expressionCursorPosition,
+						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+						expressionResultState = expressionResultState
+					)
+
+					Keyboard(
+						onButtonClick = onKeyboardButtonClick
+					)
+				}
+			}
+		} else {
+			Box(contentAlignment = Alignment.Center) {
+				Text("Landscape mode not implemented yet.")
+			}
 		}
 	}
 }
@@ -222,18 +239,16 @@ fun MainScreenBottomSheetScaffold(
 	sheetContent: @Composable ColumnScope.() -> Unit,
 	content: @Composable (PaddingValues) -> Unit
 ) {
-	Box(
-		modifier = Modifier
-			.background(MaterialTheme.colorScheme.surface)
-			.safeDrawingPadding()
-	) {
+	Surface {
 		BottomSheetScaffold(
 			sheetContent = sheetContent,
 			sheetContainerColor = MaterialTheme.colorScheme.surface,
 			sheetDragHandle = null,
 			sheetTonalElevation = 0.dp,
 			sheetShadowElevation = 0.dp,
-			sheetPeekHeight = SheetPeekHeight,
+			sheetPeekHeight = SheetPeekHeight + WindowInsets.navigationBars
+				.asPaddingValues()
+				.calculateBottomPadding(),
 			content = content
 		)
 	}
@@ -241,6 +256,7 @@ fun MainScreenBottomSheetScaffold(
 
 @Composable
 private fun MainScreenBottomSheetContent(
+	modifier: Modifier,
 	libraryState: () -> LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	elementList: () -> List<Element>,
@@ -264,46 +280,50 @@ private fun MainScreenBottomSheetContent(
 	onCreateFunctionClick: () -> Unit,
 	onRemoveFunctionClick: (List<FunctionListItem>) -> Unit
 ) {
-	Column(
-		modifier = Modifier.border(
-			width = 2.dp,
-			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-			shape = MaterialTheme.shapes.extraLarge.copy(
-				bottomStart = CornerSize(0.dp),
-				bottomEnd = CornerSize(0.dp),
-			),
+	Surface(
+		modifier = modifier,
+		shape = MaterialTheme.shapes.extraLarge.copy(
+			bottomStart = CornerSize(0.dp),
+			bottomEnd = CornerSize(0.dp),
 		),
-		horizontalAlignment = Alignment.CenterHorizontally
+		border = BorderStroke(
+			width = 2.dp,
+			color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+		)
 	) {
-		LibraryDragHandle(
-			modifier = Modifier.padding(top = SheetDragHandleTopPadding),
-			width = SheetDragHandleWidth,
-			height = SheetDragHandleHeight,
-		)
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			LibraryDragHandle(
+				modifier = Modifier.padding(top = SheetDragHandleTopPadding),
+				width = SheetDragHandleWidth,
+				height = SheetDragHandleHeight,
+			)
 
-		Library(
-			libraryState = libraryState,
-			onLibraryStateChange = onLibraryStateChange,
-			elementList = elementList,
-			onElementListItemClick = onElementListItemClick,
-			elementListQuery = elementListQuery,
-			onElementListQueryChange = onElementListQueryChange,
-			elementName = elementName,
-			onElementNameChange = onElementNameChange,
-			elementValue = elementValue,
-			onElementValueChange = onElementValueChange,
-			onCreateElementClick = onCreateElementClick,
-			onRemoveElementClick = onRemoveElementClick,
-			elementListCreateButtonEnabled = elementListCreateButtonEnabled,
-			functionList = functionList,
-			onFunctionListItemClick = onFunctionListItemClick,
-			functionName = functionName,
-			onFunctionNameChange = onFunctionNameChange,
-			functionDefinition = functionDefinition,
-			onFunctionDefinitionChange = onFunctionDefinitionChange,
-			functionListCreateButtonEnabled = functionListCreateButtonEnabled,
-			onCreateFunctionClick = onCreateFunctionClick,
-			onRemoveFunctionClick = onRemoveFunctionClick,
-		)
+			Library(
+				libraryState = libraryState,
+				onLibraryStateChange = onLibraryStateChange,
+				elementList = elementList,
+				onElementListItemClick = onElementListItemClick,
+				elementListQuery = elementListQuery,
+				onElementListQueryChange = onElementListQueryChange,
+				elementName = elementName,
+				onElementNameChange = onElementNameChange,
+				elementValue = elementValue,
+				onElementValueChange = onElementValueChange,
+				onCreateElementClick = onCreateElementClick,
+				onRemoveElementClick = onRemoveElementClick,
+				elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+				functionList = functionList,
+				onFunctionListItemClick = onFunctionListItemClick,
+				functionName = functionName,
+				onFunctionNameChange = onFunctionNameChange,
+				functionDefinition = functionDefinition,
+				onFunctionDefinitionChange = onFunctionDefinitionChange,
+				functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+				onCreateFunctionClick = onCreateFunctionClick,
+				onRemoveFunctionClick = onRemoveFunctionClick,
+			)
+		}
 	}
 }

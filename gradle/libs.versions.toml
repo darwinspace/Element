@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.7.3"
 exp4j = "0.4.8"
 ksp = "2.0.21-1.0.26"
 kotlin = "2.0.21"
@@ -9,10 +9,10 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.11.00"
+composeBom = "2024.12.01"
 hiltAndroid = "2.52"
 datastorePreferences = "1.1.1"
-materialIconsExtended = "1.7.5"
+materialIconsExtended = "1.7.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

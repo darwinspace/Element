@@ -21,8 +21,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -71,8 +74,8 @@ import com.space.element.domain.model.ElementListItem
 import com.space.element.domain.model.Function
 import com.space.element.domain.model.FunctionListItem
 import com.space.element.presentation.`interface`.component.ElementTextField
-import com.space.element.presentation.main.model.LibraryState
 import com.space.element.presentation.`interface`.theme.ElementTheme
+import com.space.element.presentation.main.model.LibraryState
 import com.space.element.util.rememberElementList
 import com.space.element.util.rememberEmptyListText
 import com.space.element.util.rememberFunctionList
@@ -150,7 +153,14 @@ fun Library(
 	val functionDataList = rememberFunctionList(functionData, state)
 
 	Surface(modifier = modifier) {
-		LazyColumn(contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 12.dp)) {
+		LazyColumn(
+			contentPadding = PaddingValues(
+				start = 24.dp,
+				end = 24.dp,
+				bottom = 12.dp + WindowInsets.navigationBars.asPaddingValues()
+					.calculateBottomPadding()
+			)
+		) {
 			stickyHeader {
 				LibraryHeader(
 					libraryState = state,
@@ -443,16 +453,22 @@ private fun LazyListScope.functionList(
 	onClick: (Function) -> Unit
 ) {
 	itemsIndexed(list) { index, item ->
-		FunctionListItem(
-			functionListItem = item,
-			onClick = {
-				if (libraryState is LibraryState.FunctionState.Edit) {
-					list[index] = item.copy(selected = !item.selected)
-				} else {
-					onClick(item.function)
+		AnimatedVisibility(
+			visible = libraryState is LibraryState.FunctionState,
+			enter = fadeIn() + expandVertically(),
+			exit = fadeOut() + shrinkVertically()
+		) {
+			FunctionListItem(
+				functionListItem = item,
+				onClick = {
+					if (libraryState is LibraryState.FunctionState.Edit) {
+						list[index] = item.copy(selected = !item.selected)
+					} else {
+						onClick(item.function)
+					}
 				}
-			}
-		)
+			)
+		}
 	}
 }
 
@@ -793,23 +809,29 @@ private fun LazyListScope.elementList(
 	onClick: (Element) -> Unit
 ) {
 	itemsIndexed(list, { _, item -> item.element.name }) { index, item ->
-		ElementListItem(
-			modifier = Modifier.fillMaxWidth(),
-			elementListItem = item,
-			onLongClick = {
-				if (libraryState is LibraryState.ElementState.List) {
-					onLibraryStateChange(LibraryState.ElementState.Edit)
-					list[index] = item.copy(selected = !item.selected)
+		AnimatedVisibility(
+			visible = libraryState is LibraryState.ElementState,
+			enter = fadeIn() + expandVertically(),
+			exit = fadeOut() + shrinkVertically()
+		) {
+			ElementListItem(
+				modifier = Modifier.fillMaxWidth(),
+				elementListItem = item,
+				onLongClick = {
+					if (libraryState is LibraryState.ElementState.List) {
+						onLibraryStateChange(LibraryState.ElementState.Edit)
+						list[index] = item.copy(selected = !item.selected)
+					}
+				},
+				onClick = {
+					if (libraryState is LibraryState.ElementState.Edit) {
+						list[index] = item.copy(selected = !item.selected)
+					} else {
+						onClick(item.element)
+					}
 				}
-			},
-			onClick = {
-				if (libraryState is LibraryState.ElementState.Edit) {
-					list[index] = item.copy(selected = !item.selected)
-				} else {
-					onClick(item.element)
-				}
-			}
-		)
+			)
+		}
 	}
 }
 
