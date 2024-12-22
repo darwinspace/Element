@@ -1,6 +1,5 @@
 package com.space.element.presentation.main.component
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -81,7 +80,6 @@ import com.space.element.util.rememberEmptyListText
 import com.space.element.util.rememberFunctionList
 import com.space.element.util.rememberFunctionName
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Preview
 @Composable
 private fun LibraryPreview() {

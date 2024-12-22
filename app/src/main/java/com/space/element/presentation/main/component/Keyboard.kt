@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -15,7 +14,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -26,9 +24,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.space.element.presentation.`interface`.theme.ElementTheme
 import com.space.element.presentation.main.model.KeyboardButton
 import com.space.element.presentation.main.model.KeyboardButton.Type
-import com.space.element.presentation.`interface`.theme.ElementTheme
 
 @Preview
 @Composable
@@ -57,35 +55,21 @@ fun KeyboardVariantPreview() {
 @Composable
 fun Keyboard(
 	modifier: Modifier = Modifier,
-	contentGap: Dp = 16.dp,
-	contentPadding: PaddingValues = PaddingValues(16.dp),
+	contentGap: Dp = 0.dp,
+	contentPadding: PaddingValues = PaddingValues(0.dp),
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
-	Surface(modifier = modifier) {
-		KeyboardContent(
-			keyboardContentPadding = contentPadding,
-			keyboardContentGap = contentGap,
-			onButtonClick = onButtonClick
-		)
-	}
-}
-
-@Composable
-private fun KeyboardContent(
-	keyboardContentPadding: PaddingValues,
-	keyboardContentGap: Dp,
-	onButtonClick: (KeyboardButton) -> Unit,
-) {
+	val buttonModifier = Modifier
 	Column(
-		modifier = Modifier.padding(keyboardContentPadding),
-		verticalArrangement = Arrangement.spacedBy(keyboardContentGap)
+		modifier = modifier.padding(contentPadding),
+		verticalArrangement = Arrangement.spacedBy(contentGap)
 	) {
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -93,7 +77,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Open,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -101,7 +85,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Close,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -109,7 +93,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Division,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -117,11 +101,11 @@ private fun KeyboardContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -129,7 +113,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -137,7 +121,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -145,7 +129,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -153,11 +137,11 @@ private fun KeyboardContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Four,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -165,7 +149,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Five,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -173,7 +157,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Six,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -181,7 +165,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -189,11 +173,11 @@ private fun KeyboardContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.One,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -201,7 +185,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Two,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -209,7 +193,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Three,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -217,7 +201,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -225,11 +209,11 @@ private fun KeyboardContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -237,7 +221,7 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -245,15 +229,18 @@ private fun KeyboardContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
+				Icon(
+					imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace,
+					contentDescription = null
+				)
 			}
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -269,31 +256,17 @@ fun KeyboardVariant(
 	contentPadding: PaddingValues = PaddingValues(16.dp),
 	onButtonClick: (KeyboardButton) -> Unit
 ) {
-	Surface(modifier = modifier) {
-		KeyboardVariantContent(
-			keyboardContentPadding = contentPadding,
-			keyboardContentGap = contentGap,
-			onButtonClick = onButtonClick
-		)
-	}
-}
-
-@Composable
-private fun KeyboardVariantContent(
-	keyboardContentPadding: PaddingValues,
-	keyboardContentGap: Dp,
-	onButtonClick: (KeyboardButton) -> Unit,
-) {
+	val buttonModifier = Modifier
 	Column(
-		modifier = Modifier.padding(keyboardContentPadding),
-		verticalArrangement = Arrangement.spacedBy(keyboardContentGap)
+		modifier = modifier.padding(contentPadding),
+		verticalArrangement = Arrangement.spacedBy(contentGap)
 	) {
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Seven,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -301,7 +274,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Eight,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -309,7 +282,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Nine,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -317,7 +290,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Division,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -325,7 +298,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Clear,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -333,11 +306,11 @@ private fun KeyboardVariantContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Four,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -345,7 +318,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Five,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -353,7 +326,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Six,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -361,7 +334,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Open,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -369,7 +342,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Close,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -377,11 +350,11 @@ private fun KeyboardVariantContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.One,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -389,7 +362,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Two,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -397,7 +370,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Three,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -405,7 +378,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Subtraction,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -413,7 +386,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Multiplication,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -421,11 +394,11 @@ private fun KeyboardVariantContent(
 		}
 
 		Row(
-			horizontalArrangement = Arrangement.spacedBy(keyboardContentGap)
+			horizontalArrangement = Arrangement.spacedBy(contentGap)
 		) {
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Dot,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -433,7 +406,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Zero,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -441,15 +414,18 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Delete,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
-				Icon(imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace, contentDescription = null)
+				Icon(
+					imageVector = Icons.AutoMirrored.Outlined.KeyboardBackspace,
+					contentDescription = null
+				)
 			}
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Addition,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -457,7 +433,7 @@ private fun KeyboardVariantContent(
 
 			KeyboardButton(
 				keyboardButton = KeyboardButton.Equal,
-				modifier = Modifier.weight(1f),
+				modifier = buttonModifier.weight(1f),
 				onClick = onButtonClick
 			) {
 				KeyboardButtonSymbol(symbol = it.symbol)
@@ -478,7 +454,7 @@ fun KeyboardButton(
 ) {
 	val hapticFeedback = LocalHapticFeedback.current
 	Button(
-		modifier = modifier.aspectRatio(1f),
+		modifier = modifier,
 		shape = CircleShape,
 		enabled = enabled,
 		colors = ButtonDefaults.buttonColors(

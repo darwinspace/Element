@@ -6,19 +6,27 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -172,16 +180,90 @@ private fun MainScreen(
 	onKeyboardButtonClick: (KeyboardButton) -> Unit
 ) {
 	/* TODO: Should be controlled here (PaddingValues, TextStyles, Sizes). */
+	Surface {
+		BoxWithConstraints {
+			val maxHeight = maxHeight
+			if (maxWidth < 600.dp) {
+				MainScreenBottomSheetScaffold(
+					modifier = Modifier.windowInsetsPadding(
+						insets = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
+					),
+					sheetContent = {
+						MainScreenBottomSheetContent(
+							modifier = Modifier.heightIn(
+								max = maxHeight - WindowInsets.statusBars.asPaddingValues()
+									.calculateTopPadding()
+							),
+							libraryState = libraryState,
+							onLibraryStateChange = onLibraryStateChange,
+							elementList = elementList,
+							onElementListItemClick = onElementListItemClick,
+							elementListQuery = elementListQuery,
+							onElementListQueryChange = onElementListQueryChange,
+							elementName = elementName,
+							onElementNameChange = onElementNameChange,
+							elementValue = elementValue,
+							onElementValueChange = onElementValueChange,
+							onCreateElementClick = onCreateElementClick,
+							onRemoveElementClick = onRemoveElementClick,
+							elementListCreateButtonEnabled = elementListCreateButtonEnabled,
+							functionList = functionList,
+							onFunctionListItemClick = onFunctionListItemClick,
+							functionName = functionName,
+							onFunctionNameChange = onFunctionNameChange,
+							functionDefinition = functionDefinition,
+							onFunctionDefinitionChange = onFunctionDefinitionChange,
+							functionListCreateButtonEnabled = functionListCreateButtonEnabled,
+							onCreateFunctionClick = onCreateFunctionClick,
+							onRemoveFunctionClick = onRemoveFunctionClick
+						)
+					}
+				) {
+					Column(
+						modifier = Modifier
+							.fillMaxSize()
+							.padding(it)
+					) {
+						Header(
+							modifier = Modifier.weight(1f),
+							expression = expression,
+							expressionCursorPosition = expressionCursorPosition,
+							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+							expressionResultState = expressionResultState
+						)
 
-	BoxWithConstraints {
-		val maxHeight = maxHeight
-		if (maxWidth < 600.dp) {
-			MainScreenBottomSheetScaffold(
-				sheetContent = {
-					val height = maxHeight - WindowInsets.statusBars.asPaddingValues()
-						.calculateTopPadding()
-					MainScreenBottomSheetContent(
-						modifier = Modifier.heightIn(max = height),
+						Keyboard(
+							onButtonClick = onKeyboardButtonClick
+						)
+					}
+				}
+			} else {
+				Row {
+					Column(
+						modifier = Modifier
+							.displayCutoutPadding()
+							.fillMaxHeight()
+							.weight(1f),
+					) {
+						Header(
+							modifier = Modifier.weight(1f),
+							expression = expression,
+							expressionCursorPosition = expressionCursorPosition,
+							onExpressionCursorPositionChange = onExpressionCursorPositionChange,
+							expressionResultState = expressionResultState
+						)
+
+						Keyboard(
+							modifier = Modifier.navigationBarsPadding(),
+							onButtonClick = onKeyboardButtonClick
+						)
+					}
+
+					Library(
+						modifier = Modifier
+							.statusBarsPadding()
+							.fillMaxHeight()
+							.weight(1f),
 						libraryState = libraryState,
 						onLibraryStateChange = onLibraryStateChange,
 						elementList = elementList,
@@ -203,31 +285,9 @@ private fun MainScreen(
 						onFunctionDefinitionChange = onFunctionDefinitionChange,
 						functionListCreateButtonEnabled = functionListCreateButtonEnabled,
 						onCreateFunctionClick = onCreateFunctionClick,
-						onRemoveFunctionClick = onRemoveFunctionClick
+						onRemoveFunctionClick = onRemoveFunctionClick,
 					)
 				}
-			) {
-				Column(
-					modifier = Modifier
-						.fillMaxSize()
-						.padding(it)
-				) {
-					Header(
-						modifier = Modifier.weight(1f),
-						expression = expression,
-						expressionCursorPosition = expressionCursorPosition,
-						onExpressionCursorPositionChange = onExpressionCursorPositionChange,
-						expressionResultState = expressionResultState
-					)
-
-					Keyboard(
-						onButtonClick = onKeyboardButtonClick
-					)
-				}
-			}
-		} else {
-			Box(contentAlignment = Alignment.Center) {
-				Text("Landscape mode not implemented yet.")
 			}
 		}
 	}
@@ -236,10 +296,11 @@ private fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenBottomSheetScaffold(
+	modifier: Modifier,
 	sheetContent: @Composable ColumnScope.() -> Unit,
 	content: @Composable (PaddingValues) -> Unit
 ) {
-	Surface {
+	Box(modifier = modifier) {
 		BottomSheetScaffold(
 			sheetContent = sheetContent,
 			sheetContainerColor = MaterialTheme.colorScheme.surface,
