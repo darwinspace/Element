@@ -1,6 +1,7 @@
 package com.space.element.presentation.main
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -16,11 +17,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetScaffold
@@ -186,13 +186,23 @@ private fun MainScreen(
 			if (maxWidth < 600.dp) {
 				MainScreenBottomSheetScaffold(
 					modifier = Modifier.windowInsetsPadding(
-						insets = WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
+						insets = WindowInsets.displayCutout
+							.only(WindowInsetsSides.Horizontal)
+							.union(
+								WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+							)
 					),
 					sheetContent = {
 						MainScreenBottomSheetContent(
 							modifier = Modifier.heightIn(
 								max = maxHeight - WindowInsets.statusBars.asPaddingValues()
 									.calculateTopPadding()
+							),
+							contentPadding = PaddingValues(
+								start = 24.dp,
+								end = 24.dp,
+								bottom = 24.dp + WindowInsets.navigationBars.asPaddingValues()
+									.calculateBottomPadding()
 							),
 							libraryState = libraryState,
 							onLibraryStateChange = onLibraryStateChange,
@@ -238,10 +248,16 @@ private fun MainScreen(
 					}
 				}
 			} else {
-				Row {
+				Row(
+					modifier = Modifier
+						.displayCutoutPadding()
+						.windowInsetsPadding(
+							insets = WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+						),
+					horizontalArrangement = Arrangement.spacedBy(24.dp)
+				) {
 					Column(
 						modifier = Modifier
-							.displayCutoutPadding()
 							.fillMaxHeight()
 							.weight(1f),
 					) {
@@ -254,16 +270,25 @@ private fun MainScreen(
 						)
 
 						Keyboard(
-							modifier = Modifier.navigationBarsPadding(),
+							modifier = Modifier.windowInsetsPadding(
+								insets = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)
+							),
 							onButtonClick = onKeyboardButtonClick
 						)
 					}
 
 					Library(
 						modifier = Modifier
-							.statusBarsPadding()
 							.fillMaxHeight()
 							.weight(1f),
+						contentPadding = PaddingValues(
+							start = 0.dp,
+							top = WindowInsets.statusBars.asPaddingValues()
+								.calculateTopPadding(),
+							end = 0.dp,
+							bottom = 0.dp + WindowInsets.navigationBars.asPaddingValues()
+								.calculateBottomPadding()
+						),
 						libraryState = libraryState,
 						onLibraryStateChange = onLibraryStateChange,
 						elementList = elementList,
@@ -318,6 +343,7 @@ fun MainScreenBottomSheetScaffold(
 @Composable
 private fun MainScreenBottomSheetContent(
 	modifier: Modifier,
+	contentPadding: PaddingValues,
 	libraryState: () -> LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	elementList: () -> List<Element>,
@@ -362,6 +388,7 @@ private fun MainScreenBottomSheetContent(
 			)
 
 			Library(
+				contentPadding = contentPadding,
 				libraryState = libraryState,
 				onLibraryStateChange = onLibraryStateChange,
 				elementList = elementList,

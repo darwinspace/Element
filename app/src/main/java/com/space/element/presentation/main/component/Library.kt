@@ -20,11 +20,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -121,6 +118,7 @@ private fun LibraryPreview() {
 @Composable
 fun Library(
 	modifier: Modifier = Modifier,
+	contentPadding: PaddingValues = PaddingValues(),
 	libraryState: () -> LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
 	elementList: () -> List<Element>,
@@ -152,12 +150,7 @@ fun Library(
 
 	Surface(modifier = modifier) {
 		LazyColumn(
-			contentPadding = PaddingValues(
-				start = 24.dp,
-				end = 24.dp,
-				bottom = 12.dp + WindowInsets.navigationBars.asPaddingValues()
-					.calculateBottomPadding()
-			)
+			contentPadding = contentPadding
 		) {
 			stickyHeader {
 				LibraryHeader(
@@ -360,9 +353,7 @@ private fun LibraryHeader(
 			AnimatedVisibility(
 				visible = libraryState is LibraryState.ElementState.List
 						|| libraryState is LibraryState.ElementState.Create
-						|| libraryState is LibraryState.ElementState.Search,
-				enter = fadeIn(),
-				exit = fadeOut()
+						|| libraryState is LibraryState.ElementState.Search
 			) {
 				CreateElementButton(
 					enabled = elementListCreateButtonEnabled,
@@ -372,9 +363,7 @@ private fun LibraryHeader(
 
 			AnimatedVisibility(
 				visible = libraryState is LibraryState.FunctionState.List
-						|| libraryState is LibraryState.FunctionState.Create,
-				enter = fadeIn(),
-				exit = fadeOut()
+						|| libraryState is LibraryState.FunctionState.Create
 			) {
 				CreateFunctionButton(
 					enabled = functionListCreateButtonEnabled,
@@ -457,6 +446,11 @@ private fun LazyListScope.functionList(
 			exit = fadeOut() + shrinkVertically()
 		) {
 			FunctionListItem(
+				modifier = Modifier
+					.padding(
+						top = 12.dp,
+						bottom = if (index != list.lastIndex) 12.dp else 0.dp
+					),
 				functionListItem = item,
 				onClick = {
 					if (libraryState is LibraryState.FunctionState.Edit) {
@@ -800,6 +794,7 @@ private fun ElementListSearchTextField(
 	)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.elementList(
 	libraryState: LibraryState,
 	onLibraryStateChange: (LibraryState) -> Unit,
@@ -813,33 +808,38 @@ private fun LazyListScope.elementList(
 			exit = fadeOut() + shrinkVertically()
 		) {
 			ElementListItem(
-				modifier = Modifier.fillMaxWidth(),
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(
+						top = 12.dp,
+						bottom = if (index != list.lastIndex) 12.dp else 0.dp
+					)
+					.clip(shape = MaterialTheme.shapes.medium)
+					.combinedClickable(
+						onLongClick = {
+							if (libraryState is LibraryState.ElementState.List) {
+								onLibraryStateChange(LibraryState.ElementState.Edit)
+								list[index] = item.copy(selected = !item.selected)
+							}
+						},
+						onClick = {
+							if (libraryState is LibraryState.ElementState.Edit) {
+								list[index] = item.copy(selected = !item.selected)
+							} else {
+								onClick(item.element)
+							}
+						}
+					),
 				elementListItem = item,
-				onLongClick = {
-					if (libraryState is LibraryState.ElementState.List) {
-						onLibraryStateChange(LibraryState.ElementState.Edit)
-						list[index] = item.copy(selected = !item.selected)
-					}
-				},
-				onClick = {
-					if (libraryState is LibraryState.ElementState.Edit) {
-						list[index] = item.copy(selected = !item.selected)
-					} else {
-						onClick(item.element)
-					}
-				}
 			)
 		}
 	}
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ElementListItem(
 	modifier: Modifier = Modifier,
-	elementListItem: ElementListItem,
-	onLongClick: () -> Unit,
-	onClick: () -> Unit
+	elementListItem: ElementListItem
 ) {
 	val borderWidth by animateDpAsState(
 		targetValue = if (elementListItem.selected) 4.dp else 2.dp,
@@ -854,13 +854,7 @@ private fun ElementListItem(
 		label = "ElementListItemSurfaceBorderColor"
 	)
 	Surface(
-		modifier = modifier
-			.padding(vertical = 12.dp)
-			.clip(shape = MaterialTheme.shapes.medium)
-			.combinedClickable(
-				onLongClick = onLongClick,
-				onClick = onClick
-			),
+		modifier = modifier,
 		shape = MaterialTheme.shapes.medium,
 		border = BorderStroke(
 			width = borderWidth,
@@ -957,6 +951,7 @@ private fun FunctionDefinitionTextField(
 
 @Composable
 private fun FunctionListItem(
+	modifier: Modifier,
 	functionListItem: FunctionListItem,
 	onClick: () -> Unit
 ) {
@@ -974,7 +969,7 @@ private fun FunctionListItem(
 	)
 
 	Surface(
-		modifier = Modifier.padding(vertical = 12.dp),
+		modifier = modifier,
 		shape = MaterialTheme.shapes.medium,
 		color = MaterialTheme.colorScheme.tertiaryContainer,
 		border = BorderStroke(
